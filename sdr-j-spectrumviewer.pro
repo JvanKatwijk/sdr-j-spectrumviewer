@@ -92,6 +92,7 @@ sdrplay {
 	                   ./input/sdrplay/sdrplay-loader.cpp \
 	                   ./input/sdrplay/sdrplay-worker.cpp 
 	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
+	DEFINES		+= SDRPLAY_LIBRARY_NEW
 }
 #
 #

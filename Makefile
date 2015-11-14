@@ -12,7 +12,7 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DHAVE_DABSTICK -DHAVE_SDRPLAY -DHAVE_AIRSPY -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DHAVE_DABSTICK -DHAVE_SDRPLAY -DSDRPLAY_LIBRARY_NEW -DHAVE_AIRSPY -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I. -Iincludes -Iinput -I../../include/qwt -I../../include -I../../local/include -Iinput/dabstick -Iinput/sdrplay -Iinput/airspy -I../../local/include/libairspy -I../../include/qt5 -I../../include/qt5/QtWidgets -I../../include/qt5/QtGui -I../../include/qt5/QtCore -I. -I. -I../../lib64/qt5/mkspecs/linux-g++
@@ -593,7 +593,51 @@ moc_gui.cpp: includes/spectrum-constants.h \
 		../../include/QtCore/qset.h \
 		../../include/QtCore/qfile.h \
 		ui_sdrgui.h \
-		../../include/qwt/qwt.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/QtGui/qicon.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QApplication \
+		../../include/qt5/QtWidgets/qapplication.h \
+		../../include/QtCore/qcoreapplication.h \
+		../../include/QtCore/qeventloop.h \
+		../../include/qt5/QtWidgets/qdesktopwidget.h \
+		../../include/qt5/QtGui/qguiapplication.h \
+		../../include/qt5/QtGui/qinputmethod.h \
+		../../include/QtCore/qlocale.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/qabstractitemdelegate.h \
+		../../include/qt5/QtWidgets/qstyleoption.h \
+		../../include/qt5/QtWidgets/qabstractspinbox.h \
+		../../include/QtGui/qvalidator.h \
+		../../include/qt5/QtWidgets/qslider.h \
+		../../include/qt5/QtWidgets/qabstractslider.h \
+		../../include/qt5/QtWidgets/qstyle.h \
+		../../include/qt5/QtWidgets/qtabbar.h \
+		../../include/qt5/QtWidgets/qtabwidget.h \
+		../../include/qt5/QtWidgets/qrubberband.h \
+		../../include/qt5/QtWidgets/qframe.h \
+		../../include/QtCore/qabstractitemmodel.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/qabstractitemview.h \
+		../../include/qt5/QtWidgets/qabstractscrollarea.h \
+		../../include/qt5/QtCore/qitemselectionmodel.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QLabel \
+		../../include/qt5/QtWidgets/qlabel.h \
+		../../include/qt5/QtWidgets/QPushButton \
+		../../include/qt5/QtWidgets/qpushbutton.h \
+		../../include/qt5/QtWidgets/qabstractbutton.h \
+		../../include/qt5/QtWidgets/QSlider \
+		../../include/qt5/QtWidgets/QSpinBox \
+		../../include/qt5/QtWidgets/qspinbox.h \
+		../../include/qwt/qwt_plot.h \
 		../../include/qwt/qwt_global.h \
 		../../include/qt5/QtCore/qglobal.h \
 		../../include/qt5/QtCore/qsystemdetection.h \
@@ -607,10 +651,6 @@ moc_gui.cpp: includes/spectrum-constants.h \
 		../../include/qt5/QtCore/qglobalstatic.h \
 		../../include/QtCore/qmutex.h \
 		../../include/QtCore/qnumeric.h \
-		../../include/qwt/qwt_slider.h \
-		../../include/qwt/qwt_abstract_slider.h \
-		../../include/qwt/qwt_abstract_scale.h \
-		../../include/qwt/qwt_plot.h \
 		../../include/qwt/qwt_text.h \
 		../../include/qt5/QtCore/qstring.h \
 		../../include/qt5/QtCore/qrefcount.h \
@@ -639,7 +679,6 @@ moc_gui.cpp: includes/spectrum-constants.h \
 		../../include/qt5/QtCore/qmap.h \
 		../../include/QtCore/qdebug.h \
 		../../include/QtCore/qtextstream.h \
-		../../include/QtCore/qlocale.h \
 		../../include/QtCore/qtextcodec.h \
 		../../include/QtCore/qcontiguouscache.h \
 		../../include/qt5/QtCore/qrect.h \
@@ -649,15 +688,24 @@ moc_gui.cpp: includes/spectrum-constants.h \
 		../../include/qwt/qwt_transform.h \
 		../../include/qt5/QtCore/qdebug.h \
 		../../include/qwt/qwt_interval.h \
-		../../include/qt5/QtWidgets/qframe.h \
+		../../include/qwt/qwt_scale_widget.h \
+		../../include/qwt/qwt_scale_draw.h \
+		../../include/qwt/qwt_abstract_scale_draw.h \
+		../../include/qwt/qwt_scale_div.h \
+		../../include/qt5/QtCore/qpoint.h \
+		../../include/qt5/QtGui/qtransform.h \
+		../../include/qt5/QtGui/qcolor.h \
+		../../include/qwt/qwt_text_label.h \
+		../../include/qwt/qwt.h \
+		../../include/qwt/qwt_slider.h \
+		../../include/qwt/qwt_abstract_slider.h \
+		../../include/qwt/qwt_abstract_scale.h \
 		../../include/qwt/qwt_plot_curve.h \
 		../../include/qwt/qwt_plot_seriesitem.h \
-		../../include/qwt/qwt_scale_div.h \
 		../../include/qwt/qwt_series_data.h \
 		../../include/qwt/qwt_samples.h \
 		../../include/qt5/QtCore/qvector.h \
 		../../include/qwt/qwt_point_3d.h \
-		../../include/qt5/QtCore/qpoint.h \
 		../../include/qwt/qwt_point_polar.h \
 		../../include/qwt/qwt_math.h \
 		../../include/qt5/QtCore/qmath.h \
@@ -667,7 +715,6 @@ moc_gui.cpp: includes/spectrum-constants.h \
 		../../include/qt5/QtGui/qbrush.h \
 		../../include/qwt/qwt_plot_grid.h \
 		../../include/qwt/qwt_dial.h \
-		../../include/qwt/qwt_abstract_scale_draw.h \
 		../../include/qt5/QtGui/qpalette.h \
 		../../include/qwt/qwt_plot_spectrogram.h \
 		../../include/qwt/qwt_raster_data.h \
@@ -688,7 +735,6 @@ moc_gui.cpp: includes/spectrum-constants.h \
 		../../include/qt5/QtWidgets/QStackedWidget \
 		../../include/qt5/QtWidgets/qstackedwidget.h \
 		../../include/qwt/qwt_color_map.h \
-		../../include/qt5/QtGui/qcolor.h \
 		../../include/qwt/qwt_plot_zoomer.h \
 		../../include/qwt/qwt_plot_picker.h \
 		../../include/qwt/qwt_picker.h \
@@ -699,9 +745,6 @@ moc_gui.cpp: includes/spectrum-constants.h \
 		../../include/qwt/qwt_plot_panner.h \
 		../../include/qwt/qwt_panner.h \
 		../../include/qwt/qwt_plot_layout.h \
-		../../include/qwt/qwt_scale_widget.h \
-		../../include/qwt/qwt_scale_draw.h \
-		../../include/qt5/QtGui/qtransform.h \
 		../../include/qt5/QtGui/QBrush \
 		includes/spectrogramdata.h \
 		includes/fft.h \
@@ -1400,6 +1443,28 @@ moc_dabstick.cpp: ../../include/qt5/QtCore/QObject \
 		../../include/qt5/QtCore/QStringList \
 		../../include/qt5/QtCore/qstringlist.h \
 		ui_dabstick-widget.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QApplication \
+		../../include/qt5/QtWidgets/qapplication.h \
+		../../include/QtCore/qcoreapplication.h \
+		../../include/QtCore/qeventloop.h \
+		../../include/qt5/QtWidgets/qdesktopwidget.h \
+		../../include/qt5/QtGui/qguiapplication.h \
+		../../include/qt5/QtGui/qinputmethod.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QSpinBox \
+		../../include/qt5/QtWidgets/qspinbox.h \
+		../../include/qt5/QtWidgets/QWidget \
 		input/dabstick/dabstick.h
 	/usr/lib64/qt5/bin/moc $(DEFINES) -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-spectrumviewer -I/usr/shared/sdr-j-spectrumviewer -I/usr/shared/sdr-j-spectrumviewer/includes -I/usr/shared/sdr-j-spectrumviewer/input -I/usr/include/qwt -I/usr/include -I/usr/local/include -I/usr/shared/sdr-j-spectrumviewer/input/dabstick -I/usr/shared/sdr-j-spectrumviewer/input/sdrplay -I/usr/shared/sdr-j-spectrumviewer/input/airspy -I/usr/local/include/libairspy -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/5.1.1 -I/usr/include/c++/5.1.1/x86_64-redhat-linux -I/usr/include/c++/5.1.1/backward -I/usr/lib/gcc/x86_64-redhat-linux/5.1.1/include -I/usr/local/include -I/usr/include input/dabstick/dabstick.h -o moc_dabstick.cpp
 
@@ -1790,6 +1855,46 @@ moc_sdrplay.cpp: ../../include/qt5/QtCore/QObject \
 		../../include/qt5/QtWidgets/QDialog \
 		../../include/qt5/QtWidgets/qdialog.h \
 		ui_sdrplay-widget.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/QtGui/qicon.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QApplication \
+		../../include/qt5/QtWidgets/qapplication.h \
+		../../include/QtCore/qcoreapplication.h \
+		../../include/QtCore/qeventloop.h \
+		../../include/qt5/QtWidgets/qdesktopwidget.h \
+		../../include/qt5/QtGui/qguiapplication.h \
+		../../include/qt5/QtGui/qinputmethod.h \
+		../../include/QtCore/qlocale.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/qabstractitemdelegate.h \
+		../../include/qt5/QtWidgets/qstyleoption.h \
+		../../include/qt5/QtWidgets/qabstractspinbox.h \
+		../../include/QtGui/qvalidator.h \
+		../../include/qt5/QtWidgets/qslider.h \
+		../../include/qt5/QtWidgets/qabstractslider.h \
+		../../include/qt5/QtWidgets/qstyle.h \
+		../../include/qt5/QtWidgets/qtabbar.h \
+		../../include/qt5/QtWidgets/qtabwidget.h \
+		../../include/qt5/QtWidgets/qrubberband.h \
+		../../include/QtCore/qabstractitemmodel.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/qabstractitemview.h \
+		../../include/qt5/QtWidgets/qabstractscrollarea.h \
+		../../include/qt5/QtCore/qitemselectionmodel.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QLabel \
+		../../include/qt5/QtWidgets/qlabel.h \
+		../../include/qt5/QtWidgets/QSpinBox \
+		../../include/qt5/QtWidgets/qspinbox.h \
+		../../include/qt5/QtWidgets/QWidget \
 		input/sdrplay/sdrplay.h
 	/usr/lib64/qt5/bin/moc $(DEFINES) -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-spectrumviewer -I/usr/shared/sdr-j-spectrumviewer -I/usr/shared/sdr-j-spectrumviewer/includes -I/usr/shared/sdr-j-spectrumviewer/input -I/usr/include/qwt -I/usr/include -I/usr/local/include -I/usr/shared/sdr-j-spectrumviewer/input/dabstick -I/usr/shared/sdr-j-spectrumviewer/input/sdrplay -I/usr/shared/sdr-j-spectrumviewer/input/airspy -I/usr/local/include/libairspy -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/5.1.1 -I/usr/include/c++/5.1.1/x86_64-redhat-linux -I/usr/include/c++/5.1.1/backward -I/usr/lib/gcc/x86_64-redhat-linux/5.1.1/include -I/usr/local/include -I/usr/include input/sdrplay/sdrplay.h -o moc_sdrplay.cpp
 
@@ -2125,6 +2230,48 @@ moc_airspy-handler.cpp: ../../include/qt5/QtCore/QObject \
 		../../include/qt5/QtWidgets/QDialog \
 		../../include/qt5/QtWidgets/qdialog.h \
 		ui_airspy-widget.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/QtGui/qicon.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QApplication \
+		../../include/qt5/QtWidgets/qapplication.h \
+		../../include/QtCore/qcoreapplication.h \
+		../../include/QtCore/qeventloop.h \
+		../../include/qt5/QtWidgets/qdesktopwidget.h \
+		../../include/qt5/QtGui/qguiapplication.h \
+		../../include/qt5/QtGui/qinputmethod.h \
+		../../include/QtCore/qlocale.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/qabstractitemdelegate.h \
+		../../include/qt5/QtWidgets/qstyleoption.h \
+		../../include/qt5/QtWidgets/qabstractspinbox.h \
+		../../include/QtGui/qvalidator.h \
+		../../include/qt5/QtWidgets/qslider.h \
+		../../include/qt5/QtWidgets/qabstractslider.h \
+		../../include/qt5/QtWidgets/qstyle.h \
+		../../include/qt5/QtWidgets/qtabbar.h \
+		../../include/qt5/QtWidgets/qtabwidget.h \
+		../../include/qt5/QtWidgets/qrubberband.h \
+		../../include/QtCore/qabstractitemmodel.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/qabstractitemview.h \
+		../../include/qt5/QtWidgets/qabstractscrollarea.h \
+		../../include/qt5/QtCore/qitemselectionmodel.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QLabel \
+		../../include/qt5/QtWidgets/qlabel.h \
+		../../include/qt5/QtWidgets/QPushButton \
+		../../include/qt5/QtWidgets/qpushbutton.h \
+		../../include/qt5/QtWidgets/qabstractbutton.h \
+		../../include/qt5/QtWidgets/QSlider \
+		../../include/qt5/QtWidgets/QWidget \
 		input/airspy/airspy_lib.h \
 		../../local/include/libairspy/airspy_commands.h \
 		input/airspy/airspy-handler.h
@@ -4000,7 +4147,43 @@ main.o: src/main.cpp ../../include/qt5/QtCore/Qt \
 		../../include/qt5/QtWidgets/QDialog \
 		../../include/qt5/QtWidgets/qdialog.h \
 		ui_sdrgui.h \
-		../../include/qwt/qwt.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/QtGui/qicon.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/qabstractitemdelegate.h \
+		../../include/qt5/QtWidgets/qstyleoption.h \
+		../../include/qt5/QtWidgets/qabstractspinbox.h \
+		../../include/QtGui/qvalidator.h \
+		../../include/qt5/QtWidgets/qslider.h \
+		../../include/qt5/QtWidgets/qabstractslider.h \
+		../../include/qt5/QtWidgets/qstyle.h \
+		../../include/qt5/QtWidgets/qtabbar.h \
+		../../include/qt5/QtWidgets/qtabwidget.h \
+		../../include/qt5/QtWidgets/qrubberband.h \
+		../../include/qt5/QtWidgets/qframe.h \
+		../../include/QtCore/qabstractitemmodel.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/qabstractitemview.h \
+		../../include/qt5/QtWidgets/qabstractscrollarea.h \
+		../../include/qt5/QtCore/qitemselectionmodel.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QLabel \
+		../../include/qt5/QtWidgets/qlabel.h \
+		../../include/qt5/QtWidgets/QPushButton \
+		../../include/qt5/QtWidgets/qpushbutton.h \
+		../../include/qt5/QtWidgets/qabstractbutton.h \
+		../../include/qt5/QtWidgets/QSlider \
+		../../include/qt5/QtWidgets/QSpinBox \
+		../../include/qt5/QtWidgets/qspinbox.h \
+		../../include/qwt/qwt_plot.h \
 		../../include/qwt/qwt_global.h \
 		../../include/qt5/QtCore/qglobal.h \
 		../../include/qt5/QtCore/qsystemdetection.h \
@@ -4014,10 +4197,6 @@ main.o: src/main.cpp ../../include/qt5/QtCore/Qt \
 		../../include/qt5/QtCore/qglobalstatic.h \
 		../../include/QtCore/qmutex.h \
 		../../include/QtCore/qnumeric.h \
-		../../include/qwt/qwt_slider.h \
-		../../include/qwt/qwt_abstract_slider.h \
-		../../include/qwt/qwt_abstract_scale.h \
-		../../include/qwt/qwt_plot.h \
 		../../include/qwt/qwt_text.h \
 		../../include/qt5/QtCore/qstring.h \
 		../../include/qt5/QtCore/qrefcount.h \
@@ -4055,15 +4234,24 @@ main.o: src/main.cpp ../../include/qt5/QtCore/Qt \
 		../../include/qwt/qwt_transform.h \
 		../../include/qt5/QtCore/qdebug.h \
 		../../include/qwt/qwt_interval.h \
-		../../include/qt5/QtWidgets/qframe.h \
+		../../include/qwt/qwt_scale_widget.h \
+		../../include/qwt/qwt_scale_draw.h \
+		../../include/qwt/qwt_abstract_scale_draw.h \
+		../../include/qwt/qwt_scale_div.h \
+		../../include/qt5/QtCore/qpoint.h \
+		../../include/qt5/QtGui/qtransform.h \
+		../../include/qt5/QtGui/qcolor.h \
+		../../include/qwt/qwt_text_label.h \
+		../../include/qwt/qwt.h \
+		../../include/qwt/qwt_slider.h \
+		../../include/qwt/qwt_abstract_slider.h \
+		../../include/qwt/qwt_abstract_scale.h \
 		../../include/qwt/qwt_plot_curve.h \
 		../../include/qwt/qwt_plot_seriesitem.h \
-		../../include/qwt/qwt_scale_div.h \
 		../../include/qwt/qwt_series_data.h \
 		../../include/qwt/qwt_samples.h \
 		../../include/qt5/QtCore/qvector.h \
 		../../include/qwt/qwt_point_3d.h \
-		../../include/qt5/QtCore/qpoint.h \
 		../../include/qwt/qwt_point_polar.h \
 		../../include/qwt/qwt_math.h \
 		../../include/qt5/QtCore/qmath.h \
@@ -4073,7 +4261,6 @@ main.o: src/main.cpp ../../include/qt5/QtCore/Qt \
 		../../include/qt5/QtGui/qbrush.h \
 		../../include/qwt/qwt_plot_grid.h \
 		../../include/qwt/qwt_dial.h \
-		../../include/qwt/qwt_abstract_scale_draw.h \
 		../../include/qt5/QtGui/qpalette.h \
 		../../include/qwt/qwt_plot_spectrogram.h \
 		../../include/qwt/qwt_raster_data.h \
@@ -4094,7 +4281,6 @@ main.o: src/main.cpp ../../include/qt5/QtCore/Qt \
 		../../include/qt5/QtWidgets/QStackedWidget \
 		../../include/qt5/QtWidgets/qstackedwidget.h \
 		../../include/qwt/qwt_color_map.h \
-		../../include/qt5/QtGui/qcolor.h \
 		../../include/qwt/qwt_plot_zoomer.h \
 		../../include/qwt/qwt_plot_picker.h \
 		../../include/qwt/qwt_picker.h \
@@ -4104,9 +4290,6 @@ main.o: src/main.cpp ../../include/qt5/QtCore/Qt \
 		../../include/qwt/qwt_plot_panner.h \
 		../../include/qwt/qwt_panner.h \
 		../../include/qwt/qwt_plot_layout.h \
-		../../include/qwt/qwt_scale_widget.h \
-		../../include/qwt/qwt_scale_draw.h \
-		../../include/qt5/QtGui/qtransform.h \
 		../../include/qt5/QtGui/QBrush \
 		includes/spectrogramdata.h \
 		includes/fft.h \
@@ -4298,7 +4481,51 @@ gui.o: src/gui.cpp includes/gui.h \
 		../../include/QtCore/qset.h \
 		../../include/QtCore/qfile.h \
 		ui_sdrgui.h \
-		../../include/qwt/qwt.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/QtGui/qicon.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QApplication \
+		../../include/qt5/QtWidgets/qapplication.h \
+		../../include/QtCore/qcoreapplication.h \
+		../../include/QtCore/qeventloop.h \
+		../../include/qt5/QtWidgets/qdesktopwidget.h \
+		../../include/qt5/QtGui/qguiapplication.h \
+		../../include/qt5/QtGui/qinputmethod.h \
+		../../include/QtCore/qlocale.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/qabstractitemdelegate.h \
+		../../include/qt5/QtWidgets/qstyleoption.h \
+		../../include/qt5/QtWidgets/qabstractspinbox.h \
+		../../include/QtGui/qvalidator.h \
+		../../include/qt5/QtWidgets/qslider.h \
+		../../include/qt5/QtWidgets/qabstractslider.h \
+		../../include/qt5/QtWidgets/qstyle.h \
+		../../include/qt5/QtWidgets/qtabbar.h \
+		../../include/qt5/QtWidgets/qtabwidget.h \
+		../../include/qt5/QtWidgets/qrubberband.h \
+		../../include/qt5/QtWidgets/qframe.h \
+		../../include/QtCore/qabstractitemmodel.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/qabstractitemview.h \
+		../../include/qt5/QtWidgets/qabstractscrollarea.h \
+		../../include/qt5/QtCore/qitemselectionmodel.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QLabel \
+		../../include/qt5/QtWidgets/qlabel.h \
+		../../include/qt5/QtWidgets/QPushButton \
+		../../include/qt5/QtWidgets/qpushbutton.h \
+		../../include/qt5/QtWidgets/qabstractbutton.h \
+		../../include/qt5/QtWidgets/QSlider \
+		../../include/qt5/QtWidgets/QSpinBox \
+		../../include/qt5/QtWidgets/qspinbox.h \
+		../../include/qwt/qwt_plot.h \
 		../../include/qwt/qwt_global.h \
 		../../include/qt5/QtCore/qglobal.h \
 		../../include/qt5/QtCore/qsystemdetection.h \
@@ -4312,10 +4539,6 @@ gui.o: src/gui.cpp includes/gui.h \
 		../../include/qt5/QtCore/qglobalstatic.h \
 		../../include/QtCore/qmutex.h \
 		../../include/QtCore/qnumeric.h \
-		../../include/qwt/qwt_slider.h \
-		../../include/qwt/qwt_abstract_slider.h \
-		../../include/qwt/qwt_abstract_scale.h \
-		../../include/qwt/qwt_plot.h \
 		../../include/qwt/qwt_text.h \
 		../../include/qt5/QtCore/qstring.h \
 		../../include/qt5/QtCore/qrefcount.h \
@@ -4344,7 +4567,6 @@ gui.o: src/gui.cpp includes/gui.h \
 		../../include/qt5/QtCore/qmap.h \
 		../../include/QtCore/qdebug.h \
 		../../include/QtCore/qtextstream.h \
-		../../include/QtCore/qlocale.h \
 		../../include/QtCore/qtextcodec.h \
 		../../include/QtCore/qcontiguouscache.h \
 		../../include/qt5/QtCore/qrect.h \
@@ -4354,15 +4576,24 @@ gui.o: src/gui.cpp includes/gui.h \
 		../../include/qwt/qwt_transform.h \
 		../../include/qt5/QtCore/qdebug.h \
 		../../include/qwt/qwt_interval.h \
-		../../include/qt5/QtWidgets/qframe.h \
+		../../include/qwt/qwt_scale_widget.h \
+		../../include/qwt/qwt_scale_draw.h \
+		../../include/qwt/qwt_abstract_scale_draw.h \
+		../../include/qwt/qwt_scale_div.h \
+		../../include/qt5/QtCore/qpoint.h \
+		../../include/qt5/QtGui/qtransform.h \
+		../../include/qt5/QtGui/qcolor.h \
+		../../include/qwt/qwt_text_label.h \
+		../../include/qwt/qwt.h \
+		../../include/qwt/qwt_slider.h \
+		../../include/qwt/qwt_abstract_slider.h \
+		../../include/qwt/qwt_abstract_scale.h \
 		../../include/qwt/qwt_plot_curve.h \
 		../../include/qwt/qwt_plot_seriesitem.h \
-		../../include/qwt/qwt_scale_div.h \
 		../../include/qwt/qwt_series_data.h \
 		../../include/qwt/qwt_samples.h \
 		../../include/qt5/QtCore/qvector.h \
 		../../include/qwt/qwt_point_3d.h \
-		../../include/qt5/QtCore/qpoint.h \
 		../../include/qwt/qwt_point_polar.h \
 		../../include/qwt/qwt_math.h \
 		../../include/qt5/QtCore/qmath.h \
@@ -4372,7 +4603,6 @@ gui.o: src/gui.cpp includes/gui.h \
 		../../include/qt5/QtGui/qbrush.h \
 		../../include/qwt/qwt_plot_grid.h \
 		../../include/qwt/qwt_dial.h \
-		../../include/qwt/qwt_abstract_scale_draw.h \
 		../../include/qt5/QtGui/qpalette.h \
 		../../include/qwt/qwt_plot_spectrogram.h \
 		../../include/qwt/qwt_raster_data.h \
@@ -4393,7 +4623,6 @@ gui.o: src/gui.cpp includes/gui.h \
 		../../include/qt5/QtWidgets/QStackedWidget \
 		../../include/qt5/QtWidgets/qstackedwidget.h \
 		../../include/qwt/qwt_color_map.h \
-		../../include/qt5/QtGui/qcolor.h \
 		../../include/qwt/qwt_plot_zoomer.h \
 		../../include/qwt/qwt_plot_picker.h \
 		../../include/qwt/qwt_picker.h \
@@ -4404,9 +4633,6 @@ gui.o: src/gui.cpp includes/gui.h \
 		../../include/qwt/qwt_plot_panner.h \
 		../../include/qwt/qwt_panner.h \
 		../../include/qwt/qwt_plot_layout.h \
-		../../include/qwt/qwt_scale_widget.h \
-		../../include/qwt/qwt_scale_draw.h \
-		../../include/qt5/QtGui/qtransform.h \
 		../../include/qt5/QtGui/QBrush \
 		includes/spectrogramdata.h \
 		includes/fft.h \
@@ -4427,31 +4653,15 @@ gui.o: src/gui.cpp includes/gui.h \
 		../../include/qt5/QtWidgets/QFrame \
 		includes/ringbuffer.h \
 		ui_sdrplay-widget.h \
+		../../include/qt5/QtWidgets/QWidget \
 		input/airspy/airspy-handler.h \
 		ui_airspy-widget.h \
 		input/airspy/airspy_lib.h \
 		../../local/include/libairspy/airspy_commands.h \
 		input/dabstick/dabstick.h \
 		input/dabstick/dongleselect.h \
-		../../include/qt5/QtWidgets/QLabel \
-		../../include/qt5/QtWidgets/qlabel.h \
 		../../include/qt5/QtWidgets/QListView \
 		../../include/qt5/QtWidgets/qlistview.h \
-		../../include/qt5/QtWidgets/qabstractitemview.h \
-		../../include/qt5/QtWidgets/qabstractscrollarea.h \
-		../../include/QtCore/qabstractitemmodel.h \
-		../../include/qt5/QtCore/qitemselectionmodel.h \
-		../../include/qt5/QtWidgets/qabstractitemdelegate.h \
-		../../include/qt5/QtWidgets/qstyleoption.h \
-		../../include/qt5/QtWidgets/qabstractspinbox.h \
-		../../include/QtGui/qvalidator.h \
-		../../include/QtGui/qicon.h \
-		../../include/qt5/QtWidgets/qslider.h \
-		../../include/qt5/QtWidgets/qabstractslider.h \
-		../../include/qt5/QtWidgets/qstyle.h \
-		../../include/qt5/QtWidgets/qtabbar.h \
-		../../include/qt5/QtWidgets/qtabwidget.h \
-		../../include/qt5/QtWidgets/qrubberband.h \
 		../../include/qt5/QtCore/QStringListModel \
 		../../include/qt5/QtCore/qstringlistmodel.h \
 		../../include/qt5/QtCore/QStringList \
@@ -5231,7 +5441,29 @@ dabstick.o: input/dabstick/dabstick.cpp ../../include/qt5/QtCore/QThread \
 		../../include/qt5/QtCore/qstringlistmodel.h \
 		../../include/qt5/QtCore/QStringList \
 		../../include/qt5/QtCore/qstringlist.h \
-		ui_dabstick-widget.h
+		ui_dabstick-widget.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QApplication \
+		../../include/qt5/QtWidgets/qapplication.h \
+		../../include/QtCore/qcoreapplication.h \
+		../../include/QtCore/qeventloop.h \
+		../../include/qt5/QtWidgets/qdesktopwidget.h \
+		../../include/qt5/QtGui/qguiapplication.h \
+		../../include/qt5/QtGui/qinputmethod.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QSpinBox \
+		../../include/qt5/QtWidgets/qspinbox.h \
+		../../include/qt5/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o dabstick.o input/dabstick/dabstick.cpp
 
 dongleselect.o: input/dabstick/dongleselect.cpp input/dabstick/dongleselect.h \
@@ -5636,6 +5868,44 @@ sdrplay.o: input/sdrplay/sdrplay.cpp ../../include/qt5/QtCore/QThread \
 		../../include/qt5/QtWidgets/QDialog \
 		../../include/qt5/QtWidgets/qdialog.h \
 		ui_sdrplay-widget.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/QtGui/qicon.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QApplication \
+		../../include/qt5/QtWidgets/qapplication.h \
+		../../include/QtCore/qcoreapplication.h \
+		../../include/QtCore/qeventloop.h \
+		../../include/qt5/QtWidgets/qdesktopwidget.h \
+		../../include/qt5/QtGui/qguiapplication.h \
+		../../include/qt5/QtGui/qinputmethod.h \
+		../../include/QtCore/qlocale.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/qabstractitemdelegate.h \
+		../../include/qt5/QtWidgets/qstyleoption.h \
+		../../include/qt5/QtWidgets/qabstractspinbox.h \
+		../../include/QtGui/qvalidator.h \
+		../../include/qt5/QtWidgets/qslider.h \
+		../../include/qt5/QtWidgets/qabstractslider.h \
+		../../include/qt5/QtWidgets/qstyle.h \
+		../../include/qt5/QtWidgets/qtabbar.h \
+		../../include/qt5/QtWidgets/qtabwidget.h \
+		../../include/qt5/QtWidgets/qrubberband.h \
+		../../include/QtCore/qabstractitemmodel.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/qabstractitemview.h \
+		../../include/qt5/QtWidgets/qabstractscrollarea.h \
+		../../include/qt5/QtCore/qitemselectionmodel.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QSpinBox \
+		../../include/qt5/QtWidgets/qspinbox.h \
+		../../include/qt5/QtWidgets/QWidget \
 		input/sdrplay/sdrplay-worker.h \
 		input/sdrplay/sdrplay-loader.h \
 		../../local/include/mirsdrapi-rsp.h \
@@ -6054,6 +6324,48 @@ airspy-handler.o: input/airspy/airspy-handler.cpp ../../local/include/libairspy/
 		../../include/qt5/QtWidgets/QDialog \
 		../../include/qt5/QtWidgets/qdialog.h \
 		ui_airspy-widget.h \
+		../../include/QtCore/QVariant \
+		../../include/qt5/QtWidgets/QAction \
+		../../include/qt5/QtWidgets/qaction.h \
+		../../include/QtGui/qicon.h \
+		../../include/qt5/QtWidgets/qactiongroup.h \
+		../../include/qt5/QtWidgets/QApplication \
+		../../include/qt5/QtWidgets/qapplication.h \
+		../../include/QtCore/qcoreapplication.h \
+		../../include/QtCore/qeventloop.h \
+		../../include/qt5/QtWidgets/qdesktopwidget.h \
+		../../include/qt5/QtGui/qguiapplication.h \
+		../../include/qt5/QtGui/qinputmethod.h \
+		../../include/QtCore/qlocale.h \
+		../../include/qt5/QtWidgets/QButtonGroup \
+		../../include/qt5/QtWidgets/qbuttongroup.h \
+		../../include/qt5/QtWidgets/QComboBox \
+		../../include/qt5/QtWidgets/qcombobox.h \
+		../../include/qt5/QtWidgets/qabstractitemdelegate.h \
+		../../include/qt5/QtWidgets/qstyleoption.h \
+		../../include/qt5/QtWidgets/qabstractspinbox.h \
+		../../include/QtGui/qvalidator.h \
+		../../include/qt5/QtWidgets/qslider.h \
+		../../include/qt5/QtWidgets/qabstractslider.h \
+		../../include/qt5/QtWidgets/qstyle.h \
+		../../include/qt5/QtWidgets/qtabbar.h \
+		../../include/qt5/QtWidgets/qtabwidget.h \
+		../../include/qt5/QtWidgets/qrubberband.h \
+		../../include/QtCore/qabstractitemmodel.h \
+		../../include/qt5/QtWidgets/QHeaderView \
+		../../include/qt5/QtWidgets/qheaderview.h \
+		../../include/qt5/QtWidgets/qabstractitemview.h \
+		../../include/qt5/QtWidgets/qabstractscrollarea.h \
+		../../include/qt5/QtCore/qitemselectionmodel.h \
+		../../include/qt5/QtWidgets/QLCDNumber \
+		../../include/qt5/QtWidgets/qlcdnumber.h \
+		../../include/qt5/QtWidgets/QLabel \
+		../../include/qt5/QtWidgets/qlabel.h \
+		../../include/qt5/QtWidgets/QPushButton \
+		../../include/qt5/QtWidgets/qpushbutton.h \
+		../../include/qt5/QtWidgets/qabstractbutton.h \
+		../../include/qt5/QtWidgets/QSlider \
+		../../include/qt5/QtWidgets/QWidget \
 		input/airspy/airspy_lib.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o airspy-handler.o input/airspy/airspy-handler.cpp
 
