@@ -228,7 +228,7 @@ int32_t	dabStick::getVFOFrequency	(void) {
 }
 
 bool	dabStick::legalFrequency (int32_t f) {
-	return  Mhz (24) <= f && f <= Mhz (1400);
+	return  Mhz (2) <= f && f <= Mhz (1800);
 }
 
 int32_t	dabStick::defaultFrequency	(void) {
