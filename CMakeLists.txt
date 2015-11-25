@@ -12,6 +12,7 @@
 	set(SDRPLAY true)
 	set(AIRSPY true)
 	set(DABSTICK true)
+	set(ELAD_S1 true)
 
 ########################################################################
 	find_package (Qt5Widgets REQUIRED)
@@ -237,6 +238,39 @@
 	   )
 
 	   add_definitions (-DHAVE_DABSTICK)
+	endif()
+
+	if (ELAD_S1)
+	   set (${objectName}_UIS
+	        ${${objectName}_UIS}
+	        ./input/sw-elad-s1/elad-widget.ui
+	   )
+
+	   set (${objectName}_MOCS
+	        ${${objectName}_MOCS}
+	        ./input/sw-elad-s1/elad-s1.h
+	        ./input/sw-elad-s1/elad-worker.h
+	   )
+
+	   include_directories (
+	        ./input/sw-elad-s1/
+	   )
+
+	   set (${objectName}_HDRS
+	        ${${objectName}_HDRS}
+	        ./input/sw-elad-s1/elad-s1.h
+	        ./input/sw-elad-s1/elad-loader.h
+	        ./input/sw-elad-s1/elad-worker.h
+	   )
+
+	   set (${objectName}_SRCS
+	        ${${objectName}_SRCS}
+	        ./input/sw-elad-s1/elad-s1.cpp
+	        ./input/sw-elad-s1/elad-loader.cpp
+	        ./input/sw-elad-s1/elad-worker.cpp
+	   )
+
+	   add_definitions (-DHAVE_ELAD_S1)
 	endif()
 
 	include_directories (

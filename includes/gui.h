@@ -68,6 +68,7 @@ private:
 	int32_t		inputRate;
 	int32_t		bandWidth;
 	int32_t		displaySize;
+	int16_t		displayRate;
 	int16_t		rasterSize;
 	int32_t		spectrumSize;
 	int16_t		spectrumFactor;
@@ -78,7 +79,6 @@ private:
 	double		*freezeBuffer;
 	int32_t		totalAmount;
 	virtualInput	*theDevice;
-	uint8_t		deviceID;
 	int64_t		currentFrequency;
 	int16_t		scanDelayTime;
 	void		ClearPanel		();
@@ -135,7 +135,7 @@ private slots:
 	void	switchScanner		(void);
 	void	setScanDelay		(int);
 public slots:
-	void	JansRadioThroughSignal	(void);
+	void	handleSamples		(void);
 	void	set_changeRate		(int);
 };
 

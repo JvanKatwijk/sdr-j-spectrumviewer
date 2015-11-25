@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>sdrplayWidget</class>
+ <widget class="QWidget" name="sdrplayWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>216</width>
+    <height>226</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>201</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>70</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>mirics-sdrPlay</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="statusLabel">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>180</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="rateSelector">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>1536</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2000</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2500</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>3000</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>5000</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>6000</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>8000</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLCDNumber" name="api_version">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>91</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="lineWidth">
+     <number>0</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="QSlider" name="gainSlider">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>50</y>
+      <width>18</width>
+      <height>160</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="showGain">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>10</y>
+      <width>51</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

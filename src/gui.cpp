@@ -46,12 +46,17 @@
 #ifdef	HAVE_DABSTICK
 #include	"dabstick.h"
 #endif
+#ifdef	HAVE_ELAD_S1
+#include	"elad-s1.h"
+#endif
+#ifdef	HAVE_SOUNDCARD
+#include	"soundcard.h"
+#endif
 #include	"scope.h"
 #ifdef __MINGW32__
 #include	<iostream>
 #endif
 #
-
 //
 //	the default
 #define	SCAN_DELAY	200
@@ -76,10 +81,13 @@ int k;
 	this	-> inputRate  		= MHz (2);	// default
 	this	-> displaySize =
 	             spectrumSettings -> value ("displaySize", 2048). toInt ();
+	this	-> displayRate	=
+	             spectrumSettings -> value ("displayRate", 10). toInt ();
+	if (displayRate < 5 || displayRate > 20)
+	   displayRate = 10;
 	this -> spectrumFactor	= 8;
 	currentFrequency = MHz (100);		// default
 	theDevice	= new virtualInput ();
-	deviceID	= NO_STICK;
 	if ((displaySize & (displaySize - 1)) != 0)
 	   displaySize = 2048;
 	spectrumSize	= spectrumFactor * displaySize;
@@ -111,6 +119,15 @@ int k;
 #endif
 #ifdef	HAVE_AIRSPY
 	deviceSelector	-> addItem ("airspy");
+#endif
+#ifdef	HAVE_ELAD_S1
+	deviceSelector	-> addItem ("elad-192000");
+	deviceSelector	-> addItem ("elad-384000");
+	deviceSelector	-> addItem ("elad-768000");
+	deviceSelector	-> addItem ("elad-1536000");
+#endif
+#ifdef	HAVE_SOUNDCARD
+	deviceSelector	-> addItem ("soundcard");
 #endif
 //
 //	set some sliders to their values
@@ -178,10 +195,10 @@ int k;
 
 	runTimer		= new QTimer ();
 	runTimer		-> setSingleShot (false);
-	runTimer		-> setInterval (50);	// milliseconds
+	runTimer		-> setInterval (1000 / displayRate);	// milliseconds
 
 	connect (runTimer, SIGNAL (timeout (void)),
-	         this, SLOT (JansRadioThroughSignal (void)));
+	         this, SLOT (handleSamples (void)));
 
 	scanTimer		= new QTimer ();
 	scanTimer		-> setSingleShot (false);
@@ -242,7 +259,6 @@ bool	success	= false;
 	   theDevice	-> stopReader ();
 	   delete	theDevice;
 	   theDevice	= NULL;
-	   deviceID	= NO_STICK;
 	   runMode	= IDLE;
 	}
 
@@ -260,12 +276,10 @@ bool	success	= false;
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening SDRplay failed\n"));
 	      delete theDevice;
-	      theDevice = NULL;
-	      return;
+	      theDevice = new virtualInput ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 //	basically, ready to run
-	   deviceID	= SDRPLAY;
 	}
 	else 
 #endif
@@ -276,12 +290,10 @@ bool	success	= false;
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening dabstick failed\n"));
 	      delete theDevice;
-	      theDevice = NULL;
-	      return;
+	      theDevice = new virtualInput ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 //	basically, ready to run
-	   deviceID	= DABSTICK;
 	}
 	else
 #endif
@@ -292,11 +304,67 @@ bool	success	= false;
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening airspy failed\n"));
 	      delete theDevice;
-	      theDevice = NULL;
-	      return;
+	      theDevice = new virtualInput ();;
 	   }
 	   inputRate	= theDevice -> getRate ();
-	   deviceID	= AIRSPY;
+	}
+#endif
+#ifdef	HAVE_ELAD_S1
+	if (s == "elad-192000") {
+	   theDevice	= new eladHandler (spectrumSettings, 192000, &success);
+	   if (!success) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening elad 192000 failed\n"));
+	      delete theDevice;
+	      theDevice = new virtualInput ();
+	   }
+	   inputRate	= theDevice -> getRate ();
+	}
+	else
+	if (s == "elad-384000") {
+	   theDevice	= new eladHandler (spectrumSettings, 384000, &success);
+	   if (!success) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening elad 384000 failed\n"));
+	      delete theDevice;
+	      theDevice = new virtualInput ();
+	   }
+	   inputRate	= theDevice -> getRate ();
+	}
+	else
+	if (s == "elad-768000") {
+	   theDevice	= new eladHandler (spectrumSettings, 768000, &success);
+	   if (!success) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening elad 768000 failed\n"));
+	      delete theDevice;
+	      theDevice = new virtualInput ();
+	   }
+	   inputRate	= theDevice -> getRate ();
+	}
+	else
+	if (s == "elad-1536000") {
+	   theDevice	= new eladHandler (spectrumSettings, 1536000, &success);
+	   if (!success) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening elad 1536000 failed\n"));
+	      delete theDevice;
+	      theDevice = new virtualInput ();
+	   }
+	   inputRate	= theDevice -> getRate ();
+	}
+#endif
+#ifdef	HAVE_SOUNDCARD
+	else
+	if (s == "soundcard") {
+	   theDevice	= new soundcard (spectrumSettings, &success);
+	   if (!success) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening soundcard failed\n"));
+	      delete theDevice;
+	      theDevice = new virtualInput ();
+	   }
+	   inputRate	= theDevice -> getRate ();
 	}
 #endif
 	connect (theDevice, SIGNAL (set_changeRate (int)),
@@ -310,9 +378,6 @@ bool	success	= false;
 	setTuner (theDevice -> defaultFrequency ());
 }
 //
-//	This "slot" is called whenever a device connected through
-//	the extio interface changes the samplerate
-
 void	RadioInterface::set_changeRate (int newRate) {
 	inputRate		= newRate;
 	setTuner (currentFrequency);
@@ -333,15 +398,15 @@ bool	r = 0;
 
 	setTuner (currentFrequency);
 	Display (currentFrequency);
-	theDevice		-> stopReader ();	// just in case
-	r = theDevice -> restartReader ();
+	theDevice	-> stopReader ();	// just in case
+	r = theDevice	-> restartReader ();
 	if (!r) {
 	   QMessageBox::warning (this, tr ("sdr"),
-	                               tr ("Opening  SDRplay failed\n"));
+	                               tr ("Opening  device failed\n"));
 	   exit (102);
 	}
 //	and we are on the move, so let the timer run
-	runTimer	-> start (50);
+	runTimer	-> start (1000 / displayRate);
 	runMode		= RUNNING;
 }
 
@@ -575,21 +640,20 @@ DSPFLOAT	decayingAverage (DSPFLOAT old,
 	return input * (1.0 / weight) + old * (1.0 - (1.0 / weight));
 }
 //
-//	we want N times per second a signal to start the function
-//	we want to process inputRate / 20 length  segments,
-//	which may amount to up to 400000 samples,
+//	we want to process inputRate / 10 length  segments,
+//	which may amount to up to 800000 samples,
 //	so the _I_Buffer should be large enough.
-void	RadioInterface::JansRadioThroughSignal (void) {
+void	RadioInterface::handleSamples (void) {
 DSPCOMPLEX	dataIn [spectrumSize];
 int32_t i, j;
 
 	if ((runMode != RUNNING) || (theDevice == NULL))
 	   return;
 
-	if (theDevice -> Samples () < inputRate / 10)
+	if (theDevice -> Samples () < inputRate / displayRate)
 	   return;
 
-	theDevice -> getSamples (dataIn, spectrumSize, inputRate / 10);
+	theDevice -> getSamples (dataIn, spectrumSize, inputRate / displayRate);
 	for (i = 0; i < spectrumSize; i ++)
 	   spectrumBuffer [i] = dataIn [i] * Window [i];
 	spectrum_fft	-> do_FFT ();

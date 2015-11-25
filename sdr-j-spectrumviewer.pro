@@ -12,11 +12,11 @@ CONFIG		+= console widgets
 DEPENDPATH += . \
 	      ./src \
 	      ./includes \
-	      ./input
+	      ./src/input
 
 INCLUDEPATH += . \
 	      ./includes \
-	      ./input
+	      ./src/input
 
 # Input
 HEADERS += ./includes/gui.h \
@@ -25,7 +25,7 @@ HEADERS += ./includes/gui.h \
            ./includes/ringbuffer.h \
 	   ./includes/spectrogramdata.h \
 	   ./includes/scope.h  \
-	   ./input/virtual-input.h
+	   ./src/input/virtual-input.h
 
 FORMS += ./sdrgui.ui 
 
@@ -33,7 +33,7 @@ SOURCES += ./src/main.cpp \
            ./src/gui.cpp \
            ./src/fft.cpp \
 	   ./src/scope.cpp \
-	   ./input/virtual-input.cpp 
+	   ./src/input/virtual-input.cpp 
 
 #for Fedora and Ubuntu use
 unix { 
@@ -46,6 +46,8 @@ LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 21
 CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
+CONFIG		+= elad-s1
+CONFIG		+= soundcard
 }
 
 ## and for windows32 we use:
@@ -72,58 +74,80 @@ CONFIG		+= sdrplay
 #	the devices
 dabstick {
 	DEFINES		+= HAVE_DABSTICK
-	INCLUDEPATH	+= ./input/dabstick
-	HEADERS		+= ./input/dabstick/dabstick.h \
-	                   ./input/dabstick/dongleselect.h
-	SOURCES		+= ./input/dabstick/dabstick.cpp \
-	                   ./input/dabstick/dongleselect.cpp
-	FORMS		+= ./input/dabstick/dabstick-widget.ui
+	INCLUDEPATH	+= ./src/input/dabstick
+	HEADERS		+= ./src/input/dabstick/dabstick.h \
+	                   ./src/input/dabstick/dongleselect.h
+	SOURCES		+= ./src/input/dabstick/dabstick.cpp \
+	                   ./src/input/dabstick/dongleselect.cpp
+	FORMS		+= ./src/input/dabstick/dabstick-widget.ui
 }
 #
 #	the SDRplay
 #
 sdrplay {
 	DEFINES		+= HAVE_SDRPLAY
-	INCLUDEPATH	+= ./input/sdrplay
-	HEADERS		+= ./input/sdrplay/sdrplay.h \
-	                   ./input/sdrplay/sdrplay-loader.h \
-	                   ./input/sdrplay/sdrplay-worker.h 
-	SOURCES		+= ./input/sdrplay/sdrplay.cpp \
-	                   ./input/sdrplay/sdrplay-loader.cpp \
-	                   ./input/sdrplay/sdrplay-worker.cpp 
-	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
+	INCLUDEPATH	+= ./src/input/sdrplay
+	HEADERS		+= ./src/input/sdrplay/sdrplay.h \
+	                   ./src/input/sdrplay/sdrplay-loader.h \
+	                   ./src/input/sdrplay/sdrplay-worker.h 
+	SOURCES		+= ./src/input/sdrplay/sdrplay.cpp \
+	                   ./src/input/sdrplay/sdrplay-loader.cpp \
+	                   ./src/input/sdrplay/sdrplay-worker.cpp 
+	FORMS		+= ./src/input/sdrplay/sdrplay-widget.ui
 	DEFINES		+= SDRPLAY_LIBRARY_NEW
 }
 #
-#
 airspy {
 	DEFINES		+= HAVE_AIRSPY
-	INCLUDEPATH	+= ./input/airspy \
+	INCLUDEPATH	+= ./src/input/airspy \
 	                   /usr/local/include/libairspy
-	HEADERS		+= ./input/airspy/airspy-handler.h 
-	SOURCES		+= ./input/airspy/airspy-handler.cpp 
-	FORMS		+= ./input/airspy/airspy-widget.ui
+	HEADERS		+= ./src/input/airspy/airspy-handler.h 
+	SOURCES		+= ./src/input/airspy/airspy-handler.cpp 
+	FORMS		+= ./src/input/airspy/airspy-widget.ui
 }
 #
 #	extio dependencies, windows only
 #
 extio {
 	DEFINES		+= HAVE_EXTIO
-	INCLUDEPATH	+= ./input/extio-handler
-	HEADERS		+= ./input/extio-handler/extio-handler.h \
-	                   ./input/extio-handler/common-readers.h \
-	                   ./input/extio-handler/virtual-reader.h
-	SOURCES		+= ./input/extio-handler/extio-handler.cpp \
-	                   ./input/extio-handler/common-readers.cpp \
-	                   ./input/extio-handler/virtual-reader.cpp
+	INCLUDEPATH	+= ./src/input/extio-handler
+	HEADERS		+= ./src/input/extio-handler/extio-handler.h \
+	                   ./src/input/extio-handler/common-readers.h \
+	                   ./src/input/extio-handler/virtual-reader.h
+	SOURCES		+= ./src/input/extio-handler/extio-handler.cpp \
+	                   ./src/input/extio-handler/common-readers.cpp \
+	                   ./src/input/extio-handler/virtual-reader.cpp
 }
 
 rtl_tcp {
 	DEFINES		+= HAVE_RTL_TCP
 	QT		+= network
-	INCLUDEPATH	+= ./input/rtl_tcp
-	HEADERS		+= ./input/rtl_tcp/rtl_tcp_client.h
-	SOURCES		+= ./input/rtl_tcp/rtl_tcp_client.cpp
-	FORMS		+= ./input/rtl_tcp/rtl_tcp-widget.ui
+	INCLUDEPATH	+= ./src/input/rtl_tcp
+	HEADERS		+= ./src/input/rtl_tcp/rtl_tcp_client.h
+	SOURCES		+= ./src/input/rtl_tcp/rtl_tcp_client.cpp
+	FORMS		+= ./src/input/rtl_tcp/rtl_tcp-widget.ui
+}
+
+elad-s1 {
+	DEFINES		+= HAVE_ELAD_S1
+	INCLUDEPATH	+= ./src/input/sw-elad-s1
+	HEADERS		+= ./src/input/sw-elad-s1/elad-s1.h \
+	                   ./src/input/sw-elad-s1/elad-worker.h \
+	                   ./src/input/sw-elad-s1/elad-loader.h
+	SOURCES		+= ./src/input/sw-elad-s1/elad-s1.cpp \
+	                   ./src/input/sw-elad-s1/elad-worker.cpp \
+	                   ./src/input/sw-elad-s1/elad-loader.cpp
+	FORMS		+= ./src/input/sw-elad-s1/elad-widget.ui
+}
+
+soundcard {
+	DEFINES		+= HAVE_SOUNDCARD
+	INCLUDEPATH	+= ./src/input/soundcard
+	HEADERS		+= ./src/input/soundcard/pa-reader.h \
+	                   ./src/input/soundcard/soundcard.h
+	SOURCES		+= ./src/input/soundcard/pa-reader.cpp \
+	                   ./src/input/soundcard/soundcard.cpp
+	FORMS		+= ./src/input/soundcard/soundcard-widget.ui
+	LIBS		+= -lportaudio
 }
 
