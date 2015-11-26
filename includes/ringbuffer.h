@@ -135,15 +135,17 @@ volatile	uint32_t	readIndex;
 		char		*buffer;
 public:
 	RingBuffer (uint32_t elementCount) {
-	if (((elementCount - 1) & elementCount) != 0)
-	    elementCount = 2 * 16384;	/* default	*/
-
-	bufferSize	= elementCount;
+	if (((elementCount - 1) & elementCount) != 0) {
+	   uint32_t base = 16384;	// minimum size
+	   while (base < elementCount)
+	      base <<= 1;
+	   bufferSize = base;
+	}
 	buffer		= new char [2 * bufferSize * sizeof (elementtype)];
 	writeIndex	= 0;
 	readIndex	= 0;
-	smallMask	= (elementCount)- 1;
-	bigMask		= (elementCount * 2) - 1;
+	smallMask	= (bufferSize)- 1;
+	bigMask		= (bufferSize * 2) - 1;
 }
 
 	~RingBuffer () {

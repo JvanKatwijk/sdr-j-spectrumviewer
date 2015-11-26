@@ -49,7 +49,7 @@ int16_t	i;
 	}
 
 	portAudio		= true;
-	_I_Buffer		= new RingBuffer<float>(16 * 32768);
+	_I_Buffer		= new RingBuffer<float>(cardRate / 5);
 	qDebug ("Hostapis: %d\n", Pa_GetHostApiCount ());
 	for (i = 0; i < Pa_GetHostApiCount (); i ++)
 	   qDebug ("Api %d is %s\n", i, Pa_GetHostApiInfo (i) -> name);

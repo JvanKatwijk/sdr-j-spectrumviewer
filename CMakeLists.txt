@@ -1,7 +1,7 @@
 #
-	cmake_minimum_required( VERSION 2.8 )
+	cmake_minimum_required (VERSION 2.8 )
 	set (CMAKE_BUILD_TYPE Release )
-	set (objectName sdr-j-spectrumviewer)
+	set (objectName sdr-j-spectrumviewer-1.1)
 	set (CMAKE_INSTALL_PREFIX ../)
 	add_definitions ( -Wall )
 ##########################################################################
@@ -13,6 +13,7 @@
 	set(AIRSPY true)
 	set(DABSTICK true)
 	set(ELAD_S1 true)
+	set(SOUNDCARD true)
 
 ########################################################################
 	find_package (Qt5Widgets REQUIRED)
@@ -123,31 +124,31 @@
 	   include_directories (${SDRPLAYLIB_INCLUDE_DIR})
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/sdrplay/sdrplay-widget.ui 
+	        ./src/input/sdrplay/sdrplay-widget.ui 
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/sdrplay/sdrplay.h
-	        ./input/sdrplay/sdrplay-worker.h
+	        ./src/input/sdrplay/sdrplay.h
+	        ./src/input/sdrplay/sdrplay-worker.h
 	   )
 
 	   include_directories (
-	        ./input/sdrplay
+	        ./src/input/sdrplay
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/sdrplay/sdrplay.h
-	        ./input/sdrplay/sdrplay-worker.h
-	        ./input/sdrplay/sdrplay-loader.h
+	        ./src/input/sdrplay/sdrplay.h
+	        ./src/input/sdrplay/sdrplay-worker.h
+	        ./src/input/sdrplay/sdrplay-loader.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/sdrplay/sdrplay.cpp
-	        ./input/sdrplay/sdrplay-worker.cpp
-	        ./input/sdrplay/sdrplay-loader.cpp
+	        ./src/input/sdrplay/sdrplay.cpp
+	        ./src/input/sdrplay/sdrplay-worker.cpp
+	        ./src/input/sdrplay/sdrplay-loader.cpp
 	   )
 
 	   add_definitions (-DHAVE_SDRPLAY)
@@ -170,26 +171,26 @@
 
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/airspy/airspy-widget.ui 
+	        ./src/input/airspy/airspy-widget.ui 
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/airspy/airspy-handler.h
+	        ./src/input/airspy/airspy-handler.h
 	   )
 
 	   include_directories (
-	     ./input/airspy
+	     ./src/input/airspy
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/airspy/airspy-handler.h
+	        ./src/input/airspy/airspy-handler.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/airspy/airspy-handler.cpp
+	        ./src/input/airspy/airspy-handler.cpp
 	   )
 
 	   add_definitions (-DHAVE_AIRSPY)
@@ -212,29 +213,29 @@
 
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/dabstick/dabstick-widget.ui
+	        ./src/input/dabstick/dabstick-widget.ui
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/dabstick/dongleselect.h
-	        ./input/dabstick/dabstick.h
+	        ./src/input/dabstick/dongleselect.h
+	        ./src/input/dabstick/dabstick.h
 	   )
 
 	   include_directories (
-	        ./input/dabstick/
+	        ./src/input/dabstick/
 	   )
 
 	   set (${objectName}_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/dabstick/dabstick.h 
-	        ./input/dabstick/dongleselect.h
+	        ./src/input/dabstick/dabstick.h 
+	        ./src/input/dabstick/dongleselect.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/dabstick/dabstick.cpp
-	        ./input/dabstick/dongleselect.cpp
+	        ./src/input/dabstick/dabstick.cpp
+	        ./src/input/dabstick/dongleselect.cpp
 	   )
 
 	   add_definitions (-DHAVE_DABSTICK)
@@ -243,34 +244,77 @@
 	if (ELAD_S1)
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/sw-elad-s1/elad-widget.ui
+	        ./src/input/sw-elad-s1/elad-widget.ui
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/sw-elad-s1/elad-s1.h
-	        ./input/sw-elad-s1/elad-worker.h
+	        ./src/input/sw-elad-s1/elad-s1.h
+	        ./src/input/sw-elad-s1/elad-worker.h
 	   )
 
 	   include_directories (
-	        ./input/sw-elad-s1/
+	        ./src/input/sw-elad-s1/
 	   )
 
 	   set (${objectName}_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/sw-elad-s1/elad-s1.h
-	        ./input/sw-elad-s1/elad-loader.h
-	        ./input/sw-elad-s1/elad-worker.h
+	        ./src/input/sw-elad-s1/elad-s1.h
+	        ./src/input/sw-elad-s1/elad-loader.h
+	        ./src/input/sw-elad-s1/elad-worker.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/sw-elad-s1/elad-s1.cpp
-	        ./input/sw-elad-s1/elad-loader.cpp
-	        ./input/sw-elad-s1/elad-worker.cpp
+	        ./src/input/sw-elad-s1/elad-s1.cpp
+	        ./src/input/sw-elad-s1/elad-loader.cpp
+	        ./src/input/sw-elad-s1/elad-worker.cpp
 	   )
 
 	   add_definitions (-DHAVE_ELAD_S1)
+	endif()
+
+	if (SOUNDCARD)
+	   find_library (PORTAUDIO_LIB portaudio)
+	   if (NOT(PORTAUDIO_LIB))
+	      message (FATAL_ERROR "please install portaudio library")
+	   else (NOT(PORTAUDIO_LIB))
+	      set (extraLibs ${extraLibs} ${PORTAUDIO_LIB})
+	   endif()
+	   find_path (PORTAUDIO_INCLUDE_DIR
+	              NAMES portaudio.h
+	              PATHS
+	              /usr/local/include/
+	   )
+	   include_directories (${PORTAUDIO_INCLUDE_DIR})
+	   set (${objectName}_UIS
+	        ${${objectName}_UIS}
+	        ./src/input/soundcard/soundcard-widget.ui
+	   )
+
+	   set (${objectName}_MOCS
+	        ${${objectName}_MOCS}
+	        ./src/input/soundcard/soundcard.h
+	        ./src/input/soundcard/pa-reader.h
+	   )
+
+	   include_directories (
+	        ./src/input/soundcard/
+	   )
+
+	   set (${objectName}_HDRS
+	        ${${objectName}_HDRS}
+	        ./src/input/soundcard/soundcard.h
+	        ./src/input/soundcard/pa-reader.h
+	   )
+
+	   set (${objectName}_SRCS
+	        ${${objectName}_SRCS}
+	        ./src/input/soundcard/soundcard.cpp
+	        ./src/input/soundcard/pa-reader.cpp
+	   )
+
+	   add_definitions (-DHAVE_SOUNDCARD)
 	endif()
 
 	include_directories (
@@ -280,8 +324,8 @@
 	   ./
 	   ../
 	   ./includes
-	   ./input
 	   ./src
+	   ./src/input
 	   /usr/include/
 	)
 
@@ -293,7 +337,7 @@
               ./includes/ringbuffer.h 
 	      ./includes/spectrogramdata.h 
 	      ./includes/scope.h  
-	      ./input/virtual-input.h 
+	      ./src/input/virtual-input.h 
 	)
 
 	set ( ${objectName}_SRCS
@@ -302,7 +346,7 @@
               ./src/gui.cpp 
 	      ./src/scope.cpp 
               ./src/fft.cpp 
-	      ./input/virtual-input.cpp 
+	      ./src/input/virtual-input.cpp 
 	)
 
 	set (${objectName}_UIS ${${objectName}_UIS} ./sdrgui.ui)
@@ -313,7 +357,7 @@
 	      ${${objectName}_MOCS}
 	      ./includes/gui.h
 	      ./includes/scope.h
-	      ./input/virtual-input.h
+	      ./src/input/virtual-input.h
 	)
 
 	include_directories (${QWT_INCLUDE_DIRS}

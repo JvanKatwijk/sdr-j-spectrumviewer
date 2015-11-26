@@ -85,7 +85,7 @@ int k;
 	             spectrumSettings -> value ("displayRate", 10). toInt ();
 	if (displayRate < 5 || displayRate > 20)
 	   displayRate = 10;
-	this -> spectrumFactor	= 8;
+	this -> spectrumFactor	= 4;
 	currentFrequency = MHz (100);		// default
 	theDevice	= new virtualInput ();
 	if ((displaySize & (displaySize - 1)) != 0)
