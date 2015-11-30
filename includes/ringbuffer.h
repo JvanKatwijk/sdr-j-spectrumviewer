@@ -139,8 +139,12 @@ public:
 	   uint32_t base = 16384;	// minimum size
 	   while (base < elementCount)
 	      base <<= 1;
+	      fprintf (stderr, "base = %u\n", base);
 	   bufferSize = base;
 	}
+	else
+	   bufferSize = elementCount;
+
 	buffer		= new char [2 * bufferSize * sizeof (elementtype)];
 	writeIndex	= 0;
 	readIndex	= 0;

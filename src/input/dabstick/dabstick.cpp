@@ -173,6 +173,7 @@ int16_t	i;
 	rtlsdr_set_tuner_gain (device, gains [gainsCount / 2]);
 
 	_I_Buffer		= new RingBuffer<uint8_t>(2048 * 1024);
+	fprintf (stderr, "size = %d\n", _I_Buffer -> GetRingBufferWriteAvailable ());
 	workerHandle		= NULL;
 	connect (gainSlider, SIGNAL (valueChanged (int)),
 	         this, SLOT (set_gainSlider (int)));
