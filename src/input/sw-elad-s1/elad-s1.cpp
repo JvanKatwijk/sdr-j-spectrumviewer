@@ -36,34 +36,16 @@
 #include	"elad-loader.h"	// function loader
 
 #include	<stdio.h>
+
 DSPCOMPLEX	makeSample_31bits (uint8_t *);
-DSPCOMPLEX	makeSample_30bits (uint8_t *);
 DSPCOMPLEX	makeSample_15bits (uint8_t *);
 
-typedef union {
-	struct __attribute__((__packed__)) {
-		float	i;
-		float	q;
-		} iqf;
-	struct __attribute__((__packed__)) {
-		int32_t	i;
-		int32_t	q;
-		} iq;
-	struct __attribute__((__packed__)) {
-		uint8_t		i1;
-		uint8_t		i2;
-		uint8_t		i3;
-		uint8_t		i4;
-		uint8_t		q1;
-		uint8_t		q2;
-		uint8_t		q3;
-		uint8_t		q4;
-		};
-} iq_sample;
+// ADC output unsigned 14 bit input to FPGA output signed 32 bit
+// multiply output FPGA by SCALE_FACTOR to normalize 32bit signed values to ADC range signed 14 bit
+#define SCALE_FACTOR_32to14    (0.000003814) //(8192/2147483648)
+// ADC out unsigned 14 bit input to FPGA output signed 16 bit
+#define SCALE_FACTOR_16to14    (0.250)       //(8192/32768)  
 
-#define	SCALE_FACTOR_30 1073741824.000
-#define	SCALE_FACTOR_29 536970912.000
-#define	SCALE_FACTOR_14 16384.000
 
 //	Currently, we do not have lots of settings,
 //	it just might change suddenly, but not today
@@ -230,7 +212,8 @@ bool	eladHandler::legalFrequency	(int32_t f) {
 DSPCOMPLEX	makeSample_31bits (uint8_t *buf) {
 int ii = 0; int qq = 0;
 int16_t	i = 0;
-
+	
+uint32_t uii=0, uqq=0;
 	uint8_t q0 = buf [i++];
 	uint8_t q1 = buf [i++];
 	uint8_t q2 = buf [i++];
@@ -240,49 +223,56 @@ int16_t	i = 0;
 	uint8_t i1 = buf [i++];
 	uint8_t i2 = buf [i++];
 	uint8_t i3 = buf [i++];
-
-	ii = (i3 << 24) | (i2 << 16) | (i1 << 8) | i0;
-	qq = (q3 << 24) | (q2 << 16) | (q1 << 8) | q0;
-	return DSPCOMPLEX ((float)qq / SCALE_FACTOR_30,
-	                   (float)ii / SCALE_FACTOR_30);
-	return DSPCOMPLEX ((float)ii / SCALE_FACTOR_30,
-	                   (float)qq / SCALE_FACTOR_30);
+// Andrea Montefusco recipe
+// from four unsigned 8bit little endian order to unsigned 32bit (just move),
+// then cast it to signed 32 bit
+	uii = (i3 << 24) | (i2 << 16) | (i1 << 8) | i0;
+	uqq = (q3 << 24) | (q2 << 16) | (q1 << 8) | q0;
+	
+	ii =(int)uii;
+        qq =(int)uqq;
+	
+	return DSPCOMPLEX ((float)ii * SCALE_FACTOR_32to14,
+	                   (float)qq * SCALE_FACTOR_32to14);
 }
+/*Giovanni Franza recipe  --(short code)  c1 and c2 scale factor to Giovanni's app
+	if(m_bytes_per_sample==2) {
+	float c=1/8.0/1024.0;            
+	for( int j=0; j<q; j++ ) {
+		short r=(short)((uint16_t *)p)[j];
+		out[j]=r*c;
+	}
+} else {
+	float c=1/256.0/1024.0/1024.0;      
+	for( int j=0; j<q; j++ ) {
+		int r=(int)((uint32_t *)p)[j];
+		out[j]=r*c;
+	}
+*/	
 
 
-DSPCOMPLEX	makeSample_30bits (uint8_t *buf) {
-int ii = 0; int qq = 0;
-int16_t	i = 0;
-	uint8_t q0 = buf [i++];
-	uint8_t q1 = buf [i++];
-	uint8_t q2 = buf [i++];
-	uint8_t q3 = buf [i++];
-
-	uint8_t i0 = buf [i++];
-	uint8_t i1 = buf [i++];
-	uint8_t i2 = buf [i++];
-	uint8_t i3 = buf [i++];
-
-	ii = (i3 << 24) | (i2 << 16) | (i1 << 8) | i0;
-	qq = (q3 << 24) | (q2 << 16) | (q1 << 8) | q0;
-	return DSPCOMPLEX ((float)ii / SCALE_FACTOR_29,
-	                   (float)qq / SCALE_FACTOR_29);
-	return DSPCOMPLEX ((float)ii / SCALE_FACTOR_29,
-	                   (float)qq / SCALE_FACTOR_29);
-}
 //
 DSPCOMPLEX	makeSample_15bits (uint8_t *buf) {
-int ii	= 0; int qq = 0;
-int16_t	i = 0;
+int16_t	i = 0;	
+	
+int32_t ii= 0 , qq= 0;
+int16_t sqq=0 , sii=0;
+	
+	uint8_t q0 = buf [i++];
+	uint8_t q1 = buf [i++];
+	uint8_t i0 = buf [i++];
+	uint8_t i1 = buf [i++];
+	
+	// from two unsigned 8 bit little endian order to unsigned 16 bit , then signed 16 bit
+	sii =(short) ((i1 << 8) | i0);
+	sqq =(short) ((q1 << 8) | q0);
+	// extension signed 16 bit to signed 32 bit 
+	ii  =(int)sii;
+	qq  =(int)sqq;
 
-              ii   = (int)((unsigned char)(buf[i++]));
-              ii  += (int)((unsigned char)(buf[i++])) << 8;
-              qq   = (int)((unsigned char)(buf[i++]));
-              qq  += (int)((unsigned char)(buf[i++])) << 8;
-              return DSPCOMPLEX ((float)ii / SCALE_FACTOR_14,
-	                         (float)ii / SCALE_FACTOR_14);
-              return DSPCOMPLEX ((float)qq / SCALE_FACTOR_14,
-	                         (float)ii / SCALE_FACTOR_14);
+	return DSPCOMPLEX ((float)ii * SCALE_FACTOR_16to14,
+			   (float)ii * SCALE_FACTOR_16to14);
+
 }
 //
 //	Please realize that the _I_Buffer contains BYTES rather than
@@ -303,7 +293,7 @@ uint8_t		buf [iqSize * size];
 	         V [i] = makeSample_31bits (&buf [iqSize * i]);
 	         break;
 	      case 2:
-	         V [i] = makeSample_30bits (&buf [iqSize * i]);
+	         V [i] = makeSample_31bits (&buf [iqSize * i]);
 	         break;
 	      case 3:
 	         V [i] = makeSample_15bits (&buf [iqSize * i]);

@@ -125,6 +125,9 @@ int k;
 	deviceSelector	-> addItem ("elad-384000");
 	deviceSelector	-> addItem ("elad-768000");
 	deviceSelector	-> addItem ("elad-1536000");
+	deviceSelector	-> addItem ("elad-3072000");
+	deviceSelector	-> addItem ("elad-6144000");
+
 #endif
 #ifdef	HAVE_SOUNDCARD
 	deviceSelector	-> addItem ("soundcard");
@@ -353,6 +356,27 @@ bool	success	= false;
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
+		else
+	if (s == "elad-3072000") {
+	   theDevice	= new eladHandler (spectrumSettings, 3072000, &success);
+	   if (!success) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening elad 3072000 failed\n"));
+	      delete theDevice;
+	      theDevice = new virtualInput ();
+	   }
+	   inputRate	= theDevice -> getRate ();
+	}
+	if (s == "elad-6144000") {
+	   theDevice	= new eladHandler (spectrumSettings, 6144000, &success);
+	   if (!success) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening elad 6144000 failed\n"));
+	      delete theDevice;
+	      theDevice = new virtualInput ();
+	   }
+	   inputRate	= theDevice -> getRate ();
+        }	
 #endif
 #ifdef	HAVE_SOUNDCARD
 	else
