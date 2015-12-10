@@ -214,15 +214,17 @@ int ii = 0; int qq = 0;
 int16_t	i = 0;
 	
 uint32_t uii=0, uqq=0;
-	uint8_t q0 = buf [i++];
-	uint8_t q1 = buf [i++];
-	uint8_t q2 = buf [i++];
-	uint8_t q3 = buf [i++];
 
-	uint8_t i0 = buf [i++];
-	uint8_t i1 = buf [i++];
-	uint8_t i2 = buf [i++];
-	uint8_t i3 = buf [i++];
+	uint8_t i0 = buf [i++]; //i+0
+	uint8_t i1 = buf [i++]; //i+1
+	uint8_t i2 = buf [i++]; //i+2
+	uint8_t i3 = buf [i++]; //i+3
+	
+	uint8_t q0 = buf [i++]; //i+4
+	uint8_t q1 = buf [i++]; //i+5
+	uint8_t q2 = buf [i++]; //i+6
+	uint8_t q3 = buf [i++]; //i+7
+
 // Andrea Montefusco recipe
 // from four unsigned 8bit little endian order to unsigned 32bit (just move),
 // then cast it to signed 32 bit
@@ -258,10 +260,11 @@ int16_t	i = 0;
 int32_t ii= 0 , qq= 0;
 int16_t sqq=0 , sii=0;
 	
-	uint8_t q0 = buf [i++];
-	uint8_t q1 = buf [i++];
-	uint8_t i0 = buf [i++];
-	uint8_t i1 = buf [i++];
+	uint8_t i0 = buf [i++]; //i+0
+	uint8_t i1 = buf [i++]; //i+1
+	uint8_t q0 = buf [i++]; //i+2
+	uint8_t q1 = buf [i++]; //i+3
+
 	
 	// from two unsigned 8 bit little endian order to unsigned 16 bit , then signed 16 bit
 	sii =(short) ((i1 << 8) | i0);
@@ -271,7 +274,7 @@ int16_t sqq=0 , sii=0;
 	qq  =(int)sqq;
 
 	return DSPCOMPLEX ((float)ii * SCALE_FACTOR_16to14,
-			   (float)ii * SCALE_FACTOR_16to14);
+			   (float)qq * SCALE_FACTOR_16to14);
 
 }
 //
