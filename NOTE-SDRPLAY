@@ -1,8 +1,0 @@
-A recent change in the installer for the sdrplay library
-causes library names to differ
-
-If you have the most recent linux installer (afaik 14 november 2015)
-define
-#define	SDRPLAY_LIBRARY_NEW
-either in the configuration file or in sdrplay/sdrplay-loader.cpp
-

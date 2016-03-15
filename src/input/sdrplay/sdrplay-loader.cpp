@@ -157,6 +157,9 @@ ULONG APIkeyValue_length = 255;
 //	   return;
 //	}
 
+	xx_mir_sdr_SetParam	= (pfn_mir_sdr_SetParam)
+	                GETPROCADDRESS (Handle, "mir_sdr_SetParam");
+
 	fprintf (stderr, "Functions seem to be loaded\n");
 	*success	= true;
 //
@@ -190,5 +193,11 @@ ULONG APIkeyValue_length = 255;
 #else
 	dlclose (Handle);
 #endif
+}
+
+void	sdrplayLoader::my_mir_sdr_SetParam	(int p, int v) {
+	if (xx_mir_sdr_SetParam == NULL)
+	   return;
+	(void)xx_mir_sdr_SetParam (p, v);
 }
 

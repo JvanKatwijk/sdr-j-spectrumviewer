@@ -69,6 +69,7 @@ LIBS	+= -lpthread
 CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
+CONFIG		+= soundcard;
 }
 #
 #	the devices

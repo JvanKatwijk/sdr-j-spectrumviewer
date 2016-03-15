@@ -117,6 +117,8 @@ int	err;
 
 	functions -> my_mir_sdr_SetSyncUpdatePeriod ((int)(deviceRate * MHz (1) / 2));
 	functions -> my_mir_sdr_SetSyncUpdateSampleNum (sps);
+	functions	-> my_mir_sdr_SetParam (102, 1);	// DC corr
+	functions	-> my_mir_sdr_SetParam (105, 1);	// IQ Corr
 	while (runnable) {
 	   err =  functions ->
 	       my_mir_sdr_ReadPacket (&xi [0], & xq [0], &fs, &grc, &rfc, &fsc);
