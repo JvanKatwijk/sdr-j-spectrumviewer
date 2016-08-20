@@ -31,13 +31,13 @@ const	int	EXTIO_BASE_TYPE_SIZE = sizeof (float);
 
 	airspyHandler::airspyHandler (QSettings *s, bool *success) {
 int	result, i;
+uint32_t	myBuffer [20];
+uint32_t	rateCount;
 
 	this	-> airspySettings	= s;
 	this	-> myFrame		= new QFrame (NULL);
 	setupUi (this -> myFrame);
 	this	-> myFrame	-> show ();
-	inputRate               = rateSelector -> currentText () == "2500" ?
-                                                 Khz (2500) : Khz (10350);
         *success                = false;
 
 	airspySettings	-> beginGroup ("airspyHandler");
@@ -82,7 +82,7 @@ int	result, i;
 	   fprintf (stderr, "problem in loading functions\n");
 	   return;
 	}
-//
+
 	strcpy (serial,"");
 	result = this -> my_airspy_init ();
 	if (result != AIRSPY_SUCCESS) {
@@ -95,6 +95,22 @@ int	result, i;
 	if (result != AIRSPY_SUCCESS) {
 	   printf ("my_airpsy_open () failed: %s (%d)\n",
 	             my_airspy_error_name ((airspy_error)result), result);
+	   return;
+	}
+//
+//	Since 1.0.8 we "poll" to get the supported rates
+	(void) my_airspy_set_sample_type (device, AIRSPY_SAMPLE_INT16_IQ);
+	(void) my_airspy_get_samplerates (device, &rateCount, 0);
+	my_airspy_get_samplerates (device, myBuffer, rateCount);
+	fprintf (stderr, "rateCount = %d\n", rateCount);
+	for (i = 0; i < (int)rateCount; i ++) 
+	   rateSelector	-> addItem (QString::number (myBuffer [i]));
+
+	inputRate	= rateSelector	-> currentText(). toInt ();
+	result = my_airspy_set_samplerate (device, inputRate);
+	if (result != AIRSPY_SUCCESS) {
+           printf("airspy_set_samplerate() failed: %s (%d)\n",
+	             my_airspy_error_name((enum airspy_error)result), result);
 	   return;
 	}
 
@@ -319,27 +335,13 @@ int result = my_airspy_open (&device);
 }
 
 int	airspyHandler::setRate (int nsr) {
-airspy_samplerate_t as_nsr;
-
-	switch (nsr) {
-	   case 10000000:
-	      as_nsr = AIRSPY_SAMPLERATE_10MSPS;
-	      inputRate = nsr;
-	      break;
-	   case 2500000:
-	      as_nsr = AIRSPY_SAMPLERATE_2_5MSPS;
-	      inputRate = nsr;
-	      break;
-	   default:
-	      return -1;
-	}
-
-	int result = my_airspy_set_samplerate (device, as_nsr);
+	int result = my_airspy_set_samplerate (device, nsr);
 	if (result != AIRSPY_SUCCESS) {
-	   printf ("airspy_set_samplerate() failed: %s (%d)\n",
-	            my_airspy_error_name ((airspy_error)result), result);
+	   printf ("airspy_set_samplerate() failed: %s (%d, %d)\n",
+	            my_airspy_error_name ((airspy_error)result), result, nsr);
 	   return -1;
-	} 
+	}
+	inputRate	= nsr; 
 	return 0;
 }
 //
@@ -356,8 +358,8 @@ int32_t v	= s. toInt ();
 
 	if (running)
 	   stopReader ();
-	setRate (Khz (v));
-	set_changeRate (Khz (v));
+	setRate (v);
+	set_changeRate (v);
 }
 
 int32_t	airspyHandler::getSamples (DSPCOMPLEX *v, int32_t size) {
@@ -509,13 +511,13 @@ bool	airspyHandler::load_airspyFunctions (void) {
 	   return false;
 	}
 
-//	my_airspy_get_samplerates	= (pfn_airspy_get_samplerates)
-//	                       GETPROCADDRESS (Handle, "airspy_get_samplerates");
-//	if (my_airspy_get_samplerates == NULL) {
-//	   fprintf (stderr, "Could not find airspy_get_samplerates\n");
-//	   return false;
-//	}
-//
+	my_airspy_get_samplerates	= (pfn_airspy_get_samplerates)
+	                       GETPROCADDRESS (Handle, "airspy_get_samplerates");
+	if (my_airspy_get_samplerates == NULL) {
+	   fprintf (stderr, "Could not find airspy_get_samplerates\n");
+	   return false;
+	}
+
 	my_airspy_set_samplerate	= (pfn_airspy_set_samplerate)
 	                       GETPROCADDRESS (Handle, "airspy_set_samplerate");
 	if (my_airspy_set_samplerate == NULL) {

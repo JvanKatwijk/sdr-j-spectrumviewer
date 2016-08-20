@@ -38,7 +38,7 @@ SOURCES += ./src/main.cpp \
 #for Fedora and Ubuntu use
 unix { 
 DESTDIR		= ./linux-bin
-INCLUDEPATH	+= /usr/include/qwt
+INCLUDEPATH	+= /usr/include/qt5/qwt
 INCLUDEPATH 	+= /usr/include/ 
 INCLUDEPATH	+= /usr/local/include
 #LIBS		+= -lqwt -lusb-1.0 -lrt -lfftw3f -ldl		# ubuntu 15.04
@@ -48,28 +48,30 @@ CONFIG		+= airspy
 CONFIG		+= sdrplay
 CONFIG		+= elad-s1
 CONFIG		+= soundcard
+CONFIG		+= extio
 }
 
 ## and for windows32 we use:
 win32 {
-DESTDIR	= ./windows-bin-dab
+DESTDIR	= ../../windows-bin-dab
 # includes in mingw differ from the includes in fedora linux
 INCLUDEPATH 	+= /usr/i686-w64-mingw32/sys-root/mingw/include
 INCLUDEPATH 	+= /usr/i686-w64-mingw32/sys-root/mingw/include/qt5/qwt
-LIBS	+= -lfftw3f
-LIBS	+= -lportaudio
-LIBS	+= -lqwt-qt5
-LIBS	+= -lsndfile
-LIBS	+= -lsamplerate
-LIBS	+= -lole32
-LIBS	+= -lwinmm
-LIBS 	+= -lstdc++
-LIBS	+= -lusb-1.0
-LIBS	+= -lpthread
+LIBS		+= -lfftw3f
+LIBS		+= -lportaudio		# for the cardreader
+LIBS		+= -lqwt-qt5
+#LIBS		+= -lsndfile
+LIBS		+= -lsamplerate
+LIBS		+= -lole32
+LIBS		+= -lwinmm
+LIBS 		+= -lstdc++
+LIBS		+= -lusb-1.0
+LIBS		+= -lpthread
 CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
 CONFIG		+= soundcard;
+CONFIG		+= extio
 }
 #
 #	the devices
@@ -114,10 +116,13 @@ extio {
 	INCLUDEPATH	+= ./src/input/extio-handler
 	HEADERS		+= ./src/input/extio-handler/extio-handler.h \
 	                   ./src/input/extio-handler/common-readers.h \
-	                   ./src/input/extio-handler/virtual-reader.h
+	                   ./src/input/extio-handler/virtual-reader.h \
+	                   ./src/input/extio-handler/card-reader.h
 	SOURCES		+= ./src/input/extio-handler/extio-handler.cpp \
 	                   ./src/input/extio-handler/common-readers.cpp \
-	                   ./src/input/extio-handler/virtual-reader.cpp
+	                   ./src/input/extio-handler/virtual-reader.cpp \
+	                   ./src/input/extio-handler/card-reader.cpp
+	FORMS		+= ./src/input/extio-handler/extio-widget.ui
 }
 
 rtl_tcp {
@@ -151,4 +156,3 @@ soundcard {
 	FORMS		+= ./src/input/soundcard/soundcard-widget.ui
 	LIBS		+= -lportaudio
 }
-

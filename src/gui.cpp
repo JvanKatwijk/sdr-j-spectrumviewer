@@ -49,6 +49,9 @@
 #ifdef	HAVE_ELAD_S1
 #include	"elad-s1.h"
 #endif
+#ifdef	HAVE_EXTIO
+#include	"extio-handler.h"
+#endif
 #ifdef	HAVE_SOUNDCARD
 #include	"soundcard.h"
 #endif
@@ -120,6 +123,9 @@ int k;
 #ifdef	HAVE_AIRSPY
 	deviceSelector	-> addItem ("airspy");
 #endif
+#ifdef	HAVE_EXTIO
+	deviceSelector	-> addItem ("extio");
+#endif
 #ifdef	HAVE_ELAD_S1
 	deviceSelector	-> addItem ("elad-192000");
 	deviceSelector	-> addItem ("elad-384000");
@@ -129,6 +135,7 @@ int k;
 	deviceSelector	-> addItem ("elad-6144000");
 
 #endif
+
 #ifdef	HAVE_SOUNDCARD
 	deviceSelector	-> addItem ("soundcard");
 #endif
@@ -217,7 +224,7 @@ int k;
 	connect (displayTimer, SIGNAL (timeout ()),
 	         this, SLOT (updateTimeDisplay ()));
 
-	QString t = QString ("SDRplay spectrumviewer ");
+	QString t = QString ("SDR-J spectrumviewer ");
 	t. append (CURRENT_VERSION);
 	systemindicator		-> setText (t);
 	displayTimer		-> start (1000);
@@ -306,6 +313,18 @@ bool	success	= false;
 	   if (!success) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening airspy failed\n"));
+	      delete theDevice;
+	      theDevice = new virtualInput ();;
+	   }
+	   inputRate	= theDevice -> getRate ();
+	}
+#endif
+#ifdef	HAVE_EXTIO
+	if (s == "extio") {
+	   theDevice	= new extioHandler (spectrumSettings, &success);
+	   if (!success) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening extio failed\n"));
 	      delete theDevice;
 	      theDevice = new virtualInput ();;
 	   }

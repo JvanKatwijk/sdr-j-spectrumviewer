@@ -32,7 +32,7 @@
 
 #include	<stdint.h>
 #include	"spectrum-constants.h"
-#include	<QObject>
+#include	<QThread>
 #include	<QDialog>
 
 //#define	NO_STICK	0100
@@ -47,7 +47,7 @@
 //
 //#define	someStick(x)	((x) & 03)
 
-class	virtualInput: public QObject {
+class	virtualInput: public QThread {
 Q_OBJECT
 public:
 			virtualInput 	(void);
@@ -67,6 +67,7 @@ virtual		int16_t	bitDepth	(void);
 //
 protected:
 		int32_t	lastFrequency;
+virtual		void	run		(void);
 signals:
 		void	set_changeRate	(int);
 };

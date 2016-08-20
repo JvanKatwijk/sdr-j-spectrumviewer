@@ -92,3 +92,6 @@ int16_t	virtualInput::bitDepth		(void) {
 	return 10;
 }
 
+void	virtualInput::run		(void) {
+}
+
