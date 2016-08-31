@@ -35,17 +35,6 @@
 #include	<QThread>
 #include	<QDialog>
 
-//#define	NO_STICK	0100
-//#define	SDRPLAY		0101
-//#define	DABSTICK	0102
-//#define	EXTIO		0104
-//#define	AIRSPY	 	0110
-//#define	ELAD_S1		0111
-////
-////	in some cases we anly want to differentiate between sticks
-////	and non-sticks
-//
-//#define	someStick(x)	((x) & 03)
 
 class	virtualInput: public QThread {
 Q_OBJECT

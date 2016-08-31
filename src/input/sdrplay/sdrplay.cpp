@@ -64,13 +64,13 @@ float	ver;
 	}
 
 	api_version	-> display (ver);
-	_I_Buffer	= new RingBuffer<int16_t>(4 * 1024 * 1024);
+	_I_Buffer	= new RingBuffer<int16_t>(2 * 1024 * 1024);
 	vfoFrequency	= Khz (94700);
 	currentGain	= DEFAULT_GAIN;
 	vfoOffset	= 0;
 	theWorker	= NULL;
 	connect (gainSlider, SIGNAL (valueChanged (int)),
-	         this, SLOT (set_gainSlider (int)));
+	         this, SLOT (setGain (int)));
 	connect (rateSelector, SIGNAL (activated (const QString &)),
 	         this, SLOT (setRateSelector (const QString &)));
 	*success	= true;
@@ -160,14 +160,14 @@ int32_t	sdrplay::getVFOFrequency	(void) {
 	return vfoFrequency - vfoOffset;
 }
 
-void	sdrplay::set_gainSlider		(int newGain) {
+void	sdrplay::setGain		(int newGain) {
 	if (newGain < 0 || newGain > 102)
 	   return;
 
+	fprintf (stderr, "gain is nu %d\n", newGain);
 	if (theWorker != NULL)
 	   theWorker -> setGain (newGain);
 	currentGain = newGain;
-	showGain  -> display (currentGain);
 }
 
 int32_t	sdrplay::getRate	(void) {
@@ -235,6 +235,10 @@ int32_t	skipAmount = segmentSize - size;
 //
 int32_t	sdrplay::Samples	(void) {
 	return _I_Buffer	-> GetRingBufferReadAvailable () / 2;
+}
+
+void	sdrplay::resetBuffer	(void) {
+	_I_Buffer	-> FlushRingBuffer ();
 }
 
 int16_t	sdrplay::bitDepth	(void) {

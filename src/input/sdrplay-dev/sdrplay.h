@@ -2,7 +2,7 @@
 /*
  *    Copyright (C) 2014
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair programming
  *
  *    This file is part of the SDR-J.
  *    Many of the ideas as implemented in SDR-J are derived from
@@ -22,33 +22,49 @@
  *    You should have received a copy of the GNU General Public License
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
 
-//
-//	To keep things simple, we just load the functions from the
-//	sdrplay dll.
-//
-//	We use a straightforward class "sdrplayLoader"  both as
-//	loader and as container	for the dll functions.
+#ifndef __SDRPLAY__
+#define	__SDRPLAY__
 
-#ifndef	__SDRPLAY_LOADER
-#define	__SDRPLAY_LOADER
+#include	<QObject>
+#include	<QFrame>
+#include	<QSettings>
 #include	"spectrum-constants.h"
-#ifndef	__MINGW32__
+#include	"ringbuffer.h"
+#include	"virtual-input.h"
+#include	"ui_sdrplay-widget.h"
 #include	"mirsdrapi-rsp.h"
-#else
-#include	"mir_sdr.h"
-#endif
-//	The naming of functions for accessing shared libraries
-//	differ between Linux and Windows
+#include	"sdrplay.h"	// our header
+
+typedef void (*mir_sdr_StreamCallback_t)(int16_t	*xi,
+	                                 int16_t	*xq,
+	                                 uint32_t	firstSampleNum, 
+	                                 int32_t	grChanged,
+	                                 int32_t	rfChanged,
+	                                 int32_t	fsChanged,
+	                                 uint32_t	numSamples,
+	                                 uint32_t	reset,
+	                                 void		*cbContext);
+typedef	void	(*mir_sdr_GainChangeCallback_t)(uint32_t	gRdB,
+	                                        uint32_t	lnaGRdB,
+	                                        void		*cbContext);
+
 #ifdef __MINGW32__
 #define	GETPROCADDRESS	GetProcAddress
 #else
 #define	GETPROCADDRESS	dlsym
 #endif
 
-// Dll function prototypes
-typedef mir_sdr_ErrT (*pfn_mir_sdr_Init)(int gRdB, double fsMHz, double rfMHz, mir_sdr_Bw_MHzT bwType, mir_sdr_If_kHzT ifType, int *samplesPerPacket);
+// Dll and ".so" function prototypes
+typedef mir_sdr_ErrT (*pfn_mir_sdr_StreamInit) (int *gRdB, double fsMHz,
+double rfMHz, mir_sdr_Bw_MHzT bwType, mir_sdr_If_kHzT ifType, int LNAEnable, int *gRdBsystem, int useGrAltMode, int *samplesPerPacket, mir_sdr_StreamCallback_t StreamCbFn, mir_sdr_GainChangeCallback_t GainChangeCbFn, void *cbContext); 
+
+typedef mir_sdr_ErrT (*pfn_mir_sdr_Reinit) (int *gRdB, double fsMHz,
+double rfMHz, mir_sdr_Bw_MHzT bwType, mir_sdr_If_kHzT ifType,
+mir_sdr_LoModeT, int, int*, int, int*, mir_sdr_ReasonForReinitT);
+
 typedef mir_sdr_ErrT (*pfn_mir_sdr_Uninit)(void);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_ReadPacket)(short *xi, short *xq, unsigned int *firstSampleNum, int *grChanged, int *rfChanged, int *fsChanged);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_SetRf)(double drfHz, int abs, int syncUpdate);
@@ -61,12 +77,35 @@ typedef mir_sdr_ErrT (*pfn_mir_sdr_SetSyncUpdateSampleNum)(unsigned int sampleNu
 typedef mir_sdr_ErrT (*pfn_mir_sdr_SetSyncUpdatePeriod)(unsigned int period);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_ApiVersion)(float *version);   
 typedef mir_sdr_ErrT (*pfn_mir_sdr_ResetUpdateFlags)(int resetGainUpdate, int resetRfUpdate, int resetFsUpdate);   
+typedef mir_sdr_ErrT (*pfn_mir_sdr_AgcControl)(uint32_t, int, int, uint32_t,
+	                                       uint32_t, int, int);
+typedef mir_sdr_ErrT (*pfn_mir_sdr_DCoffsetIQimbalanceControl) (uint32_t, uint32_t);
 
-class	sdrplayLoader {
+
+///////////////////////////////////////////////////////////////////////////
+class	sdrplay: public virtualInput, public Ui_sdrplayWidget {
+Q_OBJECT
 public:
-		sdrplayLoader		(bool *);
-		~sdrplayLoader		(void);
-	pfn_mir_sdr_Init	my_mir_sdr_Init;
+		sdrplay		(QSettings *, bool *);
+		~sdrplay	(void);
+	void	setVFOFrequency	(int32_t);
+	int32_t	getVFOFrequency		(void);
+	bool	legalFrequency		(int32_t);
+	int32_t	defaultFrequency	(void);
+
+	bool	restartReader		(void);
+	void	stopReader		(void);
+	int32_t	getSamples		(DSPCOMPLEX *, int32_t);
+	int32_t	getSamples		(DSPCOMPLEX *, int32_t, int32_t);
+	int32_t	Samples			(void);
+	uint8_t	myIdentity		(void);
+	void	resetBuffer		(void);
+	int16_t	maxGain			(void);
+	int16_t	bitDepth		(void);
+	RingBuffer<DSPCOMPLEX>	*_I_Buffer;
+private:
+	pfn_mir_sdr_StreamInit	my_mir_sdr_StreamInit;
+	pfn_mir_sdr_Reinit	my_mir_sdr_Reinit;
 	pfn_mir_sdr_Uninit	my_mir_sdr_Uninit;
 	pfn_mir_sdr_ReadPacket	my_mir_sdr_ReadPacket;
 	pfn_mir_sdr_SetRf	my_mir_sdr_SetRf;
@@ -82,11 +121,23 @@ public:
 	pfn_mir_sdr_ApiVersion	my_mir_sdr_ApiVersion;
 	pfn_mir_sdr_ResetUpdateFlags
 	                        my_mir_sdr_ResetUpdateFlags;
-private:
-	HINSTANCE	Handle;
+	pfn_mir_sdr_AgcControl	my_mir_sdr_AgcControl;
+	pfn_mir_sdr_DCoffsetIQimbalanceControl
+	                        my_mir_sdr_DCoffsetIQimbalanceControl;
+	bool		loadFunctions	(void);
+	QSettings	*sdrplaySettings;
+	QFrame		*myFrame;
+	int32_t		inputRate;
+	int32_t		vfoFrequency;
+	int		currentGain;
 	bool		libraryLoaded;
+	bool		running;
+	HINSTANCE	Handle;
+	bool		agcMode;
+private slots:
+	void		setExternalGain	(int);
+	void		setExternalRate	(const QString &);
+	void		agcControl_toggled	(int);
 };
-
 #endif
-
 

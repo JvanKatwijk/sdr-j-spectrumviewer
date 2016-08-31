@@ -67,8 +67,8 @@ private:
 	int32_t		getBandwidth	(int32_t);
 	QFrame		*myFrame;
 private	slots:
+	void		setGain 	(int);
 	void		setRateSelector	(const QString &);
-	void		set_gainSlider	(int);
 };
 #endif
 

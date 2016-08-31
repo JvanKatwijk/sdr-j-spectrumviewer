@@ -88,7 +88,7 @@ dabstick {
 #	the SDRplay
 #
 sdrplay {
-	DEFINES		+= HAVE_SDRPLAY
+DEFINES		+= HAVE_SDRPLAY
 	INCLUDEPATH	+= ./src/input/sdrplay
 	HEADERS		+= ./src/input/sdrplay/sdrplay.h \
 	                   ./src/input/sdrplay/sdrplay-loader.h \
@@ -97,7 +97,6 @@ sdrplay {
 	                   ./src/input/sdrplay/sdrplay-loader.cpp \
 	                   ./src/input/sdrplay/sdrplay-worker.cpp 
 	FORMS		+= ./src/input/sdrplay/sdrplay-widget.ui
-	DEFINES		+= SDRPLAY_LIBRARY_NEW
 }
 #
 airspy {

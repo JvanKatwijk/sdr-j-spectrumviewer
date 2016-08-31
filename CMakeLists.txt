@@ -110,12 +110,6 @@
 
 
 	if (SDRPLAY)
-	   find_library (SDRPLAYLIB libmirsdrapi-rsp.so)
-	   if (NOT(SDRPLAYLIB))
-	      message (FATAL_ERROR "please install sdrplay library")
-	   else (NOT(SDRPLAYLIB))
-	      set (extraLibs ${extraLibs} ${SDRPLAYLIB})
-	   endif()
 	   find_path (SDRPLAYLIB_INCLUDE_DIR
 	              NAMES mirsdrapi-rsp.h
 	              PATHS
@@ -140,15 +134,15 @@
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
 	        ./src/input/sdrplay/sdrplay.h
-	        ./src/input/sdrplay/sdrplay-worker.h
-	        ./src/input/sdrplay/sdrplay-loader.h
+	        ./input/sdrplay/sdrplay-worker.h
+                ./input/sdrplay/sdrplay-loader.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
 	        ./src/input/sdrplay/sdrplay.cpp
-	        ./src/input/sdrplay/sdrplay-worker.cpp
-	        ./src/input/sdrplay/sdrplay-loader.cpp
+	        ./input/sdrplay/sdrplay-worker.cpp
+                ./input/sdrplay/sdrplay-loader.cpp
 	   )
 
 	   add_definitions (-DHAVE_SDRPLAY)
