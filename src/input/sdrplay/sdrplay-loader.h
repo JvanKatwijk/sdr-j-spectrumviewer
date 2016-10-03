@@ -34,11 +34,7 @@
 #ifndef	__SDRPLAY_LOADER
 #define	__SDRPLAY_LOADER
 #include	"spectrum-constants.h"
-#ifndef	__MINGW32__
 #include	"mirsdrapi-rsp.h"
-#else
-#include	"mir_sdr.h"
-#endif
 //	The naming of functions for accessing shared libraries
 //	differ between Linux and Windows
 #ifdef __MINGW32__

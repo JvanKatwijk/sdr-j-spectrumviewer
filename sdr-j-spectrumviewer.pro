@@ -45,10 +45,11 @@ INCLUDEPATH	+= /usr/local/include
 LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 21
 CONFIG		+= dabstick
 CONFIG		+= airspy
-CONFIG		+= sdrplay
+CONFIG		+= sdrplay-exp
+#CONFIG		+= sdrplay-exp
 CONFIG		+= elad-s1
 CONFIG		+= soundcard
-CONFIG		+= extio
+#CONFIG		+= extio
 }
 
 ## and for windows32 we use:
@@ -97,6 +98,14 @@ DEFINES		+= HAVE_SDRPLAY
 	                   ./src/input/sdrplay/sdrplay-loader.cpp \
 	                   ./src/input/sdrplay/sdrplay-worker.cpp 
 	FORMS		+= ./src/input/sdrplay/sdrplay-widget.ui
+}
+#
+sdrplay-exp {
+DEFINES		+= HAVE_SDRPLAY
+	INCLUDEPATH	+= ./src/input/sdrplay-exp
+	HEADERS		+= ./src/input/sdrplay-exp/sdrplay.h 
+	SOURCES		+= ./src/input/sdrplay-exp/sdrplay.cpp 
+	FORMS		+= ./src/input/sdrplay-exp/sdrplay-widget.ui
 }
 #
 airspy {

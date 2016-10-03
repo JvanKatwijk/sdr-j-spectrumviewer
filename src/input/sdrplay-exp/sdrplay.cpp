@@ -65,7 +65,7 @@ ULONG APIkeyValue_length = 255;
 	                 NULL,
 	                 (LPBYTE)&APIkeyValue,
 	                 (LPDWORD)&APIkeyValue_length);
-//	Ok, make explicit it is in the 64 bits section
+//	Ok, make explicit it is in the 64 or 32 bits section
 	wchar_t *x = wcscat (APIkeyValue, (wchar_t *)L"\\x86\\mir_sdr_api.dll");
 //	wchar_t *x = wcscat (APIkeyValue, (wchar_t *)L"\\x64\\mir_sdr_api.dll");
 //	fprintf (stderr, "Length of APIkeyValue = %d\n", APIkeyValue_length);
@@ -152,7 +152,6 @@ ULONG APIkeyValue_length = 255;
 	delete	myFrame;
 }
 //
-//	But for the sdrplay we use the second one
 static inline
 int16_t	bankFor_sdr (int32_t freq) {
 	if (freq < 12 * MHz (1))
@@ -265,24 +264,18 @@ int	samplesPerPacket;
 	inputRate	= rate;
 	if (!running)		// save values for later
 	   return;
-
-	err	= my_mir_sdr_Reinit (&currentGain,
-	                             double (inputRate) / MHz (1),
-	                             double (vfoFrequency) / Mhz (1),
-	                             bandwidth_for (inputRate),
-	                             mir_sdr_IF_Zero,
-	                             mir_sdr_LO_Undefined,	// loMode
-	                             0,	// lnaEnable do not know yet
-	                             &gRdBSystem,
-	                             agcMode, // useGrAltMode,do not know yet
-	                             &samplesPerPacket,
-	                             mir_sdr_CHANGE_FS_FREQ);
-	if (err == mir_sdr_Success)
-	   set_changeRate (inputRate);
+	
+	stopReader ();
+	restartReader ();
+	set_changeRate (inputRate);
 }
 
 int16_t	sdrplay::maxGain	(void) {
 	return 101;
+}
+
+int32_t	sdrplay::getRate	(void) {
+	return inputRate;
 }
 
 static
@@ -339,8 +332,10 @@ mir_sdr_ErrT	err;
 	                                 (mir_sdr_StreamCallback_t)myStreamCallback,
 	                                 (mir_sdr_GainChangeCallback_t)myGainChangeCallback,
 	                                 this);
-	if (err != mir_sdr_Success)
+	if (err != mir_sdr_Success) {
+	   fprintf (stderr, "problem with streamInit %d\n", err);
 	   return false;
+	}
 
 	err		= my_mir_sdr_SetDcMode (4, 1);
 	err		= my_mir_sdr_SetDcTrackTime (63);
@@ -357,7 +352,7 @@ void	sdrplay::stopReader	(void) {
 	if (!running)
 	   return;
 
-	my_mir_sdr_Uninit	();
+	my_mir_sdr_StreamUninit	();
 	running		= false;
 }
 
@@ -405,11 +400,11 @@ bool	sdrplay::loadFunctions	(void) {
 	   return false;
 	}
 
-	my_mir_sdr_Uninit	= (pfn_mir_sdr_Uninit)
+	my_mir_sdr_StreamUninit	= (pfn_mir_sdr_StreamUninit)
 	                    GETPROCADDRESS (this -> Handle,
-	                                    "mir_sdr_Uninit");
-	if (my_mir_sdr_Uninit == NULL) {
-	   fprintf (stderr, "Could not find mir_sdr_Uninit\n");
+	                                    "mir_sdr_StreamUninit");
+	if (my_mir_sdr_StreamUninit == NULL) {
+	   fprintf (stderr, "Could not find mir_sdr_StreamUninit\n");
 	   return false;
 	}
 
@@ -509,5 +504,11 @@ bool	sdrplay::loadFunctions	(void) {
 
 void	sdrplay::agcControl_toggled (int agcMode) {
 	this	-> agcMode	= agcControl -> isChecked ();
+	if (running) {
+	   my_mir_sdr_AgcControl (this -> agcMode, -currentGain, 0, 0, 0, 1, 0);
+	   if (agcMode == 0)
+	      my_mir_sdr_SetGr (gainSlider -> value (), 1, 0);
+	}
 }
+
 

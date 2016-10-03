@@ -65,7 +65,7 @@ typedef mir_sdr_ErrT (*pfn_mir_sdr_Reinit) (int *gRdB, double fsMHz,
 double rfMHz, mir_sdr_Bw_MHzT bwType, mir_sdr_If_kHzT ifType,
 mir_sdr_LoModeT, int, int*, int, int*, mir_sdr_ReasonForReinitT);
 
-typedef mir_sdr_ErrT (*pfn_mir_sdr_Uninit)(void);
+typedef mir_sdr_ErrT (*pfn_mir_sdr_StreamUninit)(void);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_ReadPacket)(short *xi, short *xq, unsigned int *firstSampleNum, int *grChanged, int *rfChanged, int *fsChanged);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_SetRf)(double drfHz, int abs, int syncUpdate);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_SetFs)(double dfsHz, int abs, int syncUpdate, int reCal);
@@ -102,11 +102,12 @@ public:
 	void	resetBuffer		(void);
 	int16_t	maxGain			(void);
 	int16_t	bitDepth		(void);
+	int32_t	getRate			(void);
 	RingBuffer<DSPCOMPLEX>	*_I_Buffer;
 private:
 	pfn_mir_sdr_StreamInit	my_mir_sdr_StreamInit;
 	pfn_mir_sdr_Reinit	my_mir_sdr_Reinit;
-	pfn_mir_sdr_Uninit	my_mir_sdr_Uninit;
+	pfn_mir_sdr_StreamUninit	my_mir_sdr_StreamUninit;
 	pfn_mir_sdr_ReadPacket	my_mir_sdr_ReadPacket;
 	pfn_mir_sdr_SetRf	my_mir_sdr_SetRf;
 	pfn_mir_sdr_SetFs	my_mir_sdr_SetFs;

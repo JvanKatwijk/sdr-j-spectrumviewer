@@ -133,6 +133,11 @@
     </item>
     <item>
      <property name="text">
+      <string>2500000</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
       <string>3000000</string>
      </property>
     </item>
