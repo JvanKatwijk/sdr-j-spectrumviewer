@@ -1,8 +1,26 @@
 #
-	cmake_minimum_required (VERSION 2.8 )
-	set (CMAKE_BUILD_TYPE Release )
-	set (objectName sdr-j-spectrumviewer-1.1)
-	set (CMAKE_INSTALL_PREFIX ../)
+cmake_minimum_required( VERSION 2.8.11 )
+set (objectName sdr-j-spectrumviewer-1.1)
+add_definitions ( -Wall)
+#	modify if you want
+set (CMAKE_INSTALL_PREFIX ../)
+
+if(MINGW)
+    add_definitions ( -municode)
+endif()
+
+########################################################################
+# select the release build type by default to get optimization flags
+########################################################################
+if(NOT CMAKE_BUILD_TYPE)
+   set(CMAKE_BUILD_TYPE "Release")
+   message(STATUS "Build type not specified: defaulting to release.")
+endif(NOT CMAKE_BUILD_TYPE)
+set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "")
+
+### make sure our local CMake Modules path comes first
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
+
 	add_definitions ( -Wall )
 ##########################################################################
 #       R E A D  T H I S
@@ -16,8 +34,27 @@
 	set(SOUNDCARD true)
 
 ########################################################################
+
+	find_package (PkgConfig)
+
+	find_package (Qt5Core REQUIRED)
 	find_package (Qt5Widgets REQUIRED)
+	find_package (Qt5Network REQUIRED)
 	find_package (Qt5Declarative REQUIRED)
+	find_package (Qt5 5.1.0 COMPONENTS Xml)
+	include_directories (
+	      ${Qt5Network_INCLUDE_DIRS}
+	)
+
+        find_package(Qwt)
+        if (NOT QWT_FOUND)
+            message(FATAL_ERROR "please install qwt library")
+        endif ()
+
+	find_package(FFTW3f)
+        if (NOT FFTW3F_FOUND)
+            message(FATAL_ERROR "please install FFTW3")
+        endif ()
 
 	find_library (DYNAMIC_LOAD dl)
 	if(NOT(DYNAMIC_LOAD))
@@ -26,74 +63,6 @@
 	   set(extraLibs ${DYNAMIC_LOAD})
 	endif(NOT(DYNAMIC_LOAD))
 #
-
-#	find_library(QWT qwt)
-	if (QWT_INCLUDE_DIRS)
-#	Already in cache, be silent
-	   set (QWT_FIND_QUIETLY TRUE)
-	endif (QWT_INCLUDE_DIRS)
-
-	find_path (QWT_INCLUDE_DIR
-	           NAMES qwt_plot.h
-	           PATHS
-	           /usr/local/include/qwt-qt5
-	           /usr/local/include/qwt
-	           /usr/local/include/qwt6
-	           /usr/include/qwt6
-	           /usr/include/qwt
-	)
-
-	list (APPEND QWT_INCLUDE_DIRS ${QWT_INCLUDE_DIR} )
-	find_library (QWT_LIBRARIES
-	              NAMES qwt-qt5 qwt qwt6
-#	              PATHS /usr/local/lib /usr/lib
-                      PATH_SUFFIXES lib64 Lib64 lib Lib
-	)
-
-#	message (STATUS ${QWT_LIBRARIES} ${QWT_INCLUDE_DIRS})
-#	handle the QUIETLY and REQUIRED arguments and set QWT_FOUND to TRUE if 
-#	all listed variables are TRUE
-	include (FindPackageHandleStandardArgs)
-	find_package_handle_standard_args (
-	                     Qwt DEFAULT_MSG QWT_LIBRARIES QWT_INCLUDE_DIRS )
-	MARK_AS_ADVANCED (QWT_LIBRARIES QWT_INCLUDE_DIRS)
-	MARK_AS_ADVANCED (QWT_LIBRARIES QWT_INCLUDE_DIRS)
-#	Find_Package(PkgConfig)
-#	pkg_check_modules(FFTW fftw3f REQUIRED)
-#	link_directories(${FFTW_INCLUDE_DIRS})
-#	 Find the native FFTW includes and library
-#
-#	FFTW_INCLUDES    - where to find fftw3f.h
-#	FFTW_LIBRARIES   - List of libraries when using FFTW.
-#	FFTW_FOUND       - True if FFTW found.
-
-	if (FFTW_INCLUDE_DIRS)
-	   # Already in cache, be silent
-	   set (FFTW_FIND_QUIETLY TRUE)
-	endif (FFTW_INCLUDE_DIRS)
-
-	find_path (FFTW_INCLUDE_DIR fftw3.h
-              HINTS
-                  ENV FFTW_ROOT
-              PATHS 
-              PATH_SUFFIXES
-                  include
-                  Include
-	)
-	list( APPEND FFTW_INCLUDE_DIRS ${FFTW_INCLUDE_DIR} )
-	find_library (FFTW_LIBRARIES NAMES fftw3f
-              HINTS ENV FFTW_ROOT
-              PATHS
-              PATH_SUFFIXES lib64 Lib64 lib Lib)
-
-	message (STATUS ${FFTW_LIBRARIES} ${FFTW_INCLUDE_DIRS})
-#	handle the QUIETLY and REQUIRED arguments and set FFTW_FOUND to TRUE if
-#	all listed variables are TRUE
-
-	include (FindPackageHandleStandardArgs)
-	find_package_handle_standard_args (FFTW DEFAULT_MSG FFTW_LIBRARIES FFTW_INCLUDE_DIRS)
-	mark_as_advanced (FFTW_LIBRARIES FFTW_INCLUDE_DIRS)
-
 	find_library (PTHREADS pthread)
 	if (NOT(PTHREADS))
 	   message (FATAL_ERROR "please install libpthread")
@@ -107,8 +76,49 @@
 	else (NOT(USB1))
 	   set(extraLibs ${extraLibs} ${USB1})
 	endif(NOT(USB1))
+#####################################################################
+#	here we really start                                        #
+#####################################################################
 
+	set ( ${objectName}_UIS ./sdrgui.ui)
 
+	include_directories (
+                   ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+                   ${QT5Widgets_INCLUDES}
+                   ${QT_QTCORE_INCLUDE_DIR}
+                   ${QT_QTGUI_INCLUDE_DIR}
+                   .
+	   	   ./
+	   	   ../
+	   ./includes
+	   ./src
+	   ./src/input
+	   /usr/include/
+	)
+
+	set ( ${objectName}_HDRS
+	      ${${objectName}_HDRS}
+	      ./includes/gui.h 
+	      ./includes/spectrum-constants.h 
+              ./includes/fft.h 
+              ./includes/ringbuffer.h 
+	      ./includes/spectrogramdata.h 
+	      ./includes/scope.h  
+	      ./src/input/virtual-input.h 
+	)
+
+	set ( ${objectName}_SRCS
+	      ${${objectName}_SRCS}
+	      ./src/main.cpp 
+              ./src/gui.cpp 
+	      ./src/scope.cpp 
+              ./src/fft.cpp 
+	      ./src/input/virtual-input.cpp 
+	)
+
+##########################################################################
+#	devices                                                          #
+##########################################################################
 	if (SDRPLAY)
 	   find_path (SDRPLAYLIB_INCLUDE_DIR
 	              NAMES mirsdrapi-rsp.h
@@ -118,31 +128,26 @@
 	   include_directories (${SDRPLAYLIB_INCLUDE_DIR})
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./src/input/sdrplay/sdrplay-widget.ui 
+	        ./src/input/sdrplay-exp/sdrplay-widget.ui 
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./src/input/sdrplay/sdrplay.h
-	        ./src/input/sdrplay/sdrplay-worker.h
+	        ./src/input/sdrplay-exp/sdrplay.h
 	   )
 
 	   include_directories (
-	        ./src/input/sdrplay
+	        ./src/input/sdrplay-exp
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./src/input/sdrplay/sdrplay.h
-	        ./input/sdrplay/sdrplay-worker.h
-                ./input/sdrplay/sdrplay-loader.h
+	        ./src/input/sdrplay-exp/sdrplay.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./src/input/sdrplay/sdrplay.cpp
-	        ./input/sdrplay/sdrplay-worker.cpp
-                ./input/sdrplay/sdrplay-loader.cpp
+	        ./src/input/sdrplay-exp/sdrplay.cpp
 	   )
 
 	   add_definitions (-DHAVE_SDRPLAY)
@@ -310,38 +315,7 @@
 
 	   add_definitions (-DHAVE_SOUNDCARD)
 	endif()
-
-	include_directories (
-	   ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-	   ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-	   .
-	   ./
-	   ../
-	   ./includes
-	   ./src
-	   ./src/input
-	   /usr/include/
-	)
-
-	set ( ${objectName}_HDRS
-	      ${${objectName}_HDRS}
-	      ./includes/gui.h 
-	      ./includes/spectrum-constants.h 
-              ./includes/fft.h 
-              ./includes/ringbuffer.h 
-	      ./includes/spectrogramdata.h 
-	      ./includes/scope.h  
-	      ./src/input/virtual-input.h 
-	)
-
-	set ( ${objectName}_SRCS
-	      ${${objectName}_SRCS}
-	      ./src/main.cpp 
-              ./src/gui.cpp 
-	      ./src/scope.cpp 
-              ./src/fft.cpp 
-	      ./src/input/virtual-input.cpp 
-	)
+########################################################################
 
 	set (${objectName}_UIS ${${objectName}_UIS} ./sdrgui.ui)
 

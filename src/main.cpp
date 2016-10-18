@@ -85,6 +85,9 @@ char		*defaultInit	= (char *)alloca (512 * sizeof (char));
 	QApplication a (argc, argv);
 	MyRadioInterface = new RadioInterface (ISettings);
 
+#if QT_VERSION >= 0x050600
+	QGuiApplication::setAttribute (Qt::AA_EnableHighDpiScaling);
+#endif
 	MyRadioInterface -> show ();
 	a. exec ();
 /*

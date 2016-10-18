@@ -90,7 +90,7 @@
   <widget class="QPushButton" name="add_one">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>370</x>
      <y>370</y>
      <width>40</width>
      <height>31</height>
@@ -136,7 +136,7 @@
   <widget class="QPushButton" name="add_four">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>370</x>
      <y>400</y>
      <width>40</width>
      <height>31</height>
@@ -196,7 +196,7 @@
   <widget class="QPushButton" name="add_seven">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>370</x>
      <y>430</y>
      <width>40</width>
      <height>31</height>
@@ -421,7 +421,7 @@
   <widget class="QPushButton" name="add_correct">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>320</x>
      <y>400</y>
      <width>51</width>
      <height>31</height>
@@ -440,7 +440,7 @@
   <widget class="QPushButton" name="add_clear">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>320</x>
      <y>370</y>
      <width>51</width>
      <height>31</height>
@@ -729,7 +729,7 @@
   <widget class="QPushButton" name="khzSelector">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>370</x>
      <y>460</y>
      <width>41</width>
      <height>31</height>
