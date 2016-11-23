@@ -41,13 +41,25 @@ uint32_t	rateCount;
         *success                = false;
 
 	airspySettings	-> beginGroup ("airspyHandler");
+	int16_t temp 		= airspySettings -> value ("linearity", 10).
+	                                                          toInt ();
+	linearitySlider		-> setValue (temp);
+	linearityDisplay	-> display  (temp);
+	temp			= airspySettings -> value ("sensitivity", 10).
+	                                                          toInt ();
+	sensitivitySlider	-> setValue (temp);
+	sensitivityDisplay	-> display (temp);
 	vgaGain			= airspySettings -> value ("vga", 5).toInt ();
 	vgaSlider		-> setValue (vgaGain);
+	vgaDisplay		-> display (vgaGain);
 	mixerGain		= airspySettings -> value ("mixer", 10). toInt ();
 	mixerSlider		-> setValue (mixerGain);
+	mixerDisplay		-> display (mixerGain);
 	mixer_agc		= false;
 	lnaGain			= airspySettings -> value ("lna", 5). toInt ();
 	lnaSlider		-> setValue (lnaGain);
+	lnaDisplay		-> display  (lnaGain);
+	mixer_agc		= false;
 	lna_agc			= false;
 	rf_bias			= false;
 	airspySettings	-> endGroup ();
@@ -117,6 +129,10 @@ uint32_t	rateCount;
 	theBuffer	= new RingBuffer<DSPCOMPLEX> (1024 *1024 * 2);
 	connect (rateSelector, SIGNAL (activated (const QString &)),
 	         this, SLOT (set_rateSelector (const QString &)));
+	connect (linearitySlider, SIGNAL (valueChanged (int)),
+	         this, SLOT (set_linearity (int)));
+	connect (sensitivitySlider, SIGNAL (valueChanged (int)),
+	         this, SLOT (set_sensitivity (int)));
 	connect (lnaSlider, SIGNAL (valueChanged (int)),
 	         this, SLOT (set_lna_gain (int)));
 	connect (vgaSlider, SIGNAL (valueChanged (int)),
@@ -148,6 +164,8 @@ err:
 
 	airspyHandler::~airspyHandler (void) {
 	airspySettings	-> beginGroup ("airspyHandler");
+	airspySettings -> setValue ("linearity", linearitySlider -> value ());
+	airspySettings -> setValue ("sensitivity", sensitivitySlider -> value ());
 	airspySettings -> setValue ("vga", vgaGain);
 	airspySettings -> setValue ("mixer", mixerGain);
 	airspySettings -> setValue ("lna", lnaGain);
@@ -220,10 +238,12 @@ int32_t	bufSize	= EXTIO_NS * EXTIO_BASE_TYPE_SIZE * 2;
 	   return false;
 	}
 	
-	setRate		(inputRate);
+	set_linearity	(linearitySlider -> value ());
+	set_sensitivity	(sensitivitySlider -> value ());
 	set_vga_gain	(vgaGain);
 	set_mixer_gain	(mixerGain);
 	set_lna_gain	(lnaGain);
+	
 	
 	result = my_airspy_start_rx (device,
 	            (airspy_sample_block_cb_fn)callback, this);
@@ -553,6 +573,23 @@ bool	airspyHandler::load_airspyFunctions (void) {
 	   return false;
 	}
 
+	my_airspy_set_linearity_gain = (pfn_airspy_set_linearity_gain)
+	                       GETPROCADDRESS (Handle, "airspy_set_linearity_gain");
+	if (my_airspy_set_linearity_gain == NULL) {
+	   fprintf (stderr, "Could not find airspy_set_linearity_gain\n");
+	   fprintf (stderr, "You probably did install an old library\n");
+	   return false;
+	}
+
+	my_airspy_set_sensitivity_gain = (pfn_airspy_set_sensitivity_gain)
+	                       GETPROCADDRESS (Handle, "airspy_set_sensitivity_gain");
+	if (my_airspy_set_sensitivity_gain == NULL) {
+	   fprintf (stderr, "Could not find airspy_set_sensitivity_gain\n");
+	   fprintf (stderr, "You probably did install an old library\n");
+	   return false;
+	}
+
+
 	my_airspy_set_lna_gain	= (pfn_airspy_set_lna_gain)
 	                       GETPROCADDRESS (Handle, "airspy_set_lna_gain");
 	if (my_airspy_set_lna_gain == NULL) {
@@ -625,5 +662,40 @@ bool	airspyHandler::load_airspyFunctions (void) {
 	}
 
 	return true;
+}
+
+void	airspyHandler::set_linearity (int value) {
+int result = my_airspy_set_linearity_gain (device, value);
+
+	if (result != AIRSPY_SUCCESS) {
+	   printf ("airspy_set_lna_gain () failed: %s (%d)\n",
+	            my_airspy_error_name ((airspy_error)result), result);
+	}
+	else
+	   linearityDisplay	-> display (value);
+}
+
+void	airspyHandler::set_sensitivity (int value) {
+int result = my_airspy_set_mixer_gain (device, value);
+
+	if (result != AIRSPY_SUCCESS) {
+	   printf ("airspy_set_mixer_gain() failed: %s (%d)\n",
+	            my_airspy_error_name ((airspy_error)result), result);
+	}
+	else
+	   sensitivityDisplay	-> display (value);
+}
+
+void	airspyHandler::show_tab (int t) {
+	if (t == 0)		// sensitivity
+	   set_sensitivity	(sensitivitySlider -> value ());
+	else
+	if (t == 1)		// linearity
+	   set_linearity	(linearitySlider -> value ());
+	else {			// classic view
+	   set_vga_gain		(vgaGain);
+	   set_mixer_gain	(mixerGain);
+	   set_lna_gain		(lnaGain);
+	}
 }
 

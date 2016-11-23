@@ -46,6 +46,8 @@ typedef int (*pfn_airspy_set_sample_type) (struct airspy_device *,
 typedef int (*pfn_airspy_set_freq) (struct airspy_device* device,
 	                            const uint32_t freq_hz);
 
+typedef int (*pfn_airspy_set_linearity_gain) (struct airspy_device* device, uint8_t value);
+typedef int (*pfn_airspy_set_sensitivity_gain)(struct airspy_device* device, uint8_t value);
 typedef int (*pfn_airspy_set_lna_gain) (struct airspy_device* device,
 	                                uint8_t value);
 
@@ -91,12 +93,15 @@ public:
 
 private slots:
 	void		set_rateSelector	(const QString &);
-	void		set_lna_gain	(int value);
-	void		set_mixer_gain	(int value);
-	void		set_vga_gain	(int value);
-	void		set_lna_agc	(void);
-	void		set_mixer_agc	(void);
-	void		set_rf_bias	(void);
+	void		set_linearity		(int value);
+	void		set_sensitivity		(int value);
+	void		set_lna_gain		(int value);
+	void		set_mixer_gain		(int value);
+	void		set_vga_gain		(int value);
+	void		set_lna_agc		(void);
+	void		set_mixer_agc		(void);
+	void		set_rf_bias		(void);
+	void		show_tab		(int);
 private:
 	bool		load_airspyFunctions	(void);
 //	The functions to be extracted from the dll/.so file
@@ -110,6 +115,8 @@ private:
 	pfn_airspy_stop_rx	   my_airspy_stop_rx;
 	pfn_airspy_set_sample_type my_airspy_set_sample_type;
 	pfn_airspy_set_freq	   my_airspy_set_freq;
+	pfn_airspy_set_linearity_gain my_airspy_set_linearity_gain;
+	pfn_airspy_set_sensitivity_gain my_airspy_set_sensitivity_gain;
 	pfn_airspy_set_lna_gain	   my_airspy_set_lna_gain;
 	pfn_airspy_set_mixer_gain  my_airspy_set_mixer_gain;
 	pfn_airspy_set_vga_gain	   my_airspy_set_vga_gain;
