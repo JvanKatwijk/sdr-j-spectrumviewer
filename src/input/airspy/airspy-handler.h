@@ -90,7 +90,7 @@ public:
 	int32_t		getSamples	(DSPCOMPLEX *v,
 	                                 int32_t size, int32_t M);
 	int32_t		Samples		(void);
-
+	int16_t		currentTab;
 private slots:
 	void		set_rateSelector	(const QString &);
 	void		set_linearity		(int value);
