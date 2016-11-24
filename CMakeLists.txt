@@ -344,7 +344,7 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 	target_link_libraries (${objectName}
 	                       Qt5::Widgets
-	                       ${FFTW_LIBRARIES}
+	                       ${FFTW3F_LIBRARIES}
 	                       ${extraLibs}
 	                       ${FAAD_LIBRARIES}
 	                       ${QWT_LIBRARIES}
