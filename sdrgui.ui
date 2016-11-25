@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>947</width>
+    <width>991</width>
     <height>503</height>
    </rect>
   </property>
@@ -148,6 +148,9 @@
      <italic>true</italic>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400; font-style:normal;&quot;&gt;The keyboard for typing in a frequency. Terminate with pressing on either kHz or mHz, after which the frequency is passed on.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>4</string>
@@ -382,6 +385,9 @@
      <bold>true</bold>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;The selected frequency.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
@@ -433,6 +439,9 @@
      <bold>true</bold>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Remove the digit last typed.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>Corr</string>
    </property>
@@ -452,6 +461,9 @@
      <bold>true</bold>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Clear the selection.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>Clear</string>
    </property>
@@ -469,6 +481,9 @@
     <font>
      <pointsize>10</pointsize>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;version indicator.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
@@ -555,6 +570,9 @@
       </colorrole>
      </disabled>
     </palette>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The selected samplerate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
@@ -741,6 +759,9 @@
      <bold>true</bold>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;For specifying a frequency in Khz, type the amount in kHz and press kHz,&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>khz</string>
    </property>
@@ -753,6 +774,9 @@
      <width>901</width>
      <height>351</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;main display&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
@@ -775,6 +799,9 @@
      <width>221</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;show the current time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
@@ -857,6 +884,9 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select between viewing the spectrum directly and viewing the spectrum as waterfall.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>view mode</string>
    </property>
@@ -890,8 +920,11 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For selecting a frequency in mHz, type the amount in mHz and press the button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
-    <string>MHz</string>
+    <string>mHz</string>
    </property>
   </widget>
   <widget class="QSpinBox" name="lowerLimit">
@@ -902,6 +935,9 @@
      <width>71</width>
      <height>33</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lower end of scan range, expressed in mHz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="maximum">
     <number>2000</number>
@@ -915,6 +951,9 @@
      <width>71</width>
      <height>33</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stepsize while scanning, expressed in kHz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="minimum">
     <number>-4000</number>
@@ -932,6 +971,9 @@
      <height>33</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Top end of the scan range, expressed in mHz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="maximum">
     <number>2000</number>
    </property>
@@ -944,6 +986,9 @@
      <width>97</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scanner function. When pushed, the selected frequency will be increased periodically by the amount specified in the stepSize. When pushed while scanning, scanning will halt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>set scan</string>
@@ -958,6 +1003,9 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Freeze the image in the spectrum display. This comes in handy when concentrating on a&lt;/p&gt;&lt;p&gt;certain aspect viewed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>freeze</string>
    </property>
@@ -970,6 +1018,9 @@
      <width>61</width>
      <height>33</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delay function, active while scanning. Expressed in seconds.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="minimum">
     <number>1</number>
@@ -1001,6 +1052,9 @@
      <width>161</width>
      <height>29</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a device. The selection - obviously - depends on the configuration. Note that it is ill-advised to select a device for which no support library is installed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <item>
     <property name="text">
