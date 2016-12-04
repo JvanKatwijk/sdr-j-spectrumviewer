@@ -39,7 +39,6 @@ SOURCES += ./src/main.cpp \
 unix { 
 DESTDIR		= ./linux-bin
 INCLUDEPATH	+= /usr/include/qt5/qwt
-INCLUDEPATH 	+= /usr/include/ 
 INCLUDEPATH	+= /usr/local/include
 #LIBS		+= -lqwt -lusb-1.0 -lrt -lfftw3f -ldl		# ubuntu 15.04
 LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 25
