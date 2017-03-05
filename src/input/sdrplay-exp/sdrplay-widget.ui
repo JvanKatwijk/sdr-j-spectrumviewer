@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>256</width>
-    <height>220</height>
+    <height>301</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>0</x>
      <y>0</y>
      <width>211</width>
-     <height>221</height>
+     <height>281</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -63,6 +63,9 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Library version number&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="lineWidth">
      <number>0</number>
     </property>
@@ -78,6 +81,9 @@
       <width>20</width>
       <height>141</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;gain selector. 0 is minimal gain, 100 is maximal.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>
@@ -121,14 +127,12 @@
       <height>32</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;samplerate selector. With the samplerate you also select a bandwidth.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <item>
      <property name="text">
-      <string>960000</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>1920000</string>
+      <string>2000000</string>
      </property>
     </item>
     <item>
@@ -151,6 +155,19 @@
       <string>8000000</string>
      </property>
     </item>
+   </widget>
+   <widget class="QLabel" name="serialNumber">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>220</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
   </widget>
  </widget>
