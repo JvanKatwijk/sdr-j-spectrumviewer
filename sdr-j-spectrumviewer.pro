@@ -44,8 +44,7 @@ INCLUDEPATH	+= /usr/local/include
 LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 25
 CONFIG		+= dabstick
 CONFIG		+= airspy
-CONFIG		+= sdrplay-exp
-#CONFIG		+= sdrplay
+CONFIG		+= sdrplay
 CONFIG		+= elad-s1
 CONFIG		+= soundcard
 #CONFIG		+= extio
@@ -91,20 +90,10 @@ sdrplay {
 DEFINES		+= HAVE_SDRPLAY
 	INCLUDEPATH	+= ./src/input/sdrplay
 	HEADERS		+= ./src/input/sdrplay/sdrplay.h \
-	                   ./src/input/sdrplay/sdrplay-loader.h \
-	                   ./src/input/sdrplay/sdrplay-worker.h 
+	                   ./src/input/sdrplay/sdrplayselect.h
 	SOURCES		+= ./src/input/sdrplay/sdrplay.cpp \
-	                   ./src/input/sdrplay/sdrplay-loader.cpp \
-	                   ./src/input/sdrplay/sdrplay-worker.cpp 
+	                   ./src/input/sdrplay/sdrplayselect.cpp
 	FORMS		+= ./src/input/sdrplay/sdrplay-widget.ui
-}
-#
-sdrplay-exp {
-DEFINES		+= HAVE_SDRPLAY
-	INCLUDEPATH	+= ./src/input/sdrplay-exp
-	HEADERS		+= ./src/input/sdrplay-exp/sdrplay.h 
-	SOURCES		+= ./src/input/sdrplay-exp/sdrplay.cpp 
-	FORMS		+= ./src/input/sdrplay-exp/sdrplay-widget.ui
 }
 #
 airspy {

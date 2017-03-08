@@ -746,7 +746,6 @@ int32_t	i;
 	   bufferIn [i] = bufferRes [i];
 	}
 }
-
 //
 //	For displaying values, we use different scales, depending
 //	on the size of the value
