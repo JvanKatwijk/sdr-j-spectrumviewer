@@ -62,8 +62,8 @@ public:
 
 private:
 	QSettings	*spectrumSettings;
-	Scope		*HFScope;
-	int16_t		HFViewmode;
+	Scope		*HFScope_1;
+	Scope		*HFScope_2;
 	DSPFLOAT	*Window;
 	int32_t		inputRate;
 	int32_t		bandWidth;
@@ -101,7 +101,6 @@ private:
 	int32_t		freezeCount;
 	void		doFreeze		(double *, double *, int32_t);
 	void		IncrementFrequency	(int32_t);
-	int32_t		bandwidthFor		(int32_t);
 /*
  */
 private slots:
@@ -129,11 +128,11 @@ private slots:
 
 	void	abortSystem		(int);
 	void	TerminateProcess	(void);
-	void	setViewmode		(void);
-	void	setFreezer		(void);
+	void	toggle_Freezer		(void);
 	void	nextFrequency		(void);
 	void	switchScanner		(void);
 	void	setScanDelay		(int);
+
 public slots:
 	void	handleSamples		(void);
 	void	set_changeRate		(int);

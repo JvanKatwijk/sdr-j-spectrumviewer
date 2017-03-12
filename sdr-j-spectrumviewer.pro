@@ -7,7 +7,14 @@
 TEMPLATE	= app
 TARGET		= sdr-j-spectrumviewer
 QT		+= widgets
-CONFIG		+= console widgets
+CONFIG		+= console 
+QMAKE_CFLAGS    +=  -flto -ffast-math
+QMAKE_CXXFLAGS  +=  -flto -ffast-math
+QMAKE_LFLAGS    +=  -flto
+#QMAKE_CFLAGS   +=  -g
+#QMAKE_CXXFLAGS +=  -g
+#QMAKE_LFLAGS   +=  -g
+
 
 DEPENDPATH += . \
 	      ./src \
@@ -19,7 +26,7 @@ INCLUDEPATH += . \
 	      ./src/input
 
 # Input
-HEADERS += ./includes/gui.h \
+HEADERS += ./viewer.h \
 	   ./includes/spectrum-constants.h \
            ./includes/fft.h \
            ./includes/ringbuffer.h \
@@ -29,8 +36,8 @@ HEADERS += ./includes/gui.h \
 
 FORMS += ./sdrgui.ui 
 
-SOURCES += ./src/main.cpp \
-           ./src/gui.cpp \
+SOURCES += ./main.cpp \
+           ./viewer.cpp \
            ./src/fft.cpp \
 	   ./src/scope.cpp \
 	   ./src/input/virtual-input.cpp 

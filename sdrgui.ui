@@ -90,7 +90,7 @@
   <widget class="QPushButton" name="add_one">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>320</x>
      <y>370</y>
      <width>40</width>
      <height>31</height>
@@ -116,7 +116,7 @@
   <widget class="QPushButton" name="add_two">
    <property name="geometry">
     <rect>
-     <x>410</x>
+     <x>360</x>
      <y>370</y>
      <width>41</width>
      <height>31</height>
@@ -136,7 +136,7 @@
   <widget class="QPushButton" name="add_four">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>320</x>
      <y>400</y>
      <width>40</width>
      <height>31</height>
@@ -159,7 +159,7 @@
   <widget class="QPushButton" name="add_five">
    <property name="geometry">
     <rect>
-     <x>410</x>
+     <x>360</x>
      <y>400</y>
      <width>40</width>
      <height>31</height>
@@ -179,7 +179,7 @@
   <widget class="QPushButton" name="add_six">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>400</x>
      <y>400</y>
      <width>40</width>
      <height>31</height>
@@ -199,7 +199,7 @@
   <widget class="QPushButton" name="add_seven">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>320</x>
      <y>430</y>
      <width>40</width>
      <height>31</height>
@@ -219,7 +219,7 @@
   <widget class="QPushButton" name="add_eight">
    <property name="geometry">
     <rect>
-     <x>410</x>
+     <x>360</x>
      <y>430</y>
      <width>40</width>
      <height>31</height>
@@ -239,7 +239,7 @@
   <widget class="QPushButton" name="add_nine">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>400</x>
      <y>430</y>
      <width>40</width>
      <height>31</height>
@@ -260,7 +260,7 @@
   <widget class="QPushButton" name="add_zero">
    <property name="geometry">
     <rect>
-     <x>410</x>
+     <x>360</x>
      <y>460</y>
      <width>40</width>
      <height>31</height>
@@ -282,7 +282,7 @@
     <rect>
      <x>10</x>
      <y>390</y>
-     <width>191</width>
+     <width>181</width>
      <height>51</height>
     </rect>
    </property>
@@ -407,7 +407,7 @@
   <widget class="QPushButton" name="add_three">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>400</x>
      <y>370</y>
      <width>40</width>
      <height>31</height>
@@ -427,7 +427,7 @@
   <widget class="QPushButton" name="add_correct">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>270</x>
      <y>400</y>
      <width>51</width>
      <height>31</height>
@@ -449,7 +449,7 @@
   <widget class="QPushButton" name="add_clear">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>270</x>
      <y>370</y>
      <width>51</width>
      <height>31</height>
@@ -471,8 +471,8 @@
   <widget class="QLabel" name="systemindicator">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>350</y>
+     <x>630</x>
+     <y>360</y>
      <width>271</width>
      <height>31</height>
     </rect>
@@ -503,7 +503,7 @@
     <rect>
      <x>10</x>
      <y>450</y>
-     <width>201</width>
+     <width>181</width>
      <height>41</height>
     </rect>
    </property>
@@ -661,7 +661,7 @@
   <widget class="QPushButton" name="startButton">
    <property name="geometry">
     <rect>
-     <x>870</x>
+     <x>910</x>
      <y>360</y>
      <width>71</width>
      <height>51</height>
@@ -747,7 +747,7 @@
   <widget class="QPushButton" name="khzSelector">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>320</x>
      <y>460</y>
      <width>41</width>
      <height>31</height>
@@ -766,13 +766,13 @@
     <string>khz</string>
    </property>
   </widget>
-  <widget class="QwtPlot" name="hfscope">
+  <widget class="QwtPlot" name="hf_spectrumscope">
    <property name="geometry">
     <rect>
      <x>30</x>
      <y>0</y>
-     <width>901</width>
-     <height>351</height>
+     <width>951</width>
+     <height>171</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -819,7 +819,7 @@
   <widget class="QPushButton" name="QuitButton">
    <property name="geometry">
     <rect>
-     <x>870</x>
+     <x>910</x>
      <y>410</y>
      <width>71</width>
      <height>51</height>
@@ -875,26 +875,10 @@
     <string>QUIT</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="viewmodeButton">
-   <property name="geometry">
-    <rect>
-     <x>490</x>
-     <y>400</y>
-     <width>111</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select between viewing the spectrum directly and viewing the spectrum as waterfall.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="text">
-    <string>view mode</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pauseButton">
    <property name="geometry">
     <rect>
-     <x>870</x>
+     <x>910</x>
      <y>460</y>
      <width>71</width>
      <height>31</height>
@@ -914,7 +898,7 @@
   <widget class="QPushButton" name="mhzSelector">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>400</x>
      <y>460</y>
      <width>41</width>
      <height>31</height>
@@ -930,9 +914,9 @@
   <widget class="QSpinBox" name="lowerLimit">
    <property name="geometry">
     <rect>
-     <x>590</x>
+     <x>440</x>
      <y>430</y>
-     <width>71</width>
+     <width>101</width>
      <height>33</height>
     </rect>
    </property>
@@ -946,9 +930,9 @@
   <widget class="QSpinBox" name="stepSize">
    <property name="geometry">
     <rect>
-     <x>660</x>
+     <x>560</x>
      <y>430</y>
-     <width>71</width>
+     <width>111</width>
      <height>33</height>
     </rect>
    </property>
@@ -965,9 +949,9 @@
   <widget class="QSpinBox" name="upperLimit">
    <property name="geometry">
     <rect>
-     <x>730</x>
+     <x>680</x>
      <y>430</y>
-     <width>71</width>
+     <width>121</width>
      <height>33</height>
     </rect>
    </property>
@@ -981,10 +965,10 @@
   <widget class="QPushButton" name="scanstartButton">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>430</y>
-     <width>97</width>
-     <height>31</height>
+     <x>440</x>
+     <y>390</y>
+     <width>121</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -997,10 +981,10 @@
   <widget class="QPushButton" name="freezeButton">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>400</y>
-     <width>97</width>
-     <height>31</height>
+     <x>560</x>
+     <y>390</y>
+     <width>111</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -1015,7 +999,7 @@
     <rect>
      <x>800</x>
      <y>430</y>
-     <width>61</width>
+     <width>101</width>
      <height>33</height>
     </rect>
    </property>
@@ -1029,8 +1013,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>400</y>
+     <x>190</x>
+     <y>390</y>
      <width>65</width>
      <height>51</height>
     </rect>
@@ -1047,10 +1031,10 @@
   <widget class="QComboBox" name="deviceSelector">
    <property name="geometry">
     <rect>
-     <x>700</x>
-     <y>400</y>
-     <width>161</width>
-     <height>29</height>
+     <x>670</x>
+     <y>388</y>
+     <width>231</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -1065,7 +1049,7 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>600</x>
+     <x>470</x>
      <y>470</y>
      <width>65</width>
      <height>21</height>
@@ -1078,7 +1062,7 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>670</x>
+     <x>590</x>
      <y>470</y>
      <width>65</width>
      <height>21</height>
@@ -1091,7 +1075,7 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>754</x>
+     <x>720</x>
      <y>470</y>
      <width>51</width>
      <height>21</height>
@@ -1104,7 +1088,7 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>810</x>
+     <x>830</x>
      <y>470</y>
      <width>65</width>
      <height>21</height>
@@ -1117,7 +1101,7 @@
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>210</x>
      <y>450</y>
      <width>66</width>
      <height>41</height>
@@ -1130,6 +1114,16 @@
    </property>
    <property name="text">
     <string>RATE</string>
+   </property>
+  </widget>
+  <widget class="QwtPlot" name="hf_waterfallscope">
+   <property name="geometry">
+    <rect>
+     <x>29</x>
+     <y>170</y>
+     <width>951</width>
+     <height>181</height>
+    </rect>
    </property>
   </widget>
  </widget>

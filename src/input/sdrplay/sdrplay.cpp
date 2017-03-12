@@ -51,7 +51,6 @@ sdrplaySelect	*sdrplaySelector;
 	*success		= false;
 	_I_Buffer	= NULL;
 	libraryLoaded	= false;
-	*success	= false;
 
 #ifdef	__MINGW32__
 HKEY APIkey;
@@ -147,14 +146,22 @@ ULONG APIkeyValue_length = 255;
 	if (numofDevs > 1) {
            sdrplaySelector       = new sdrplaySelect ();
            for (deviceIndex = 0; deviceIndex < numofDevs; deviceIndex ++) {
+#ifndef	__MINGW32__
               sdrplaySelector ->
                    addtoList (devDesc [deviceIndex]. DevNm);
+#else
+              sdrplaySelector ->
+                   addtoList (devDesc [deviceIndex]. SerNo);
+#endif
            }
            deviceIndex = sdrplaySelector -> QDialog::exec ();
            delete sdrplaySelector;
         }
         else
+	if (numofDevs == 1)
            deviceIndex = 0;
+	else
+	   return;
 
 	serialNumber -> setText (devDesc [deviceIndex]. SerNo);
 	hwVersion = devDesc [deviceIndex]. hwVer;
@@ -181,10 +188,18 @@ ULONG APIkeyValue_length = 255;
 	sdrplaySettings	-> setValue ("externalGain", gainSlider -> value ());
 	sdrplaySettings	-> setValue ("sdrplayRate", rateSelector -> currentText ());
 	sdrplaySettings	-> endGroup ();
-	my_mir_sdr_ReleaseDeviceIdx (deviceIndex);
+	delete myFrame;
+	if (!libraryLoaded)
+	   return;
+	if (numofDevs >= 1)
+	   my_mir_sdr_ReleaseDeviceIdx (deviceIndex);
 	if (_I_Buffer != NULL)
 	   delete _I_Buffer;
-	delete	myFrame;
+#ifdef __MINGW32__
+        FreeLibrary (Handle);
+#else
+        dlclose (Handle);
+#endif
 }
 //
 static inline
@@ -243,6 +258,7 @@ int32_t	realFreq = newFrequency + vfoOffset;
 int	gRdBSystem;
 int	samplesPerPacket;
 int32_t	localGred	= currentGred;
+
 	if (bankFor_sdr (realFreq) == -1)
 	   return;
 

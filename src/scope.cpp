@@ -20,16 +20,14 @@
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with JSDR; if not, write to the Free Software
+ *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include	"scope.h"
 #include	<qwt_picker_machine.h>
 /*
  *	The "scope" combines the Qwt widgets and control for both
- *	the spectrumdisplay and the waterfall display. It is used
- *	two times: for the large front end display and for the
- *	display used by the detectors
+ *	the spectrumdisplay and the waterfall display.
  */
 	Scope::Scope (QwtPlot		*scope,
 	              uint16_t		displaysize,
@@ -88,7 +86,7 @@ void	Scope::SelectView (uint8_t n) {
 	if (n == WATERFALL_MODE) {
 	   if (Spectrum != NULL)
 	      delete Spectrum;
-//	   Plotter	-> detachItems ();
+	   Plotter	-> detachItems ();
 	   Spectrum	= NULL;
 	   Waterfall	= new WaterfallViewer (Plotter,
 	                                       Displaysize,
@@ -126,7 +124,6 @@ void	Scope::setBitDepth	(int16_t b) {
  *	The spectrumDisplay
  */
 	SpectrumViewer::SpectrumViewer (QwtPlot *plot, uint16_t displaysize) {
-
 	plotgrid		= plot;
 	this	-> Displaysize	= displaysize;
 	plotgrid-> setCanvasBackground (Qt::blue);
@@ -261,22 +258,22 @@ void	SpectrumViewer::setBitDepth	(int16_t d) {
 int	i, j;
 	colorMap  = new QwtLinearColorMap (Qt::darkCyan, Qt::red);
 	QwtLinearColorMap *c2 = new QwtLinearColorMap (Qt::darkCyan, Qt::red);
-	plotgrid		= plot;
-	this	-> Displaysize	= displaysize;
-	this	-> Rastersize	= rastersize;
+	plotgrid	= plot;
+	this		-> Displaysize	= displaysize;
+	this		-> Rastersize	= rastersize;
 	colorMap 	-> addColorStop	(0.1, Qt::cyan);
 	colorMap 	-> addColorStop	(0.4, Qt::green);
 	colorMap	-> addColorStop	(0.7, Qt::yellow);
-	c2 	-> addColorStop	(0.1, Qt::cyan);
-	c2 	-> addColorStop	(0.4, Qt::green);
-	c2	-> addColorStop	(0.7, Qt::yellow);
-	this -> setColorMap (colorMap);
-	OneofTwo		= 0;
-	rightAxis = plotgrid -> axisWidget (QwtPlot::yRight);
+	c2 		-> addColorStop	(0.1, Qt::cyan);
+	c2 		-> addColorStop	(0.4, Qt::green);
+	c2		-> addColorStop	(0.7, Qt::yellow);
+	this 		-> setColorMap (colorMap);
+	OneofTwo	= 0;
+	rightAxis 	= plotgrid -> axisWidget (QwtPlot::yRight);
 // A color bar on the right axis
 	rightAxis -> setColorBarEnabled (true);
 
-	plotData = new double [Displaysize * Rastersize];
+	plotData = new double [2 * Displaysize * Rastersize];
 	for (i = 0; i < Rastersize; i ++)
  	   for (j = 0; j < Displaysize; j ++)
 	      plotData [i * Displaysize + j] = (double)i / Rastersize;
@@ -304,7 +301,7 @@ int	i, j;
 	Marker		-> setLineStyle (QwtPlotMarker::VLine);
 	Marker		-> setLinePen (QPen (Qt::black));
 	Marker		-> attach (plotgrid);
-	this		-> attach (plotgrid);
+//	this		-> attach (plotgrid);
 	IndexforMarker	= 0;
 
 	lm_picker	= new QwtPlotPicker (plot -> canvas ());
@@ -330,12 +327,14 @@ void	WaterfallViewer::leftMouseClick (const QPointF &point) {
 	leftClicked ((int)(point. x()) - IndexforMarker);
 }
 
+
 void	WaterfallViewer::ViewWaterfall (double *X_axis,
 	                                double *Y1_value,
 	                                double amp,
 	                                int32_t marker) {
 int	orig	= (int)(X_axis [0]);
 int	width	= (int)(X_axis [Displaysize - 1] - orig);
+SpectrogramData	*oldData;
 
 	IndexforMarker	= marker;
 	if (OneofTwo) {
@@ -358,17 +357,17 @@ int	width	= (int)(X_axis [Displaysize - 1] - orig);
 	        &Y1_value [0],
 	        Displaysize * sizeof (double));
 
-	this		-> detach	();
 	if (WaterfallData != NULL)
-	   delete WaterfallData;
-
+	   delete	WaterfallData;
+//
 	WaterfallData = new SpectrogramData (plotData,
 	                                     orig,
 	                                     width,
 	                                     Rastersize,
 	                                     Displaysize,
 	                                     amp);
-//	this		-> detach	();
+
+	this		-> detach	();
 	this		-> setData	(WaterfallData);
 	this		-> setDisplayMode (QwtPlotSpectrogram::ImageMode,
 	                                                               true);

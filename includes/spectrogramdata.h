@@ -39,6 +39,7 @@ public:
 	int	height;		// rasterheigth
 	int	datawidth;	// width of matrix
 	int	dataheight;	// for now == rasterheigth
+	int	counter;
 	double	max;
 
 	SpectrogramData (double *data, int left, int width, int height,
@@ -51,10 +52,13 @@ public:
 	this	-> datawidth	= datawidth;
 	this	-> dataheight	= height;
 	this	-> max		= max;
-
+	counter			= 0;
 	setInterval (Qt::XAxis, QwtInterval (left, left + width));
 	setInterval (Qt::YAxis, QwtInterval (0, height));
 	setInterval (Qt::ZAxis, QwtInterval (0, max));
+}
+
+	~SpectrogramData (void) {
 }
 
 void	initRaster (const QRectF &x, const QSize &raster) {
@@ -62,17 +66,18 @@ void	initRaster (const QRectF &x, const QSize &raster) {
 	(void)raster;
 }
 
+void	discardRaster (void) {
+}
+
 QwtInterval Interval (Qt::Axis x)const {
 	if (x == Qt::XAxis)
 	   return QwtInterval (left, left + width);
+	if (x == Qt::YAxis)
+	   return QwtInterval (0, height);
 	return QwtInterval (0, max);
 }
 
-	~SpectrogramData () {
-}
-
 double value (double x, double y) const {
-//fprintf (stderr, "x = %f, y = %f\n", x, y);
 	   x = x - left;
 	   x = x / width * datawidth;
 	   return data [(int)y * datawidth + (int)x];

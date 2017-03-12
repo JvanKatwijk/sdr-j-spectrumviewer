@@ -23,18 +23,11 @@
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include	"gui.h"
+#include	"viewer.h"
 #include	<QSettings>
 #include	<QMessageBox>
 #include	<QFileDialog>
 #include	<QDebug>
-#include	<qwt_color_map.h>
-#include	<qwt_plot_spectrogram.h>
-#include	<qwt_scale_widget.h>
-#include	<qwt_scale_draw.h>
-#include	<qwt_plot_zoomer.h>
-#include	<qwt_plot_panner.h>
-#include	<qwt_plot_layout.h>
 #include	<QDateTime>
 #include	"virtual-input.h"
 #ifdef	HAVE_SDRPLAY
@@ -100,12 +93,17 @@ int k;
 	   Window [i] = 0.42 - 0.5 * cos ((2.0 * M_PI * i) / spectrumSize) +
 	                       0.08 * cos ((4.0 * M_PI * i) / spectrumSize);
 
-	HFScope		= new Scope (hfscope,
+	HFScope_1	= new Scope (hf_spectrumscope,
+	                             this	-> displaySize,
+	                             this	-> rasterSize);
+	HFScope_1	-> SelectView (SPECTRUM_MODE);
+	connect (HFScope_1, SIGNAL (clickedwithLeft (int)),
+	         this, SLOT (adjustFrequency (int)));
+	HFScope_2	= new Scope (hf_waterfallscope,
 	                             this -> displaySize,
 	                             this -> rasterSize);
-	HFViewmode	= SPECTRUM_MODE;
-	HFScope		-> SelectView (SPECTRUM_MODE);
-	connect (HFScope, SIGNAL (clickedwithLeft (int)),
+	HFScope_2	-> SelectView (SPECTRUM_MODE);
+	connect (HFScope_2, SIGNAL (clickedwithLeft (int)),
 	         this, SLOT (adjustFrequency (int)));
 	this		-> X_axis		= new double [displaySize];
 	this		-> displayBuffer	= new double [displaySize];
@@ -157,6 +155,7 @@ int k;
 	scanDelayTime		= k;
 
 	ClearPanel		();
+
 	connect (deviceSelector, SIGNAL (activated (const QString &)),
 	         this, SLOT (setDevice (const QString &)));
 	connect (startButton, SIGNAL (clicked (void)),
@@ -166,10 +165,8 @@ int k;
 	connect (pauseButton, SIGNAL (clicked (void)),
 	         this, SLOT (clickPause (void)));
 	
-	connect (viewmodeButton, SIGNAL (clicked (void)),
-	         this, SLOT (setViewmode (void)));
 	connect (freezeButton, SIGNAL (clicked (void)),
-	         this, SLOT (setFreezer (void)));
+	         this, SLOT (toggle_Freezer (void)));
 	connect (delayBox, SIGNAL (valueChanged (int)),
 	         this, SLOT (setScanDelay (int)));
 /*
@@ -253,7 +250,8 @@ int k;
 //	and then we delete
 	delete		lcd_timer;
 	delete		theDevice;
-	delete		HFScope;
+	delete		HFScope_1;
+	delete		HFScope_2;
 	delete		displayTimer;
 	delete[]	Window;
 	delete		runTimer;
@@ -417,7 +415,8 @@ bool	success	= false;
 //	we are not running, so the X axis will be set when computing
 //	a new spectrum
 	lcd_inputRate	-> display (inputRate);
-	HFScope	-> setBitDepth (theDevice -> bitDepth ());
+	HFScope_1 -> setBitDepth (theDevice -> bitDepth ());
+	HFScope_2 -> setBitDepth (theDevice -> bitDepth ());
 	setTuner (theDevice -> defaultFrequency ());
 }
 //
@@ -431,6 +430,7 @@ void	RadioInterface::set_changeRate (int newRate) {
 
 //
 //	Now, "start" is only meaningful if we are not running already
+//	and the device isn't NULL
 void	RadioInterface::setStart	(void) {
 bool	r = 0;
 
@@ -585,7 +585,6 @@ int	RadioInterface::getPanel (void) {
 
 void	RadioInterface::adjustFrequency (int n) {
 	stop_lcdTimer ();
-
 	setTuner (currentFrequency + Khz (n));
 	Display (currentFrequency);
 }
@@ -608,7 +607,7 @@ int32_t	i;
 	   displayBuffer [i] = 0;
 	}
 	if (freezer)
-	   setFreezer	();	// just  ensure 
+	   toggle_Freezer	();	// just  ensure 
 }
 //	setnextFrequency () is almost identical to setTuner
 //
@@ -629,7 +628,7 @@ int32_t	i;
 	   displayBuffer [i] = 0;
 	}
 	if (freezer)
-	   setFreezer	();	// just  ensure 
+	   toggle_Freezer	();	// just  ensure 
 }
 //
 void	RadioInterface::stop_lcdTimer (void) {
@@ -686,8 +685,10 @@ DSPFLOAT	decayingAverage (DSPFLOAT old,
 //	we want to process inputRate / 10 length  segments,
 //	which may amount to up to 800000 samples,
 //	so the _I_Buffer should be large enough.
+static bool	gezet	= false;
 void	RadioInterface::handleSamples (void) {
 DSPCOMPLEX	dataIn [spectrumSize];
+double hulp [displaySize];
 int32_t i, j;
 
 	if ((runMode != RUNNING) || (theDevice == NULL))
@@ -726,10 +727,20 @@ int32_t i, j;
 	   doFreeze (displayBuffer, freezeBuffer, 5);
 //
 //	and finally
-	HFScope -> Display (X_axis,
-	                    displayBuffer,
-	                    spectrumAmplitudeSlider -> value (),
-	                    currentFrequency / Khz (1));
+	memcpy (hulp, displayBuffer, displaySize * sizeof (double));
+	HFScope_2 -> Display (X_axis,
+	                      displayBuffer,
+	                      spectrumAmplitudeSlider -> value (),
+	                      currentFrequency / Khz (1));
+	HFScope_1 -> Display  (X_axis,
+	                       hulp,
+	                       spectrumAmplitudeSlider -> value (),
+	                       currentFrequency / Khz (1));
+
+	if (!gezet) {
+	   gezet = true;
+	   HFScope_2	-> SelectView (WATERFALL_MODE);
+	}
 }
 
 //
@@ -775,16 +786,7 @@ int32_t nd	= numberofDigits (freq);
 	lcd_Frequency	-> display ((int)freq / Khz (1));
 }
 
-void	RadioInterface::setViewmode (void) {
-	if (HFViewmode == SPECTRUM_MODE)
-	   HFViewmode = WATERFALL_MODE;
-	else
-	   HFViewmode = SPECTRUM_MODE;
-
-	HFScope -> SelectView (HFViewmode);
-}
-
-void	RadioInterface::setFreezer	(void) {
+void	RadioInterface::toggle_Freezer	(void) {
 int16_t	i;
 	freezer = !freezer;
 	if (freezer)
@@ -822,7 +824,7 @@ void	RadioInterface::switchScanner	(void) {
 	if (scanner) {
 	   scanTimer	-> start (scanDelayTime * 100);
 	   if (freezer)
-	      setFreezer ();	// will be switched off
+	      toggle_Freezer ();	// will be switched off
 	}
 	else
 	   scanTimer	-> stop ();
@@ -836,16 +838,4 @@ void	RadioInterface::setScanDelay	(int d) {
 	}
 }
 
-int32_t	RadioInterface::bandwidthFor (int32_t rate) {
-	switch (rate) {
-	   case 8000000:
-	   case 7000000:
-	   case 6000000:
-	   case 5000000:
-	      return rate;
-
-	   default:
-	      return 1536000;
-	}
-}
 
