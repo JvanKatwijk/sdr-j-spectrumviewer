@@ -277,6 +277,8 @@ bool	success	= false;
 	   inputRate	= MHz (100);
 	   return;
 	}
+
+
 #ifdef	HAVE_SDRPLAY
 	if (s == "sdrplay") {
 	   theDevice	= new sdrplay (spectrumSettings, &success);
@@ -289,7 +291,7 @@ bool	success	= false;
 	   inputRate	= theDevice -> getRate ();
 //	basically, ready to run
 	}
-	else 
+	else
 #endif
 #ifdef	HAVE_DABSTICK
 	if (s == "dabstick") {
@@ -316,6 +318,7 @@ bool	success	= false;
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
+	else
 #endif
 #ifdef	HAVE_EXTIO
 	if (s == "extio") {
@@ -328,6 +331,7 @@ bool	success	= false;
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
+	else
 #endif
 #ifdef	HAVE_ELAD_S1
 	if (s == "elad-192000") {
@@ -373,7 +377,7 @@ bool	success	= false;
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
-		else
+	else
 	if (s == "elad-3072000") {
 	   theDevice	= new eladHandler (spectrumSettings, 3072000, &success);
 	   if (!success) {
@@ -384,6 +388,7 @@ bool	success	= false;
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
+	else
 	if (s == "elad-6144000") {
 	   theDevice	= new eladHandler (spectrumSettings, 6144000, &success);
 	   if (!success) {
@@ -393,10 +398,10 @@ bool	success	= false;
 	      theDevice = new virtualInput ();
 	   }
 	   inputRate	= theDevice -> getRate ();
-        }	
+        }
+	else	
 #endif
 #ifdef	HAVE_SOUNDCARD
-	else
 	if (s == "soundcard") {
 	   theDevice	= new soundcard (spectrumSettings, &success);
 	   if (!success) {
@@ -407,7 +412,10 @@ bool	success	= false;
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
+	else
 #endif
+	   theDevice	= new virtualInput ();
+
 	connect (theDevice, SIGNAL (set_changeRate (int)),
 	         this, SLOT (set_changeRate (int)));
 	inputRate	= theDevice -> getRate ();
