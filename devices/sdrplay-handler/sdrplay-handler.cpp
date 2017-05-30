@@ -28,12 +28,12 @@
 #include	<QSettings>
 #include	<QHBoxLayout>
 #include	<QLabel>
-#include	"sdrplay.h"
+#include	"sdrplay-handler.h"
 #include	"sdrplayselect.h"
 
 #define	DEFAULT_GRED	40
 
-	sdrplay::sdrplay  (QSettings *s, bool *success) {
+	sdrplayHandler::sdrplayHandler  (QSettings *s) {
 int	err;
 float	ver;
 QString	str;
@@ -48,7 +48,6 @@ sdrplaySelect	*sdrplaySelector;
 	this	-> myFrame	-> show ();
 	antennaSelector		-> hide ();
 
-	*success		= false;
 	_I_Buffer	= NULL;
 	libraryLoaded	= false;
 
@@ -100,10 +99,9 @@ ULONG APIkeyValue_length = 255;
 //	OK, library is loaded, now the functions
 	libraryLoaded	= true;
 
-	*success = loadFunctions ();
-	if (!(*success)) {
+	if (!loadFunctions ()) {
 	   fprintf (stderr, " No success in loading sdrplay lib\n");
-	   return;
+	   throw (21);
 	}
 
 	(void)my_mir_sdr_ApiVersion (&ver);
@@ -139,7 +137,7 @@ ULONG APIkeyValue_length = 255;
 	my_mir_sdr_GetDevices (devDesc, &numofDevs, uint32_t (2));
 	if (numofDevs == 0) {
 	   fprintf (stderr, "Sorry, no device found\n");
-	   return;
+	   throw (22);
 	}
 
 	fprintf (stderr, "%d devices found\n", numofDevs);
@@ -161,7 +159,7 @@ ULONG APIkeyValue_length = 255;
 	if (numofDevs == 1)
            deviceIndex = 0;
 	else
-	   return;
+	   throw (23);
 
 	serialNumber -> setText (devDesc [deviceIndex]. SerNo);
 	hwVersion = devDesc [deviceIndex]. hwVer;
@@ -179,10 +177,9 @@ ULONG APIkeyValue_length = 255;
 //	my_mir_sdr_ResetUpdateFlags (1, 0, 0);
 	running		= false;
 	agcMode		= false;
-	*success	= true;
 }
 
-	sdrplay::~sdrplay	(void) {
+	sdrplayHandler::~sdrplayHandler	(void) {
 	stopReader ();
 	sdrplaySettings	-> beginGroup ("sdrplaySettings");
 	sdrplaySettings	-> setValue ("externalGain", gainSlider -> value ());
@@ -244,15 +241,15 @@ mir_sdr_Bw_MHzT bandwidth_for (int32_t rate) {
 	   return mir_sdr_BW_8_000;
 }
 
-bool	sdrplay::legalFrequency (int32_t f) {
+bool	sdrplayHandler::legalFrequency (int32_t f) {
 	return (bankFor_sdr (f) != -1);
 }
 
-int32_t	sdrplay::defaultFrequency	(void) {
+int32_t	sdrplayHandler::defaultFrequency	(void) {
 	return Khz (94700);
 }
 
-void	sdrplay::setVFOFrequency	(int32_t newFrequency) {
+void	sdrplayHandler::setVFOFrequency	(int32_t newFrequency) {
 mir_sdr_ErrT	err;
 int32_t	realFreq = newFrequency + vfoOffset;
 int	gRdBSystem;
@@ -290,11 +287,11 @@ int32_t	localGred	= currentGred;
 	   vfoFrequency = realFreq;
 }
 
-int32_t	sdrplay::getVFOFrequency	(void) {
+int32_t	sdrplayHandler::getVFOFrequency	(void) {
 	return vfoFrequency - vfoOffset;
 }
 
-void	sdrplay::setExternalGain	(int newGain) {
+void	sdrplayHandler::setExternalGain	(int newGain) {
 	if (newGain < 0 || newGain > 102)
 	   return;
 
@@ -304,7 +301,7 @@ void	sdrplay::setExternalGain	(int newGain) {
 	gainDisplay	-> display (newGain);
 }
 
-void	sdrplay::setExternalRate	(const QString &s) {
+void	sdrplayHandler::setExternalRate	(const QString &s) {
 int rate	= s. toInt ();
 mir_sdr_ErrT	err;
 int	gRdBSystem;
@@ -322,11 +319,11 @@ int	samplesPerPacket;
 	set_changeRate (inputRate);
 }
 
-int16_t	sdrplay::maxGain	(void) {
+int16_t	sdrplayHandler::maxGain	(void) {
 	return 101;
 }
 
-int32_t	sdrplay::getRate	(void) {
+int32_t	sdrplayHandler::getRate	(void) {
 	return inputRate;
 }
 
@@ -341,7 +338,7 @@ void myStreamCallback (int16_t		*xi,
 	               uint32_t		reset,
 	               void		*cbContext) {
 int16_t	i;
-sdrplay	*p	= static_cast<sdrplay *> (cbContext);
+sdrplayHandler	*p	= static_cast<sdrplayHandler *> (cbContext);
 DSPCOMPLEX localBuf [numSamples];
 
 	for (i = 0; i <  (int)numSamples; i ++)
@@ -364,7 +361,7 @@ void	myGainChangeCallback (uint32_t	gRdB,
 }
 
 
-bool	sdrplay::restartReader	(void) {
+bool	sdrplayHandler::restartReader	(void) {
 int	gRdBSystem;
 int	samplesPerPacket;
 mir_sdr_ErrT	err;
@@ -401,7 +398,7 @@ int32_t	localGred	= currentGred;
 	return true;
 }
 
-void	sdrplay::stopReader	(void) {
+void	sdrplayHandler::stopReader	(void) {
 	if (!running)
 	   return;
 
@@ -413,13 +410,13 @@ void	sdrplay::stopReader	(void) {
 //	The brave old getSamples. For the mirics stick, we get
 //	size still in I/Q pairs
 //	Note that the sdrPlay returns 10 bit values
-int32_t	sdrplay::getSamples (DSPCOMPLEX *V, int32_t size) { 
+int32_t	sdrplayHandler::getSamples (DSPCOMPLEX *V, int32_t size) { 
 //
 	return _I_Buffer	-> getDataFromBuffer (V, size);
 }
 
 //	and especially for our beloved spectrum viewer we provide
-int32_t	sdrplay::getSamples 	(DSPCOMPLEX  *V,
+int32_t	sdrplayHandler::getSamples 	(DSPCOMPLEX  *V,
 	                         int32_t size, int32_t segmentSize) {
 int32_t	amount;
 	amount = _I_Buffer	-> getDataFromBuffer (V, size);
@@ -427,23 +424,23 @@ int32_t	amount;
 	return amount;
 }
 
-int32_t	sdrplay::Samples	(void) {
+int32_t	sdrplayHandler::Samples	(void) {
 	return _I_Buffer	-> GetRingBufferReadAvailable ();
 }
 
-uint8_t	sdrplay::myIdentity	(void) {
+uint8_t	sdrplayHandler::myIdentity	(void) {
 	return 0;
 }
 
-void	sdrplay::resetBuffer	(void) {
+void	sdrplayHandler::resetBuffer	(void) {
 	_I_Buffer	-> FlushRingBuffer ();
 }
 
-int16_t	sdrplay::bitDepth	(void) {
+int16_t	sdrplayHandler::bitDepth	(void) {
 	return 12;
 }
 
-bool	sdrplay::loadFunctions	(void) {
+bool	sdrplayHandler::loadFunctions	(void) {
 
 	my_mir_sdr_StreamInit	= (pfn_mir_sdr_StreamInit)
 	                    GETPROCADDRESS (this -> Handle,
@@ -598,7 +595,7 @@ bool	sdrplay::loadFunctions	(void) {
 	return true;
 }
 
-void	sdrplay::agcControl_toggled (int agcMode) {
+void	sdrplayHandler::agcControl_toggled (int agcMode) {
 	this	-> agcMode	= agcControl -> isChecked ();
 	if (running) {
 	   my_mir_sdr_AgcControl (this -> agcMode, -currentGred, 0, 0, 0, 0, 1);
@@ -608,7 +605,7 @@ void	sdrplay::agcControl_toggled (int agcMode) {
 }
 
 
-void	sdrplay::set_antennaControl (const QString &s) {
+void	sdrplayHandler::set_antennaControl (const QString &s) {
 mir_sdr_ErrT err;
 
 	if (hwVersion < 2)	// should not happen
@@ -619,7 +616,4 @@ mir_sdr_ErrT err;
 	else
 	   err = my_mir_sdr_RSPII_AntennaControl (mir_sdr_RSPII_ANTENNA_B);
 }
-
-
-	  
 

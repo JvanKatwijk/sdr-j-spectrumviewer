@@ -327,7 +327,6 @@ void	WaterfallViewer::leftMouseClick (const QPointF &point) {
 	leftClicked ((int)(point. x()) - IndexforMarker);
 }
 
-
 void	WaterfallViewer::ViewWaterfall (double *X_axis,
 	                                double *Y1_value,
 	                                double amp,
@@ -357,8 +356,8 @@ SpectrogramData	*oldData;
 	        &Y1_value [0],
 	        Displaysize * sizeof (double));
 
-	if (WaterfallData != NULL)
-	   delete	WaterfallData;
+//	if (WaterfallData != NULL)
+//	   delete	WaterfallData;
 //
 	WaterfallData = new SpectrogramData (plotData,
 	                                     orig,

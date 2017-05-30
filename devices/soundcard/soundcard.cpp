@@ -33,15 +33,16 @@
 #define	FAILING		00
 #define	NOT_READY	02
 
-	soundcard::soundcard (QSettings *s, bool *success) {
+	soundcard::soundcard (QSettings *s) {
+bool	success;
 	(void)s;
 	myFrame		= new QFrame (NULL);
 	setupUi (myFrame);
 	myFrame	-> show ();
 	inputRate	= rateSelector -> currentText (). toInt ();
-	myReader	= new paReader (inputRate, cardSelector, success);
-	if (!*success)
-	   return;
+	myReader	= new paReader (inputRate, cardSelector, &success);
+//	if (success)
+//	   throw (21);
 	connect (cardSelector, SIGNAL (activated (int)),
 	         this, SLOT (set_streamSelector (int)));
 	connect (rateSelector, SIGNAL (activated (const QString &)),
@@ -51,7 +52,6 @@
 	gainFactor	= 1.0;
 	status	-> setText ("idle");
 	runMode		= NOT_READY;
-	*success	= true;
 }
 
 	soundcard::~soundcard		(void) {

@@ -29,7 +29,7 @@ const	int	EXTIO_NS	=  8192;
 static
 const	int	EXTIO_BASE_TYPE_SIZE = sizeof (float);
 
-	airspyHandler::airspyHandler (QSettings *s, bool *success) {
+	airspyHandler::airspyHandler (QSettings *s) {
 int	result, i;
 uint32_t	myBuffer [20];
 uint32_t	rateCount;
@@ -38,7 +38,6 @@ uint32_t	rateCount;
 	this	-> myFrame		= new QFrame (NULL);
 	setupUi (this -> myFrame);
 	this	-> myFrame	-> show ();
-        *success                = false;
 
 	airspySettings	-> beginGroup ("airspyHandler");
 	int16_t temp 		= airspySettings -> value ("linearity", 10).
@@ -75,7 +74,7 @@ uint32_t	rateCount;
 	Handle		= dlopen ("libusb-1.0.so", RTLD_NOW | RTLD_GLOBAL);
 	if (Handle == NULL) {
 	   fprintf (stderr, "libusb cannot be loaded\n");
-	   goto err;
+	   throw (21);
 	}
 	   
 	Handle		= dlopen ("libairspy.so", RTLD_LAZY);
@@ -86,13 +85,18 @@ uint32_t	rateCount;
 #ifndef	__MINGW32__
 	   fprintf (stderr, "Error = %s\n", dlerror ());
 #endif
-	   goto err;
+	   throw (21);
 	}
 	libraryLoaded	= true;
 
 	if (!load_airspyFunctions ()) {
 	   fprintf (stderr, "problem in loading functions\n");
-	   return;
+#ifdef __MINGW32__
+	   FreeLibrary (Handle);
+#else
+	   dlclose (Handle);
+#endif
+	   throw (22);
 	}
 
 	strcpy (serial,"");
@@ -100,14 +104,24 @@ uint32_t	rateCount;
 	if (result != AIRSPY_SUCCESS) {
 	   printf("my_airspy_init () failed: %s (%d)\n",
 	             my_airspy_error_name((airspy_error)result), result);
-        return;
+#ifdef __MINGW32__
+	   FreeLibrary (Handle);
+#else
+	   dlclose (Handle);
+#endif
+	   throw (23);
 	}
 	
 	result = my_airspy_open (&device);
 	if (result != AIRSPY_SUCCESS) {
 	   printf ("my_airpsy_open () failed: %s (%d)\n",
 	             my_airspy_error_name ((airspy_error)result), result);
-	   return;
+#ifdef __MINGW32__
+	   FreeLibrary (Handle);
+#else
+	   dlclose (Handle);
+#endif
+	   throw (24);
 	}
 //
 //	Since 1.0.8 we "poll" to get the supported rates
@@ -123,8 +137,15 @@ uint32_t	rateCount;
 	if (result != AIRSPY_SUCCESS) {
            printf("airspy_set_samplerate() failed: %s (%d)\n",
 	             my_airspy_error_name((enum airspy_error)result), result);
-	   return;
+#ifdef __MINGW32__
+	   FreeLibrary (Handle);
+#else
+	   dlclose (Handle);
+#endif
+	   throw (25);
 	}
+
+	my_airspy_set_freq (device, defaultFrequency ());
 
 	tabWidget	-> setCurrentIndex (0);
 	theBuffer	= new RingBuffer<DSPCOMPLEX> (1024 *1024 * 2);
@@ -151,19 +172,6 @@ uint32_t	rateCount;
 	displaySerial	-> setText (getSerial ());
 	running		= false;
 	show_tab (0);		// will set currentTab
-	*success	= true;
-	return;
-err:
-#ifdef __MINGW32__
-	FreeLibrary (Handle);
-#else
-	if (Handle != NULL)
-	   dlclose (Handle);
-#endif
-	Handle		= NULL;
-	libraryLoaded	= false;
-	*success	= false;
-	return;
 }
 
 	airspyHandler::~airspyHandler (void) {

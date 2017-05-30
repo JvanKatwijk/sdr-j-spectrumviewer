@@ -90,7 +90,7 @@ int	extioCallback (int cnt, int status, float IQoffs, void *IQData) {
 //	We assume that if there are settings possible, they
 //	are dealt with by the producer of the extio, so here 
 //	no frame whatsoever.
-	extioHandler::extioHandler (QSettings *s, bool *success) {
+	extioHandler::extioHandler (QSettings *s) {
 #ifdef	__MINGW32__
 char	temp [256];
 wchar_t	*windowsName;
@@ -102,7 +102,6 @@ int16_t	wchars_num;
 	myFrame 	-> show ();
 	theSelector	-> hide ();
 
-	*success	= false;
 	inputRate	= 192000;	// default
 	lastFrequency	= Khz (25000);
 	base_16		= s -> value ("base_16", 32767). toInt ();
@@ -127,7 +126,7 @@ int16_t	wchars_num;
 	if (dll_file == QString ("")) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("incorrect filename\n"));
-	   return;
+	   throw (2);
 	}
 
 #ifdef	__MINGW32__
@@ -147,13 +146,13 @@ int16_t	wchars_num;
 	if (Handle == NULL) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("loading dll failed\n"));
-	   return;
+	   throw (20);
 	}
 
 	if (!loadFunctions ()) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("loading functions failed\n"));
-	   return;
+	   throw (21);
 	}
 
 //	apparently, the library is open, so record that
@@ -166,7 +165,7 @@ int16_t	wchars_num;
 	if (!((*InitHW) (rigName, rigModel, hardwareType))) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("init failed\n"));
-	   exit (1);
+	   FREELIBRARY (Handle);
 	}
 	deviceName	-> setText (rigName);
 	theBuffer	= new RingBuffer<DSPCOMPLEX>(1024 * 1024);
@@ -179,7 +178,7 @@ int16_t	wchars_num;
 	   default:
 	      QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("device not supported\n"));
-	      return;
+	      throw (23);
 
 	   case exthwSCdata:
 	      theSelector -> show ();
@@ -187,7 +186,7 @@ int16_t	wchars_num;
 	      if (!((cardReader *)theReader) -> worksFine ()) {
 	         QMessageBox::warning (NULL, tr ("sdr"),
 	                                     tr ("cannot handle soundcard"));
-	         return;
+	         throw (24);
 	      }
 	      connect (theSelector, SIGNAL (activated (int)),
 	               this, SLOT (set_streamSelector (int)));
@@ -210,12 +209,12 @@ int16_t	wchars_num;
 	if (!(*OpenHW)()) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("Opening hardware failed\n"));
-	   exit (1);
+	   FREELIBRARY (Handle);
+	   throw (25);
 	}
 	ShowGUI ();
 	fprintf (stderr, "Hw open successful\n");
 	start ();
-	*success	= true;
 }
 
 	extioHandler::~extioHandler (void) {

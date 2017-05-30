@@ -81,9 +81,7 @@ RadioInterface	*MyRadioInterface;
 	fflush (stdout);
 	fflush (stderr);
 	qDebug ("It is done\n");
+	ISettings	-> sync ();
 	MyRadioInterface	-> ~RadioInterface ();
-	if (ISettings != NULL)
-	   ISettings 		-> ~QSettings ();
-	exit (1);
 }
 

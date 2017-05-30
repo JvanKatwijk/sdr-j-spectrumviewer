@@ -3,7 +3,11 @@ cmake_minimum_required( VERSION 2.8.11 )
 set (objectName sdr-j-spectrumviewer-1.1)
 add_definitions ( -Wall)
 #	modify if you want
-set (CMAKE_INSTALL_PREFIX ../)
+
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set (CMAKE_INSTALL_PREFIX "/usr/local/bin" CACHE PATH "default install path" FORCE )
+endif()
+#set (CMAKE_INSTALL_PREFIX /usr/local/bin)
 
 if(MINGW)
     add_definitions ( -municode)
@@ -25,13 +29,30 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 ##########################################################################
 #       R E A D  T H I S
 #####################################################################
-#	adjust to your likings
-#	if you want support for any of these devices, uncomment the line
-	set(SDRPLAY true)
-	set(AIRSPY true)
-	set(DABSTICK true)
-	set(ELAD_S1 true)
-	set(SOUNDCARD true)
+
+if(DEFINED AIRSPY)
+   set(AIRSPY true)
+endif ()
+
+if(DEFINED SDRPLAY)
+   set(SDRPLAY true)
+endif ()
+
+if(DEFINED DABSTICK)
+   set(DABSTICK true)
+endif ()
+
+if(DEFINED RTLTCP)
+   set(RTLTCP true)
+endif ()
+
+if(DEFINED ELAD_S1)
+   set(ELAD_S1 true)
+endif ()
+
+if(DEFINED SOUNDCARD)
+   set(SOUNDCARD true)
+endif()
 
 ########################################################################
 
@@ -40,8 +61,8 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 	find_package (Qt5Core REQUIRED)
 	find_package (Qt5Widgets REQUIRED)
 	find_package (Qt5Network REQUIRED)
-	find_package (Qt5Declarative REQUIRED)
-	find_package (Qt5 5.1.0 COMPONENTS Xml)
+#	find_package (Qt5Declarative REQUIRED)
+#	find_package (Qt5 5.1.0 COMPONENTS Xml)
 	include_directories (
 	      ${Qt5Network_INCLUDE_DIRS}
 	)
@@ -92,28 +113,28 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 	   	   ../
 	   ./includes
 	   ./src
-	   ./src/input
+	   ./devices
 	   /usr/include/
 	)
 
 	set ( ${objectName}_HDRS
 	      ${${objectName}_HDRS}
-	      ./includes/gui.h 
+	      ./viewer.h 
 	      ./includes/spectrum-constants.h 
               ./includes/fft.h 
               ./includes/ringbuffer.h 
 	      ./includes/spectrogramdata.h 
 	      ./includes/scope.h  
-	      ./src/input/virtual-input.h 
+	      ./devices/device-handler.h 
 	)
 
 	set ( ${objectName}_SRCS
 	      ${${objectName}_SRCS}
-	      ./src/main.cpp 
-              ./src/gui.cpp 
+	      ./main.cpp 
+              ./viewer.cpp 
 	      ./src/scope.cpp 
               ./src/fft.cpp 
-	      ./src/input/virtual-input.cpp 
+	      ./devices/device-handler.cpp 
 	)
 
 ##########################################################################
@@ -128,29 +149,29 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 	   include_directories (${SDRPLAYLIB_INCLUDE_DIR})
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./src/input/sdrplay/sdrplay-widget.ui 
+	        ./devices/sdrplay-handler/sdrplay-widget.ui 
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./src/input/sdrplay/sdrplay.h
-	        ./src/input/sdrplay/sdrplayselect.h
+	        ./devices/sdrplay-handler/sdrplay-handler.h
+	        ./devices/sdrplay-handler/sdrplayselect.h
 	   )
 
 	   include_directories (
-	        ./src/input/sdrplay
+	        ./devices/sdrplay-handler
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./src/input/sdrplay/sdrplay.h
-	        ./src/input/sdrplay/sdrplayselect.h
+	        ./devices/sdrplay-handler/sdrplay-handler.h
+	        ./devices/sdrplay-handler/sdrplayselect.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./src/input/sdrplay/sdrplay.cpp
-	        ./src/input/sdrplay/sdrplayselect.cpp
+	        ./devices/sdrplay-handler/sdrplay-handler.cpp
+	        ./devices/sdrplay-handler/sdrplayselect.cpp
 	   )
 
 	   add_definitions (-DHAVE_SDRPLAY)
@@ -173,26 +194,26 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./src/input/airspy/airspy-widget.ui 
+	        ./devices/airspy-handler/airspy-widget.ui 
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./src/input/airspy/airspy-handler.h
+	        ./devices/airspy-handler/airspy-handler.h
 	   )
 
 	   include_directories (
-	     ./src/input/airspy
+	     ./devices/airspy-handler
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./src/input/airspy/airspy-handler.h
+	        ./devices/airspy-handler/airspy-handler.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./src/input/airspy/airspy-handler.cpp
+	        ./devices/airspy-handler/airspy-handler.cpp
 	   )
 
 	   add_definitions (-DHAVE_AIRSPY)
@@ -215,62 +236,62 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./src/input/dabstick/dabstick-widget.ui
+	        ./devices/rtlsdr-handler/dabstick-widget.ui
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./src/input/dabstick/dongleselect.h
-	        ./src/input/dabstick/dabstick.h
+	        ./devices/rtlsdr-handler/dongleselect.h
+	        ./devices/rtlsdr-handler/rtlsdr-handler.h
 	   )
 
 	   include_directories (
-	        ./src/input/dabstick/
+	        ./devices/rtlsdr-handler/
 	   )
 
 	   set (${objectName}_HDRS
 	        ${${objectName}_HDRS}
-	        ./src/input/dabstick/dabstick.h 
-	        ./src/input/dabstick/dongleselect.h
+	        ./devices/rtlsdr-handler/rtlsdr-handler.h 
+	        ./devices/rtlsdr-handler/dongleselect.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./src/input/dabstick/dabstick.cpp
-	        ./src/input/dabstick/dongleselect.cpp
+	        ./devices/rtlsdr-handler/rtlsdr-handler.cpp
+	        ./devices/rtlsdr-handler/dongleselect.cpp
 	   )
 
-	   add_definitions (-DHAVE_DABSTICK)
+	   add_definitions (-DHAVE_RTLSDR)
 	endif()
 
 	if (ELAD_S1)
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./src/input/sw-elad-s1/elad-widget.ui
+	        ./devices/sw-elad-s1/elad-widget.ui
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./src/input/sw-elad-s1/elad-s1.h
-	        ./src/input/sw-elad-s1/elad-worker.h
+	        ./devices/sw-elad-s1/elad-s1.h
+	        ./devices/sw-elad-s1/elad-worker.h
 	   )
 
 	   include_directories (
-	        ./src/input/sw-elad-s1/
+	        ./devices/sw-elad-s1/
 	   )
 
 	   set (${objectName}_HDRS
 	        ${${objectName}_HDRS}
-	        ./src/input/sw-elad-s1/elad-s1.h
-	        ./src/input/sw-elad-s1/elad-loader.h
-	        ./src/input/sw-elad-s1/elad-worker.h
+	        ./devices/sw-elad-s1/elad-s1.h
+	        ./devices/sw-elad-s1/elad-loader.h
+	        ./devices/sw-elad-s1/elad-worker.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./src/input/sw-elad-s1/elad-s1.cpp
-	        ./src/input/sw-elad-s1/elad-loader.cpp
-	        ./src/input/sw-elad-s1/elad-worker.cpp
+	        ./devices/sw-elad-s1/elad-s1.cpp
+	        ./devices/sw-elad-s1/elad-loader.cpp
+	        ./devices/sw-elad-s1/elad-worker.cpp
 	   )
 
 	   add_definitions (-DHAVE_ELAD_S1)
@@ -291,29 +312,29 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 	   include_directories (${PORTAUDIO_INCLUDE_DIR})
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./src/input/soundcard/soundcard-widget.ui
+	        ./devices/soundcard/soundcard-widget.ui
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./src/input/soundcard/soundcard.h
-	        ./src/input/soundcard/pa-reader.h
+	        ./devices/soundcard/soundcard.h
+	        ./devices/soundcard/pa-reader.h
 	   )
 
 	   include_directories (
-	        ./src/input/soundcard/
+	        ./devices/soundcard/
 	   )
 
 	   set (${objectName}_HDRS
 	        ${${objectName}_HDRS}
-	        ./src/input/soundcard/soundcard.h
-	        ./src/input/soundcard/pa-reader.h
+	        ./devices/soundcard/soundcard.h
+	        ./devices/soundcard/pa-reader.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./src/input/soundcard/soundcard.cpp
-	        ./src/input/soundcard/pa-reader.cpp
+	        ./devices/soundcard/soundcard.cpp
+	        ./devices/soundcard/pa-reader.cpp
 	   )
 
 	   add_definitions (-DHAVE_SOUNDCARD)
@@ -326,9 +347,9 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 	set ( ${objectName}_MOCS
 	      ${${objectName}_MOCS}
-	      ./includes/gui.h
+	      ./viewer.h
 	      ./includes/scope.h
-	      ./src/input/virtual-input.h
+	      ./devices/device-handler.h
 	)
 
 	include_directories (${QWT_INCLUDE_DIRS}

@@ -1,10 +1,10 @@
 #
 /*
- *    Copyright (C) 2008, 2009, 2010
+ *    Copyright (C) 2014
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair programming
  *
- *    This file is part of the SDR-J (JSDR).
+ *    This file is part of the SDR-J.
  *    Many of the ideas as implemented in SDR-J are derived from
  *    other work, made available through the GNU general Public License. 
  *    All copyrights of the original authors are recognized.
@@ -22,44 +22,61 @@
  *    You should have received a copy of the GNU General Public License
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
-#ifndef __SOUNDCARD__
-#define	__SOUNDCARD__
 
-#include	<QWidget>
+#ifndef __ELAD_S1__
+#define	__ELAD_S1__
+
+#include	<QObject>
 #include	<QFrame>
-#include	<QSettings>
-#include	<QComboBox>
+#include	<QFileDialog>
 #include	"spectrum-constants.h"
-#include	"virtual-input.h"
-#include	"ui_soundcard-widget.h"
-/*
- */
-class	paReader;
+#include	"ringbuffer.h"
+#include	"ui_elad-widget.h"
+#include	"device-handler.h"
+#include	<libusb-1.0/libusb.h>
 
-class	soundcard: public virtualInput, public Ui_soundcardWidget {
+class	QSettings;
+class	eladWorker;
+class	eladLoader;
+typedef	DSPCOMPLEX(*makeSampleP)(uint8_t *);
+
+class	eladHandler: public deviceHandler, public Ui_eladWidget {
 Q_OBJECT
 public:
-		soundcard (QSettings *, bool *);
-		~soundcard		(void);
-	int32_t	getRate			(void);
+		eladHandler		(QSettings *, int32_t);
+		~eladHandler		(void);
+	void	setVFOFrequency		(int32_t);
+	int32_t	getVFOFrequency		(void);
 	bool	restartReader		(void);
 	void	stopReader		(void);
-	int32_t	Samples			(void);
+	int32_t	getSamples		(DSPCOMPLEX *, int32_t);
 	int32_t	getSamples		(DSPCOMPLEX *, int32_t, int32_t);
+	int32_t	Samples			(void);
+	int32_t	getRate			(void);
 	int16_t	bitDepth		(void);
-//	remaining functions from virtualInput not implemented here
+	bool	legalFrequency		(int32_t);
+private	slots:
+	void	setGainReduction	(void);
+	void	setOffset		(int);
+	void	setFilter		(void);
 private:
-	QFrame		*myFrame;
+	QSettings	*eladSettings;
 	int32_t		inputRate;
-	paReader	*myReader;
-	float		gainFactor;
-	uint8_t		runMode;
-private slots:
-	void		set_streamSelector	(int);
-	void		set_rateSelector	(const QString &);
-	void		set_gainSlider		(int);
+	int16_t		depth;
+	bool		deviceOK;
+	eladLoader	*theLoader;
+	eladWorker	*theWorker;
+	RingBuffer<uint8_t>	*_I_Buffer;
+	QFrame		*myFrame;
+	int32_t		vfoFrequency;
+	int32_t		vfoOffset;
+	int		gainReduced;
+	int		localFilter;
+	uint8_t		conversionNumber;
+	int16_t		iqSize;
+signals:
+	void		samplesAvailable	(int);
 };
 #endif
 

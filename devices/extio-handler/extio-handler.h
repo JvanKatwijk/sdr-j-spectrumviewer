@@ -24,8 +24,8 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef __EXTIO_HANDLER
-#define	__EXTIO_HANDLER
+#ifndef __EXTIO_HANDLER__
+#define	__EXTIO_HANDLER__
 #
 #include	<QThread>
 #include	<QFrame>
@@ -34,7 +34,7 @@
 #include	<QQueue>
 #include	<QWaitCondition>
 #include	<QMutex>
-#include	<virtual-input.h>
+#include	"device-handler.h"
 #include	"ringbuffer.h"
 #include	"ui_extio-widget.h"
 
@@ -176,10 +176,10 @@ typedef enum {
   , extHw_modeTX  = 1
 } extHw_ModeRxTxT;
 
-class	extioHandler:public virtualInput, public Ui_extioWidget {
+class	extioHandler:public deviceHandler, public Ui_extioWidget {
 Q_OBJECT
 public:
-			extioHandler		(QSettings *, bool *);
+			extioHandler		(QSettings *);
 			~extioHandler		(void);
 	void		setVFOFrequency		(int32_t);
 	int32_t		getVFOFrequency		(void);

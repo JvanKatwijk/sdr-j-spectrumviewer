@@ -25,15 +25,15 @@
  *
  */
 
-#ifndef __DABSTICK__
-#define	__DABSTICK__
+#ifndef __RTLSDR_HANDLER__
+#define	__RTLSDR_HANDLER__
 
 #include	<QObject>
 #include	<QSettings>
 #include	<QFrame>
 #include	"spectrum-constants.h"
 #include	"ringbuffer.h"
-#include	"virtual-input.h"
+#include	"device-handler.h"
 #include	"dongleselect.h"
 #include	"ui_dabstick-widget.h"
 
@@ -68,11 +68,11 @@ typedef	char *(* pfnrtlsdr_get_device_name)(int);
 //	This class is a simple wrapper around the
 //	rtlsdr library that is read is as dll
 //	It does not do any processing itself.
-class	dabStick: public virtualInput, public Ui_dabstickWidget {
+class	rtlsdrHandler: public deviceHandler, public Ui_dabstickWidget {
 Q_OBJECT
 public:
-			dabStick	(QSettings *, bool *);
-			~dabStick	(void);
+			rtlsdrHandler	(QSettings *);
+			~rtlsdrHandler	(void);
 	void		setVFOFrequency	(int32_t);
 	int32_t		getVFOFrequency	(void);
 	int32_t		defaultFrequency	(void);

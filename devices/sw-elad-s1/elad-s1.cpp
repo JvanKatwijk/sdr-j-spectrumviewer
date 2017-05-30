@@ -50,12 +50,10 @@ DSPCOMPLEX	makeSample_15bits (uint8_t *);
 //	Currently, we do not have lots of settings,
 //	it just might change suddenly, but not today
 		eladHandler::eladHandler (QSettings	*s,
-	                                  int32_t	theRate,
-	                                  bool		*success) {
+	                                  int32_t	theRate) {
 int16_t	theSuccess;
 	this	-> eladSettings	= s;
 	this	-> inputRate	= theRate;
-	*success		= false;
 	deviceOK		= false;
 	myFrame			= new QFrame;
 	setupUi (myFrame);
@@ -77,7 +75,7 @@ int16_t	theSuccess;
 //	loaded indirectly through the dll
 	if (libusb_init (NULL) < 0) {
 	   fprintf (stderr, "libusb problem\n");	// should not happen
-	   return;
+	   throw (2);
 	}
 	libusb_exit (NULL);
 	theLoader	= new eladLoader (inputRate, &theSuccess);
@@ -100,8 +98,7 @@ int16_t	theSuccess;
 	
 	   statusLabel -> setText ("not functioning");
 	   delete theLoader;
-	   theLoader	= NULL;
-	   return ;
+	   throw (21);
 	}
 //
 //	Note (10.10.2014: 
@@ -130,9 +127,7 @@ int16_t	theSuccess;
 	         this, SLOT (setGainReduction (void)));
 	connect (filter, SIGNAL (clicked (void)),
 	         this, SLOT (setFilter (void)));
-	*success	= true;
 }
-//
 
 	eladHandler::~eladHandler	(void) {
 	eladSettings	-> beginGroup ("eladSettings");

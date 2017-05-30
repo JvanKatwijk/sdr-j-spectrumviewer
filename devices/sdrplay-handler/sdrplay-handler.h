@@ -25,18 +25,17 @@
  *
  */
 
-#ifndef __SDRPLAY__
-#define	__SDRPLAY__
+#ifndef __SDRPLAY_HANDLER__
+#define	__SDRPLAY_HANDLER__
 
 #include	<QObject>
 #include	<QFrame>
 #include	<QSettings>
 #include	"spectrum-constants.h"
 #include	"ringbuffer.h"
-#include	"virtual-input.h"
+#include	"device-handler.h"
 #include	"ui_sdrplay-widget.h"
 #include	"mirsdrapi-rsp.h"
-#include	"sdrplay.h"	// our header
 
 typedef void (*mir_sdr_StreamCallback_t)(int16_t	*xi,
 	                                 int16_t	*xq,
@@ -91,12 +90,12 @@ typedef mir_sdr_ErrT (*pfn_mir_sdr_ReleaseDeviceIdx) (unsigned int);
 
 
 ///////////////////////////////////////////////////////////////////////////
-class	sdrplay: public virtualInput, public Ui_sdrplayWidget {
+class	sdrplayHandler: public deviceHandler, public Ui_sdrplayWidget {
 Q_OBJECT
 public:
-		sdrplay		(QSettings *, bool *);
-		~sdrplay	(void);
-	void	setVFOFrequency	(int32_t);
+		sdrplayHandler		(QSettings *);
+		~sdrplayHandler		(void);
+	void	setVFOFrequency		(int32_t);
 	int32_t	getVFOFrequency		(void);
 	bool	legalFrequency		(int32_t);
 	int32_t	defaultFrequency	(void);

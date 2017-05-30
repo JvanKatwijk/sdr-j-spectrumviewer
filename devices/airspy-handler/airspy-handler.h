@@ -14,15 +14,15 @@
  *	jan van Katwijk
  *	Lazy Chair Computing
  */
-#ifndef __AIRSPY_RADIO__
-#define	__AIRSPY_RADIO__
+#ifndef __AIRSPY_HANDLER__
+#define	__AIRSPY_HANDLER__
 
 #include	<QObject>
 #include	<QSettings>
 #include	<QFrame>
 #include	"spectrum-constants.h"
 #include	"ringbuffer.h"
-#include	"virtual-input.h"
+#include	"device-handler.h"
 #include	"ui_airspy-widget.h"
 #include	"airspy.h"
 
@@ -73,10 +73,10 @@ typedef int (*pfn_airspy_board_partid_serialno_read)(struct airspy_device* devic
 
 }
 
-class airspyHandler: public virtualInput, public Ui_airspyWidget {
+class airspyHandler: public deviceHandler, public Ui_airspyWidget {
 Q_OBJECT
 public:
-			airspyHandler	(QSettings *, bool *);
+			airspyHandler	(QSettings *);
 			~airspyHandler	(void);
 	void		setVFOFrequency (int32_t nf);
 	int32_t		getVFOFrequency (void);

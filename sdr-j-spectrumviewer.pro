@@ -19,11 +19,11 @@ QMAKE_LFLAGS    +=  -flto
 DEPENDPATH += . \
 	      ./src \
 	      ./includes \
-	      ./src/input
+	      ./devices
 
 INCLUDEPATH += . \
 	      ./includes \
-	      ./src/input
+	      ./devices
 
 # Input
 HEADERS += ./viewer.h \
@@ -32,7 +32,7 @@ HEADERS += ./viewer.h \
            ./includes/ringbuffer.h \
 	   ./includes/spectrogramdata.h \
 	   ./includes/scope.h  \
-	   ./src/input/virtual-input.h
+	   ./devices/device-handler.h
 
 FORMS += ./sdrgui.ui 
 
@@ -40,7 +40,7 @@ SOURCES += ./main.cpp \
            ./viewer.cpp \
            ./src/fft.cpp \
 	   ./src/scope.cpp \
-	   ./src/input/virtual-input.cpp 
+	   ./devices/device-handler.cpp 
 
 #for Fedora and Ubuntu use
 unix { 
@@ -54,7 +54,7 @@ CONFIG		+= airspy
 CONFIG		+= sdrplay
 CONFIG		+= elad-s1
 CONFIG		+= soundcard
-#CONFIG		+= extio
+CONFIG		+= extio
 }
 
 ## and for windows32 we use:
@@ -82,80 +82,80 @@ CONFIG		+= extio
 #
 #	the devices
 dabstick {
-	DEFINES		+= HAVE_DABSTICK
-	INCLUDEPATH	+= ./src/input/dabstick
-	HEADERS		+= ./src/input/dabstick/dabstick.h \
-	                   ./src/input/dabstick/dongleselect.h
-	SOURCES		+= ./src/input/dabstick/dabstick.cpp \
-	                   ./src/input/dabstick/dongleselect.cpp
-	FORMS		+= ./src/input/dabstick/dabstick-widget.ui
+	DEFINES		+= HAVE_RTLSDR
+	INCLUDEPATH	+= ./devices/rtlsdr-handler
+	HEADERS		+= ./devices/rtlsdr-handler/rtlsdr-handler.h \
+	                   ./devices/rtlsdr-handler/dongleselect.h
+	SOURCES		+= ./devices/rtlsdr-handler/rtlsdr-handler.cpp \
+	                   ./devices/rtlsdr-handler/dongleselect.cpp
+	FORMS		+= ./devices/rtlsdr-handler/dabstick-widget.ui
 }
 #
 #	the SDRplay
 #
 sdrplay {
 DEFINES		+= HAVE_SDRPLAY
-	INCLUDEPATH	+= ./src/input/sdrplay
-	HEADERS		+= ./src/input/sdrplay/sdrplay.h \
-	                   ./src/input/sdrplay/sdrplayselect.h
-	SOURCES		+= ./src/input/sdrplay/sdrplay.cpp \
-	                   ./src/input/sdrplay/sdrplayselect.cpp
-	FORMS		+= ./src/input/sdrplay/sdrplay-widget.ui
+	INCLUDEPATH	+= ./devices/sdrplay-handler
+	HEADERS		+= ./devices/sdrplay-handler/sdrplay-handler.h \
+	                   ./devices/sdrplay-handler/sdrplayselect.h
+	SOURCES		+= ./devices/sdrplay-handler/sdrplay-handler.cpp \
+	                   ./devices/sdrplay-handler/sdrplayselect.cpp
+	FORMS		+= ./devices/sdrplay-handler/sdrplay-widget.ui
 }
 #
 airspy {
 	DEFINES		+= HAVE_AIRSPY
-	INCLUDEPATH	+= ./src/input/airspy \
+	INCLUDEPATH	+= ./devices/airspy-handler \
 	                   /usr/local/include/libairspy
-	HEADERS		+= ./src/input/airspy/airspy-handler.h 
-	SOURCES		+= ./src/input/airspy/airspy-handler.cpp 
-	FORMS		+= ./src/input/airspy/airspy-widget.ui
+	HEADERS		+= ./devices/airspy-handler/airspy-handler.h 
+	SOURCES		+= ./devices/airspy-handler/airspy-handler.cpp 
+	FORMS		+= ./devices/airspy-handler/airspy-widget.ui
 }
 #
 #	extio dependencies, windows only
 #
 extio {
 	DEFINES		+= HAVE_EXTIO
-	INCLUDEPATH	+= ./src/input/extio-handler
-	HEADERS		+= ./src/input/extio-handler/extio-handler.h \
-	                   ./src/input/extio-handler/common-readers.h \
-	                   ./src/input/extio-handler/virtual-reader.h \
-	                   ./src/input/extio-handler/card-reader.h
-	SOURCES		+= ./src/input/extio-handler/extio-handler.cpp \
-	                   ./src/input/extio-handler/common-readers.cpp \
-	                   ./src/input/extio-handler/virtual-reader.cpp \
-	                   ./src/input/extio-handler/card-reader.cpp
-	FORMS		+= ./src/input/extio-handler/extio-widget.ui
+	INCLUDEPATH	+= ./devices/extio-handler
+	HEADERS		+= ./devices/extio-handler/extio-handler.h \
+	                   ./devices/extio-handler/common-readers.h \
+	                   ./devices/extio-handler/virtual-reader.h \
+	                   ./devices/extio-handler/card-reader.h
+	SOURCES		+= ./devices/extio-handler/extio-handler.cpp \
+	                   ./devices/extio-handler/common-readers.cpp \
+	                   ./devices/extio-handler/virtual-reader.cpp \
+	                   ./devices/extio-handler/card-reader.cpp
+	FORMS		+= ./devices/extio-handler/extio-widget.ui
 }
 
 rtl_tcp {
 	DEFINES		+= HAVE_RTL_TCP
 	QT		+= network
-	INCLUDEPATH	+= ./src/input/rtl_tcp
-	HEADERS		+= ./src/input/rtl_tcp/rtl_tcp_client.h
-	SOURCES		+= ./src/input/rtl_tcp/rtl_tcp_client.cpp
-	FORMS		+= ./src/input/rtl_tcp/rtl_tcp-widget.ui
+	INCLUDEPATH	+= ./devices/rtl_tcp
+	HEADERS		+= ./devices/rtl_tcp/rtl_tcp_client.h
+	SOURCES		+= ./devices/rtl_tcp/rtl_tcp_client.cpp
+	FORMS		+= ./devices/rtl_tcp/rtl_tcp-widget.ui
 }
 
 elad-s1 {
 	DEFINES		+= HAVE_ELAD_S1
-	INCLUDEPATH	+= ./src/input/sw-elad-s1
-	HEADERS		+= ./src/input/sw-elad-s1/elad-s1.h \
-	                   ./src/input/sw-elad-s1/elad-worker.h \
-	                   ./src/input/sw-elad-s1/elad-loader.h
-	SOURCES		+= ./src/input/sw-elad-s1/elad-s1.cpp \
-	                   ./src/input/sw-elad-s1/elad-worker.cpp \
-	                   ./src/input/sw-elad-s1/elad-loader.cpp
-	FORMS		+= ./src/input/sw-elad-s1/elad-widget.ui
+	INCLUDEPATH	+= ./devices/sw-elad-s1
+	HEADERS		+= ./devices/sw-elad-s1/elad-s1.h \
+	                   ./devices/sw-elad-s1/elad-worker.h \
+	                   ./devices/sw-elad-s1/elad-loader.h
+	SOURCES		+= ./devices/sw-elad-s1/elad-s1.cpp \
+	                   ./devices/sw-elad-s1/elad-worker.cpp \
+	                   ./devices/sw-elad-s1/elad-loader.cpp
+	FORMS		+= ./devices/sw-elad-s1/elad-widget.ui
 }
 
 soundcard {
 	DEFINES		+= HAVE_SOUNDCARD
-	INCLUDEPATH	+= ./src/input/soundcard
-	HEADERS		+= ./src/input/soundcard/pa-reader.h \
-	                   ./src/input/soundcard/soundcard.h
-	SOURCES		+= ./src/input/soundcard/pa-reader.cpp \
-	                   ./src/input/soundcard/soundcard.cpp
-	FORMS		+= ./src/input/soundcard/soundcard-widget.ui
+	INCLUDEPATH	+= ./devices/soundcard
+	HEADERS		+= ./devices/soundcard/pa-reader.h \
+	                   ./devices/soundcard/soundcard.h
+	SOURCES		+= ./devices/soundcard/pa-reader.cpp \
+	                   ./devices/soundcard/soundcard.cpp
+	FORMS		+= ./devices/soundcard/soundcard-widget.ui
 	LIBS		+= -lportaudio
 }

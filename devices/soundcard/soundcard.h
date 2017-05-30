@@ -1,10 +1,10 @@
 #
 /*
- *    Copyright (C) 2010, 2011, 2012
+ *    Copyright (C) 2008, 2009, 2010
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair Programming
  *
- *    This file is part of the SDR-J.
+ *    This file is part of the SDR-J (JSDR).
  *    Many of the ideas as implemented in SDR-J are derived from
  *    other work, made available through the GNU general Public License. 
  *    All copyrights of the original authors are recognized.
@@ -23,42 +23,43 @@
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *	We have to create a simple virtual class here, since we
- *	want the interface with different devices (including  filehandling)
- *	to be transparent
  */
-#ifndef	__VIRTUAL_INPUT
-#define	__VIRTUAL_INPUT
+#ifndef __SOUNDCARD__
+#define	__SOUNDCARD__
 
-#include	<stdint.h>
+#include	<QWidget>
+#include	<QFrame>
+#include	<QSettings>
+#include	<QComboBox>
 #include	"spectrum-constants.h"
-#include	<QThread>
-#include	<QDialog>
+#include	"device-handler.h"
+#include	"ui_soundcard-widget.h"
+/*
+ */
+class	paReader;
 
-
-class	virtualInput: public QThread {
+class	soundcard: public deviceHandler, public Ui_soundcardWidget {
 Q_OBJECT
 public:
-			virtualInput 	(void);
-virtual			~virtualInput 	(void);
-virtual		int32_t	getRate		(void);
-virtual		void	setVFOFrequency	(int32_t);
-virtual		int32_t	getVFOFrequency	(void);
-virtual		bool	legalFrequency	(int32_t);
-virtual		int32_t	defaultFrequency (void);
-virtual		bool	restartReader	(void);
-virtual		void	stopReader	(void);
-virtual		int32_t	getSamples	(DSPCOMPLEX *, int32_t);
-virtual		int32_t	getSamples	(DSPCOMPLEX *, int32_t, int32_t);
-virtual		int32_t	Samples		(void);
-virtual		int16_t	bitDepth	(void);
-	        int32_t	vfoOffset;
-//
-protected:
-		int32_t	lastFrequency;
-virtual		void	run		(void);
-signals:
-		void	set_changeRate	(int);
+		soundcard (QSettings *);
+		~soundcard		(void);
+	int32_t	getRate			(void);
+	bool	restartReader		(void);
+	void	stopReader		(void);
+	int32_t	Samples			(void);
+	int32_t	getSamples		(DSPCOMPLEX *, int32_t, int32_t);
+	int16_t	bitDepth		(void);
+//	remaining functions from virtualInput not implemented here
+private:
+	QFrame		*myFrame;
+	int32_t		inputRate;
+	paReader	*myReader;
+	float		gainFactor;
+	uint8_t		runMode;
+private slots:
+	void		set_streamSelector	(int);
+	void		set_rateSelector	(const QString &);
+	void		set_gainSlider		(int);
 };
 #endif
 

@@ -47,7 +47,7 @@
 
 class	QSettings;
 class	Scope;
-class	virtualInput;
+class	deviceHandler;
 /*
  *	The main gui object. It inherits from
  *	QDialog and the generated form
@@ -78,13 +78,13 @@ private:
 	double		*displayBuffer;
 	double		*freezeBuffer;
 	int32_t		totalAmount;
-	virtualInput	*theDevice;
+	deviceHandler	*theDevice;
 	int64_t		currentFrequency;
 	int16_t		scanDelayTime;
-	void		ClearPanel		();
+	void		ClearPanel		(void);
 	void		AddtoPanel		(int16_t);
-	int		getPanel		();
-	void		CorrectPanel		();
+	int		getPanel		(void);
+	void		CorrectPanel		(void);
 
 	void		setTuner		(int32_t);
 	void		setnextFrequency	(int32_t);

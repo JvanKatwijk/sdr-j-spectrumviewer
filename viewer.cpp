@@ -29,9 +29,9 @@
 #include	<QFileDialog>
 #include	<QDebug>
 #include	<QDateTime>
-#include	"virtual-input.h"
+#include	"device-handler.h"
 #ifdef	HAVE_SDRPLAY
-#include	"sdrplay.h"
+#include	"sdrplay-handler.h"
 #endif
 #ifdef	HAVE_AIRSPY
 #include	"airspy-handler.h"
@@ -83,7 +83,7 @@ int k;
 	   displayRate = 10;
 	this -> spectrumFactor	= 4;
 	currentFrequency = MHz (100);		// default
-	theDevice	= new virtualInput ();
+	theDevice	= new deviceHandler ();
 	if ((displaySize & (displaySize - 1)) != 0)
 	   displaySize = 2048;
 	spectrumSize	= spectrumFactor * displaySize;
@@ -273,7 +273,7 @@ bool	success	= false;
 	lcd_inputRate	-> display (0);
 
 	if (s == "no device")  {
-	   theDevice	= new virtualInput ();
+	   theDevice	= new deviceHandler ();
 	   inputRate	= MHz (100);
 	   return;
 	}
@@ -281,12 +281,13 @@ bool	success	= false;
 
 #ifdef	HAVE_SDRPLAY
 	if (s == "sdrplay") {
-	   theDevice	= new sdrplay (spectrumSettings, &success);
-	   if (!success) {
+
+	   try {
+	      theDevice	= new sdrplayHandler (spectrumSettings);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening SDRplay failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 //	basically, ready to run
@@ -295,12 +296,12 @@ bool	success	= false;
 #endif
 #ifdef	HAVE_DABSTICK
 	if (s == "dabstick") {
-	   theDevice	= new dabStick (spectrumSettings, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new rtlsdrHandler (spectrumSettings);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening dabstick failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 //	basically, ready to run
@@ -309,12 +310,12 @@ bool	success	= false;
 #endif
 #ifdef	HAVE_AIRSPY
 	if (s == "airspy") {
-	   theDevice	= new airspyHandler (spectrumSettings, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new airspyHandler (spectrumSettings);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening airspy failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();;
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
@@ -322,12 +323,12 @@ bool	success	= false;
 #endif
 #ifdef	HAVE_EXTIO
 	if (s == "extio") {
-	   theDevice	= new extioHandler (spectrumSettings, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new extioHandler (spectrumSettings);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening extio failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();;
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
@@ -335,87 +336,88 @@ bool	success	= false;
 #endif
 #ifdef	HAVE_ELAD_S1
 	if (s == "elad-192000") {
-	   theDevice	= new eladHandler (spectrumSettings, 192000, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new eladHandler (spectrumSettings, 192000);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening elad 192000 failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
 	else
 	if (s == "elad-384000") {
-	   theDevice	= new eladHandler (spectrumSettings, 384000, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new eladHandler (spectrumSettings, 384000);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening elad 384000 failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
 	else
 	if (s == "elad-768000") {
-	   theDevice	= new eladHandler (spectrumSettings, 768000, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new eladHandler (spectrumSettings, 768000);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening elad 768000 failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
 	else
 	if (s == "elad-1536000") {
-	   theDevice	= new eladHandler (spectrumSettings, 1536000, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new eladHandler (spectrumSettings, 1536000);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening elad 1536000 failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
 	else
 	if (s == "elad-3072000") {
-	   theDevice	= new eladHandler (spectrumSettings, 3072000, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new eladHandler (spectrumSettings, 3072000);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening elad 3072000 failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
 	else
 	if (s == "elad-6144000") {
-	   theDevice	= new eladHandler (spectrumSettings, 6144000, &success);
-	   if (!success) {
+	   try {
+	      theDevice	= new eladHandler (spectrumSettings, 6144000);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening elad 6144000 failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
         }
 	else	
 #endif
 #ifdef	HAVE_SOUNDCARD
-	if (s == "soundcard") {
-	   theDevice	= new soundcard (spectrumSettings, &success);
-	   if (!success) {
+	if (s == "soundcard") { 
+	   try {
+	      theDevice	= new soundcard (spectrumSettings);
+	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening soundcard failed\n"));
-	      delete theDevice;
-	      theDevice = new virtualInput ();
+	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
 	}
 	else
 #endif
-	   theDevice	= new virtualInput ();
+	   theDevice	= new deviceHandler ();
 
+	theDevice	-> setVFOFrequency (theDevice -> defaultFrequency ());
 	connect (theDevice, SIGNAL (set_changeRate (int)),
 	         this, SLOT (set_changeRate (int)));
 	inputRate	= theDevice -> getRate ();
