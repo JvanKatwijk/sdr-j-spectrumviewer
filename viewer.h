@@ -24,8 +24,8 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __SPECTRUM_VIEWER
-#define __SPECTRUM_VIEWER
+#ifndef __SPECTRUM_VIEWER__
+#define __SPECTRUM_VIEWER__
 
 #include	"spectrum-constants.h"
 #include	<QDialog>
@@ -86,10 +86,10 @@ private:
 	int		getPanel		(void);
 	void		CorrectPanel		(void);
 
-	void		setTuner		(int32_t);
-	void		setnextFrequency	(int32_t);
-	void		Display			(int32_t);
-	void		Display			(int32_t, bool);
+	void		setTuner		(uint64_t);
+	void		setnextFrequency	(uint64_t);
+	void		Display			(uint64_t);
+	void		Display			(uint64_t, bool);
 	QTimer		*lcd_timer;
 	QTimer		*scanTimer;
 	QTimer		*displayTimer;

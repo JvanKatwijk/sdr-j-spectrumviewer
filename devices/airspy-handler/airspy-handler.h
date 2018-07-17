@@ -78,10 +78,10 @@ Q_OBJECT
 public:
 			airspyHandler	(QSettings *);
 			~airspyHandler	(void);
-	void		setVFOFrequency (int32_t nf);
-	int32_t		getVFOFrequency (void);
-	bool		legalFrequency	(int32_t f);
-	int32_t		defaultFrequency (void);
+	void		setVFOFrequency (uint64_t nf);
+	uint64_t	getVFOFrequency (void);
+	bool		legalFrequency	(uint64_t f);
+	uint64_t	defaultFrequency (void);
 	bool		restartReader	(void);
 	void		stopReader 	(void);
 	int16_t		bitDepth 	(void);

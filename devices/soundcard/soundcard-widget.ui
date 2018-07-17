@@ -88,6 +88,16 @@
       <string>192000</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>24000</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>8000</string>
+     </property>
+    </item>
    </widget>
    <widget class="QSlider" name="gainSlider">
     <property name="geometry">

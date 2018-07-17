@@ -227,19 +227,19 @@ int16_t	i;
 	open = false;
 }
 
-void	rtlsdrHandler::setVFOFrequency	(int32_t f) {
-	(void)(this -> rtlsdr_set_center_freq (device, f + vfoOffset));
+void	rtlsdrHandler::setVFOFrequency	(uint64_t f) {
+	(void)(this -> rtlsdr_set_center_freq (device, (uint32_t)f + vfoOffset));
 }
 
-int32_t	rtlsdrHandler::getVFOFrequency	(void) {
-	return (int32_t)(this -> rtlsdr_get_center_freq (device)) - vfoOffset;
+uint64_t rtlsdrHandler::getVFOFrequency	(void) {
+	return (uint64_t)(this -> rtlsdr_get_center_freq (device)) - vfoOffset;
 }
 
-bool	rtlsdrHandler::legalFrequency (int32_t f) {
-	return  Mhz (2) <= f && f <= Mhz (1800);
+bool	rtlsdrHandler::legalFrequency (uint64_t f) {
+	return  Mhz (1) <= f && f <= Mhz (1800);
 }
 
-int32_t	rtlsdrHandler::defaultFrequency	(void) {
+uint64_t rtlsdrHandler::defaultFrequency	(void) {
 	return Khz (94700);
 }
 //

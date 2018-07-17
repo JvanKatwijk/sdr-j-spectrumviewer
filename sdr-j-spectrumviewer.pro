@@ -49,12 +49,12 @@ INCLUDEPATH	+= /usr/include/qt5/qwt
 INCLUDEPATH	+= /usr/local/include
 #LIBS		+= -lqwt -lusb-1.0 -lrt -lfftw3f -ldl		# ubuntu 15.04
 LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 25
-CONFIG		+= dabstick
-CONFIG		+= airspy
+#CONFIG		+= dabstick
+#CONFIG		+= airspy
 CONFIG		+= sdrplay
-CONFIG		+= elad-s1
-CONFIG		+= soundcard
-CONFIG		+= extio
+#CONFIG		+= elad-s1
+#CONFIG		+= soundcard
+CONFIG		+= hackrf
 }
 
 ## and for windows32 we use:
@@ -74,10 +74,11 @@ LIBS 		+= -lstdc++
 LIBS		+= -lusb-1.0
 LIBS		+= -lpthread
 CONFIG		+= dabstick
-CONFIG		+= airspy
+#CONFIG		+= airspy
 CONFIG		+= sdrplay
-CONFIG		+= soundcard;
-CONFIG		+= extio
+#CONFIG		+= soundcard
+CONFIG		+= hackrf
+#CONFIG		+= extio
 }
 #
 #	the devices
@@ -159,3 +160,16 @@ soundcard {
 	FORMS		+= ./devices/soundcard/soundcard-widget.ui
 	LIBS		+= -lportaudio
 }
+
+#
+#       the HACKRF One
+#
+hackrf {
+        DEFINES         += HAVE_HACKRF
+        DEPENDPATH      += ./devices/hackrf-handler
+        INCLUDEPATH     += ./devices/hackrf-handler
+        HEADERS         += ./devices/hackrf-handler/hackrf-handler.h
+        SOURCES         += ./devices/hackrf-handler/hackrf-handler.cpp
+        FORMS           += ./devices/hackrf-handler/hackrf-widget.ui
+}
+

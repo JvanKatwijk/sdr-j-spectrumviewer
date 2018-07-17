@@ -102,7 +102,7 @@ void	Scope::SelectView (uint8_t n) {
 void	Scope::Display (double	*x_axis,
 	                double	*buffer,
 	                double	amp,
-	                int32_t	marker) {
+	                uint64_t	marker) {
 	if (CurrentWidget == WATERFALL_MODE)
 	   Waterfall	-> ViewWaterfall (x_axis,
 	                                  buffer,
@@ -210,7 +210,7 @@ void	SpectrumViewer::rightMouseClick (const QPointF &point) {
 void	SpectrumViewer::ViewSpectrum (double *X_axis,
 		                      double *Y1_value,
 	                              double amp,
-	                              int32_t marker) {
+	                              uint64_t marker) {
 uint16_t	i;
 
 	amp		= amp / 100 * (-get_db (0));
@@ -330,7 +330,7 @@ void	WaterfallViewer::leftMouseClick (const QPointF &point) {
 void	WaterfallViewer::ViewWaterfall (double *X_axis,
 	                                double *Y1_value,
 	                                double amp,
-	                                int32_t marker) {
+	                                uint64_t marker) {
 int	orig	= (int)(X_axis [0]);
 int	width	= (int)(X_axis [Displaysize - 1] - orig);
 SpectrogramData	*oldData;

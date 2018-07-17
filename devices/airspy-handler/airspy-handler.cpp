@@ -213,8 +213,8 @@ err:
 	   delete theBuffer;
 }
 
-void	airspyHandler::setVFOFrequency (int32_t nf) {
-int result = my_airspy_set_freq (device, lastFrequency = nf);
+void	airspyHandler::setVFOFrequency (uint64_t nf) {
+int result = my_airspy_set_freq (device, lastFrequency = (uint32_t)nf);
 
 	if (result != AIRSPY_SUCCESS) {
 	   printf ("my_airspy_set_freq() failed: %s (%d)\n",
@@ -222,15 +222,15 @@ int result = my_airspy_set_freq (device, lastFrequency = nf);
 	}
 }
 
-int32_t	airspyHandler::getVFOFrequency (void) {
-	return lastFrequency;
+uint64_t airspyHandler::getVFOFrequency (void) {
+	return  (uint64_t)lastFrequency;
 }
 
-bool	airspyHandler::legalFrequency (int32_t f) {
+bool	airspyHandler::legalFrequency (uint64_t f) {
 	return Khz (24000) <= f && f <= Khz (1750000);
 }
 
-int32_t	airspyHandler::defaultFrequency (void) {
+int64_t	airspyHandler::defaultFrequency (void) {
 	return Khz (94700);
 }
 

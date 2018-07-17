@@ -5,9 +5,6 @@
  *    Lazy Chair Programming
  *
  *    This file is part of the SDR-J.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
  *
  *    SDR-J is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -42,10 +39,10 @@ public:
 			deviceHandler 	(void);
 virtual			~deviceHandler 	(void);
 virtual		int32_t	getRate		(void);
-virtual		void	setVFOFrequency	(int32_t);
-virtual		int32_t	getVFOFrequency	(void);
-virtual		bool	legalFrequency	(int32_t);
-virtual		int32_t	defaultFrequency (void);
+virtual		void	setVFOFrequency	(uint64_t);
+virtual		uint64_t	getVFOFrequency	(void);
+virtual		bool	legalFrequency	(uint64_t);
+virtual		uint64_t	defaultFrequency (void);
 virtual		bool	restartReader	(void);
 virtual		void	stopReader	(void);
 virtual		int32_t	getSamples	(DSPCOMPLEX *, int32_t);
@@ -55,7 +52,7 @@ virtual		int16_t	bitDepth	(void);
 	        int32_t	vfoOffset;
 //
 protected:
-		int32_t	lastFrequency;
+		uint64_t	lastFrequency;
 virtual		void	run		(void);
 signals:
 		void	set_changeRate	(int);

@@ -5,9 +5,6 @@
  *    Lazy Chair Programming
  *
  *    This file is part of the SDR-J.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
  *
  *    SDR-J is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -200,7 +197,7 @@ ULONG APIkeyValue_length = 255;
 }
 //
 static inline
-int16_t	bankFor_sdr (int32_t freq) {
+int16_t	bankFor_sdr (uint64_t freq) {
 	if (freq < 12 * MHz (1))
 	   return 1;
 	if (freq < 30 * MHz (1))
@@ -221,7 +218,7 @@ int16_t	bankFor_sdr (int32_t freq) {
 }
 
 static inline
-mir_sdr_Bw_MHzT bandwidth_for (int32_t rate) {
+mir_sdr_Bw_MHzT bandwidth_for (uint64_t rate) {
 
 	if (rate < Khz (300))
 	   return mir_sdr_BW_0_200;
@@ -241,17 +238,17 @@ mir_sdr_Bw_MHzT bandwidth_for (int32_t rate) {
 	   return mir_sdr_BW_8_000;
 }
 
-bool	sdrplayHandler::legalFrequency (int32_t f) {
+bool	sdrplayHandler::legalFrequency (uint64_t f) {
 	return (bankFor_sdr (f) != -1);
 }
 
-int32_t	sdrplayHandler::defaultFrequency	(void) {
+uint64_t	sdrplayHandler::defaultFrequency	(void) {
 	return Khz (94700);
 }
 
-void	sdrplayHandler::setVFOFrequency	(int32_t newFrequency) {
+void	sdrplayHandler::setVFOFrequency	(uint64_t newFrequency) {
 mir_sdr_ErrT	err;
-int32_t	realFreq = newFrequency + vfoOffset;
+uint64_t realFreq = newFrequency + vfoOffset;
 int	gRdBSystem;
 int	samplesPerPacket;
 int32_t	localGred	= currentGred;
@@ -287,7 +284,7 @@ int32_t	localGred	= currentGred;
 	   vfoFrequency = realFreq;
 }
 
-int32_t	sdrplayHandler::getVFOFrequency	(void) {
+uint64_t	sdrplayHandler::getVFOFrequency	(void) {
 	return vfoFrequency - vfoOffset;
 }
 
@@ -336,10 +333,14 @@ void myStreamCallback (int16_t		*xi,
 	               int32_t		fsChanged,
 	               uint32_t		numSamples,
 	               uint32_t		reset,
+	               uint32_t		hwRemoved,
 	               void		*cbContext) {
 int16_t	i;
 sdrplayHandler	*p	= static_cast<sdrplayHandler *> (cbContext);
 DSPCOMPLEX localBuf [numSamples];
+
+	if (reset || hwRemoved)
+	   return;
 
 	for (i = 0; i <  (int)numSamples; i ++)
 	   localBuf [i] = DSPCOMPLEX (float (xi [i]) / 2048.0,

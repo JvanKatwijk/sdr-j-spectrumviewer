@@ -24,8 +24,8 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef	__SCOPES
-#define	__SCOPES
+#ifndef	__SCOPES__
+#define	__SCOPES__
 
 #include	"spectrum-constants.h"
 #include	<QObject>
@@ -64,7 +64,7 @@ Q_OBJECT
 public:
 	Scope (QwtPlot *, uint16_t, uint16_t);
 	~Scope (void);
-void	Display 	(double *, double *, double, int32_t);
+void	Display 	(double *, double *, double, uint64_t);
 void	SelectView	(uint8_t);
 void	setBitDepth	(int16_t);
 private:
@@ -95,7 +95,7 @@ public:
 void	ViewWaterfall 		(double *,
 	                         double *,
 	                         double,
-	                         int32_t);
+	                         uint64_t);
 private:
 	SpectrogramData	*WaterfallData;
 	QwtPlot		*plotgrid;
@@ -103,7 +103,7 @@ private:
 	uint16_t	Rastersize;
 	double		*plotData;
 	QwtPlotMarker	*Marker;
-	uint32_t	IndexforMarker;
+	uint64_t	IndexforMarker;
 	QwtPlotPicker	*lm_picker;
 	uint8_t		OneofTwo;
 	QwtLinearColorMap	*colorMap;
@@ -121,7 +121,7 @@ Q_OBJECT
 public:
 	SpectrumViewer 	(QwtPlot *, uint16_t);
 	~SpectrumViewer	(void);
-void	ViewSpectrum	(double *, double *, double, int32_t);
+void	ViewSpectrum	(double *, double *, double, uint64_t);
 void	setBitDepth	(int16_t);
 private:
 	QwtPlot		*plotgrid;
@@ -129,7 +129,7 @@ private:
 	QwtPlotGrid	*grid;
 	QwtPlotCurve	*SpectrumCurve;
 	QwtPlotMarker	*Marker;
-	uint32_t	IndexforMarker;
+	uint64_t	IndexforMarker;
 	QwtPlotPicker	*lm_picker;
 	QwtPlotPicker	*rm_picker;
 	QBrush		*ourBrush;

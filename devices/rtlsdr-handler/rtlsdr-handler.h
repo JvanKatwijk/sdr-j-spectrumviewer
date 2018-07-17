@@ -73,10 +73,10 @@ Q_OBJECT
 public:
 			rtlsdrHandler	(QSettings *);
 			~rtlsdrHandler	(void);
-	void		setVFOFrequency	(int32_t);
-	int32_t		getVFOFrequency	(void);
-	int32_t		defaultFrequency	(void);
-	bool		legalFrequency	(int32_t);
+	void		setVFOFrequency	(uint64_t);
+	uint64_t	getVFOFrequency	(void);
+	uint64_t	defaultFrequency	(void);
+	bool		legalFrequency	(uint64_t);
 //	interface to the reader
 	bool		restartReader	(void);
 	void		stopReader	(void);

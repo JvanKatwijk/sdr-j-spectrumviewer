@@ -5,9 +5,6 @@
  *    Lazy Chair programming
  *
  *    This file is part of the SDR-J.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
  *
  *    SDR-J is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -45,6 +42,7 @@ typedef void (*mir_sdr_StreamCallback_t)(int16_t	*xi,
 	                                 int32_t	fsChanged,
 	                                 uint32_t	numSamples,
 	                                 uint32_t	reset,
+	                                 uint32_t	hwRemoved,
 	                                 void		*cbContext);
 typedef	void	(*mir_sdr_GainChangeCallback_t)(uint32_t	gRdB,
 	                                        uint32_t	lnaGRdB,
@@ -95,10 +93,10 @@ Q_OBJECT
 public:
 		sdrplayHandler		(QSettings *);
 		~sdrplayHandler		(void);
-	void	setVFOFrequency		(int32_t);
-	int32_t	getVFOFrequency		(void);
-	bool	legalFrequency		(int32_t);
-	int32_t	defaultFrequency	(void);
+	void	setVFOFrequency		(uint64_t);
+	uint64_t	getVFOFrequency		(void);
+	bool	legalFrequency		(uint64_t);
+	uint64_t	defaultFrequency	(void);
 
 	bool	restartReader		(void);
 	void	stopReader		(void);

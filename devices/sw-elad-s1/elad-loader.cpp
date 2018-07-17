@@ -46,9 +46,10 @@ int	rc;
 	hwHandle	= dlopen (hwLibname, RTLD_NOW);
 	if (hwHandle == NULL) {
 	   fprintf (stderr, "error report %s\n", dlerror ());
-	   libusb_close (dev_handle);
+//	   libusb_close (dev_handle);
 	   return;
 	}
+
 //	load the init function
 	Init	= (FDMS1_HW_INIT) dlsym(hwHandle, (const char *)"fdms1_hw_init");
 	if (Init == NULL) {

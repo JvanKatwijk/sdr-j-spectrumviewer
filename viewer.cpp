@@ -48,6 +48,9 @@
 #ifdef	HAVE_SOUNDCARD
 #include	"soundcard.h"
 #endif
+#ifdef	HAVE_HACKRF
+#include	"hackrf-handler.h"
+#endif
 #include	"scope.h"
 #ifdef __MINGW32__
 #include	<iostream>
@@ -120,6 +123,9 @@ int k;
 #endif
 #ifdef	HAVE_AIRSPY
 	deviceSelector	-> addItem ("airspy");
+#endif
+#ifdef	HAVE_HACKRF
+	deviceSelector	-> addItem ("hackrf");
 #endif
 #ifdef	HAVE_EXTIO
 	deviceSelector	-> addItem ("extio");
@@ -315,6 +321,19 @@ bool	success	= false;
 	   } catch (int e) {
 	      QMessageBox::warning (this, tr ("sdr"),
 	                                  tr ("Opening airspy failed\n"));
+	      theDevice = new deviceHandler ();
+	   }
+	   inputRate	= theDevice -> getRate ();
+	}
+	else
+#endif
+#ifdef	HAVE_HACKRF
+	if (s == "hackrf") {
+	   try {
+	      theDevice	= new hackrfHandler (spectrumSettings);
+	   } catch (int e) {
+	      QMessageBox::warning (this, tr ("sdr"),
+	                                  tr ("Opening hackrf failed\n"));
 	      theDevice = new deviceHandler ();
 	   }
 	   inputRate	= theDevice -> getRate ();
@@ -535,7 +554,7 @@ void RadioInterface::addClear (void) {
 //
 //
 void RadioInterface::AcceptFreqinKhz (void) {
-int32_t	p;
+uint64_t	p;
 
 	if (!lcd_timer -> isActive ())
 	   return;
@@ -601,11 +620,11 @@ void	RadioInterface::adjustFrequency (int n) {
 
 //	SetTuner accepts freq in Hz.
 //
-void	RadioInterface::setTuner (int32_t n) {
+void	RadioInterface::setTuner (uint64_t n) {
 int32_t	i;
-	if (!theDevice -> legalFrequency (n - inputRate / 2) ||
-	    !theDevice -> legalFrequency (n + inputRate / 2))
-	   return;
+//	if (!theDevice -> legalFrequency (n - inputRate / 2) ||
+//	    !theDevice -> legalFrequency (n + inputRate / 2))
+//	   return;
 	scanTimer	-> stop ();
 	theDevice	-> setVFOFrequency (n);
 	currentFrequency = theDevice -> getVFOFrequency ();
@@ -621,7 +640,7 @@ int32_t	i;
 }
 //	setnextFrequency () is almost identical to setTuner
 //
-void	RadioInterface::setnextFrequency (int32_t n) {
+void	RadioInterface::setnextFrequency (uint64_t n) {
 int32_t	i;
 
 	if (!theDevice -> legalFrequency (n - inputRate / 2) ||
@@ -655,7 +674,7 @@ QDateTime	currentTime = QDateTime::currentDateTime ();
 
 void	RadioInterface::lcd_timeout (void) {
 	Panel		= 0;			// throw away anything
-	Display (currentFrequency);
+	Display (currentFrequency / KHz (1));
 }
 
 void	RadioInterface::clickPause (void) {
@@ -771,7 +790,7 @@ int32_t	i;
 //	For displaying values, we use different scales, depending
 //	on the size of the value
 static inline
-int32_t numberofDigits (int32_t f) {
+int32_t numberofDigits (uint64_t f) {
 
 	if (f < 100000)
 	   return 6;
@@ -783,14 +802,14 @@ int32_t numberofDigits (int32_t f) {
 	   return 10;
 }
 
-void	RadioInterface::Display (int32_t freq, bool b) {
+void	RadioInterface::Display (uint64_t freq, bool b) {
 int32_t nd	= numberofDigits (freq);
 	(void)b;
 	lcd_Frequency	-> setDigitCount (nd);
-	lcd_Frequency	-> display (freq);
+	lcd_Frequency	-> display ((int32_t)freq);
 }
 
-void	RadioInterface::Display (int32_t freq) {
+void	RadioInterface::Display (uint64_t freq) {
 int32_t nd	= numberofDigits (freq);
 	lcd_Frequency	-> setDigitCount (nd);
 	lcd_Frequency	-> display ((int)freq / Khz (1));

@@ -29,7 +29,7 @@
 #include	"device-handler.h"
 
 	deviceHandler::deviceHandler (void) {
-	lastFrequency	= 100000;
+	lastFrequency	= 10000000;
 }
 
 	deviceHandler::~deviceHandler (void) {
@@ -39,20 +39,20 @@ int32_t	deviceHandler::getRate	(void) {
 	return KHz (192);
 }
 
-void	deviceHandler::setVFOFrequency (int32_t f) {
+void	deviceHandler::setVFOFrequency (uint64_t f) {
 	lastFrequency = f;
 }
 
-int32_t	deviceHandler::getVFOFrequency	(void) {
+uint64_t	deviceHandler::getVFOFrequency	(void) {
 	return lastFrequency;
 }
 
-bool	deviceHandler::legalFrequency	(int32_t f) {
+bool	deviceHandler::legalFrequency	(uint64_t f) {
 	(void)f;
 	return true;
 }
 
-int32_t	deviceHandler::defaultFrequency	(void) {
+uint64_t	deviceHandler::defaultFrequency	(void) {
 	return Khz (94700);
 }
 

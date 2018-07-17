@@ -71,14 +71,8 @@ int16_t	theSuccess;
 //	number of bytes per IQ value
 	iqSize			= conversionNumber == 3 ? 4 : 8;
 //
-//	sometimes problems with dynamic linkage of libusb, it is
-//	loaded indirectly through the dll
-	if (libusb_init (NULL) < 0) {
-	   fprintf (stderr, "libusb problem\n");	// should not happen
-	   throw (2);
-	}
-	libusb_exit (NULL);
 	theLoader	= new eladLoader (inputRate, &theSuccess);
+	fprintf (stderr, "we zijn terug\n");
 	if (theSuccess != 0) {
 	   if (theSuccess == -1)
 	   QMessageBox::warning (myFrame, tr ("viewer"),
