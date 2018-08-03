@@ -26,6 +26,7 @@
  *
  */
 #include "fft.h"
+#include	<cstring>
 /*
  */
 	common_fft::common_fft (int32_t fft_size) {
@@ -37,8 +38,7 @@ int32_t	i;
 	   this -> fft_size = 4096;	/* just a default	*/
 
 	vector	= (DSPCOMPLEX *) FFTW_MALLOC (sizeof (DSPCOMPLEX) * fft_size);
-	for (i = 0; i < fft_size; i ++)
-	   vector [i] = DSPCOMPLEX (0, 0);
+//	memset (vector, 0, fft_size * sizeof (std::complex<float>));
 	plan	= FFTW_PLAN_DFT_1D (fft_size,
 	                            reinterpret_cast <fftwf_complex *>(vector),
 	                            reinterpret_cast <fftwf_complex *>(vector),

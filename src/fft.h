@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __COMMON_FFT
-#define	__COMMON_FFT
+#ifndef __COMMON_FFT__
+#define	__COMMON_FFT__
 
 #include	"spectrum-constants.h"
 //

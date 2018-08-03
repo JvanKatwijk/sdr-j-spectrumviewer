@@ -28,6 +28,7 @@
 #define	__DEVICE_HANDLER__
 
 #include	<stdint.h>
+#include	<complex>
 #include	"spectrum-constants.h"
 #include	<QThread>
 #include	<QDialog>
@@ -45,10 +46,11 @@ virtual		bool	legalFrequency	(uint64_t);
 virtual		uint64_t	defaultFrequency (void);
 virtual		bool	restartReader	(void);
 virtual		void	stopReader	(void);
-virtual		int32_t	getSamples	(DSPCOMPLEX *, int32_t);
-virtual		int32_t	getSamples	(DSPCOMPLEX *, int32_t, int32_t);
+virtual		int32_t	getSamples	(std::complex<float> *, int32_t);
+virtual		int32_t	getSamples	(std::complex<float> *, int32_t, int32_t);
 virtual		int32_t	Samples		(void);
 virtual		int16_t	bitDepth	(void);
+virtual		void	resetBuffer	(void);
 	        int32_t	vfoOffset;
 //
 protected:

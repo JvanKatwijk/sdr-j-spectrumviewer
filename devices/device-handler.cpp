@@ -85,8 +85,8 @@ int32_t	deviceHandler::Samples		(void) {
 	return 0;
 }
 
-//void	deviceHandler::resetBuffer	(void) {
-//}
+void	deviceHandler::resetBuffer	(void) {
+}
 
 int16_t	deviceHandler::bitDepth		(void) {
 	return 10;

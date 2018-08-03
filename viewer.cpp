@@ -1,6 +1,6 @@
 #
 /*
- *    Copyright (C) 2014
+ *    Copyright (C) 2014 - 2018
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair Programming
  *
@@ -39,142 +39,80 @@
 #ifdef	HAVE_DABSTICK
 #include	"dabstick.h"
 #endif
-#ifdef	HAVE_ELAD_S1
-#include	"elad-s1.h"
-#endif
-#ifdef	HAVE_EXTIO
-#include	"extio-handler.h"
-#endif
-#ifdef	HAVE_SOUNDCARD
-#include	"soundcard.h"
-#endif
 #ifdef	HAVE_HACKRF
 #include	"hackrf-handler.h"
 #endif
-#include	"scope.h"
+#include	"spectrum-scope.h"
+#include	"waterfall-scope.h"
 #ifdef __MINGW32__
 #include	<iostream>
 #endif
 #
-//
-//	the default
-#define	SCAN_DELAY	200
-#define	IDLE		0100
-#define	PAUSED		0101
-#define	RUNNING		0102
-//
+
 /*
  *	We use the creation function merely to set up the
  *	user interface and make the connections between the
  *	gui elements and the handling agents. All real action
  *	is embedded in actions, initiated by gui buttons
  */
-	RadioInterface::RadioInterface (QSettings	*Si,
-	                                QWidget		*parent): QDialog (parent) {
-int	i;
+	Viewer::Viewer (QSettings	*Si,
+	                QWidget		*parent): QDialog (parent) {
 int k;
 // 	the setup for the generated part of the ui
 	setupUi (this);
 	spectrumSettings		= Si;
-	this		-> rasterSize	= 50;
-	this	-> inputRate  		= MHz (2);	// default
+	this	-> rasterSize		= 50;
 	this	-> displaySize =
 	             spectrumSettings -> value ("displaySize", 2048). toInt ();
-	this	-> displayRate	=
-	             spectrumSettings -> value ("displayRate", 10). toInt ();
-	if (displayRate < 5 || displayRate > 20)
-	   displayRate = 10;
-	this -> spectrumFactor	= 4;
-	currentFrequency = MHz (100);		// default
-	theDevice	= new deviceHandler ();
-	if ((displaySize & (displaySize - 1)) != 0)
-	   displaySize = 2048;
-	spectrumSize	= spectrumFactor * displaySize;
-//	we use a blackman window
-	Window				= new DSPFLOAT [spectrumSize];
-	for (i = 0; i < spectrumSize; i ++)
-	   Window [i] = 0.42 - 0.5 * cos ((2.0 * M_PI * i) / spectrumSize) +
-	                       0.08 * cos ((4.0 * M_PI * i) / spectrumSize);
+//	if ((displaySize & (displaySize - 1)) != 0)
+//	   displaySize	= 1024;
 
-	HFScope_1	= new Scope (hf_spectrumscope,
-	                             this	-> displaySize,
-	                             this	-> rasterSize);
-	HFScope_1	-> SelectView (SPECTRUM_MODE);
-	connect (HFScope_1, SIGNAL (clickedwithLeft (int)),
+	HFScope_1	= new spectrumScope (hf_spectrumscope,
+	                                           displaySize);
+	connect (HFScope_1, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustFrequency (int)));
-	HFScope_2	= new Scope (hf_waterfallscope,
-	                             this -> displaySize,
-	                             this -> rasterSize);
-	HFScope_2	-> SelectView (SPECTRUM_MODE);
-	connect (HFScope_2, SIGNAL (clickedwithLeft (int)),
+
+	HFScope_2	= new waterfallScope (hf_waterfallscope, displaySize,
+	                                                         rasterSize);
+	connect (HFScope_2, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustFrequency (int)));
-	this		-> X_axis		= new double [displaySize];
-	this		-> displayBuffer	= new double [displaySize];
-	this		-> freezeBuffer		= new double [displaySize];
-	memset (freezeBuffer, 0, displaySize * sizeof (double));
-	this		-> spectrum_fft	= new common_fft (spectrumSize);
-	this		-> spectrumBuffer	= spectrum_fft -> getVector ();
-	
-#ifdef	HAVE_SDRPLAY
-	deviceSelector	-> addItem ("sdrplay");
-#endif
-#ifdef	HAVE_DABSTICK
-	deviceSelector	-> addItem ("dabstick");
-#endif
-#ifdef	HAVE_AIRSPY
-	deviceSelector	-> addItem ("airspy");
-#endif
-#ifdef	HAVE_HACKRF
-	deviceSelector	-> addItem ("hackrf");
-#endif
-#ifdef	HAVE_EXTIO
-	deviceSelector	-> addItem ("extio");
-#endif
-#ifdef	HAVE_ELAD_S1
-	deviceSelector	-> addItem ("elad-192000");
-	deviceSelector	-> addItem ("elad-384000");
-	deviceSelector	-> addItem ("elad-768000");
-	deviceSelector	-> addItem ("elad-1536000");
-	deviceSelector	-> addItem ("elad-3072000");
-	deviceSelector	-> addItem ("elad-6144000");
 
-#endif
+	IFScope		= new spectrumScope (detailscope, displaySize);
 
-#ifdef	HAVE_SOUNDCARD
-	deviceSelector	-> addItem ("soundcard");
-#endif
-//
+	theMapper	= new freqmapper (displaySize);
+	theDevice	= setDevice ();
+	if (theDevice == nullptr) {
+	   fprintf (stderr, "no device found\n");
+	   exit (21);
+	}
+	theDevice	-> setVFOFrequency (theDevice -> defaultFrequency ());
+	currentFrequency	= theDevice -> defaultFrequency ();
+	HFScope_1	-> setBitDepth (theDevice -> bitDepth ());
+
 //	set some sliders to their values
 	k	= spectrumSettings -> value ("spectrumAmplitudeSlider", 20). toInt ();
 	spectrumAmplitudeSlider	-> setValue (k);
 	k	= spectrumSettings -> value ("lowerLimit", 86). toInt ();
-	lowerLimit			-> setValue (k);
+	lowerLimit		-> setValue (k);
 
 	k	= spectrumSettings -> value ("upperLimit", 110). toInt ();
-	upperLimit			-> setValue (k);
+	upperLimit		-> setValue (k);
 
 	k	= spectrumSettings -> value ("stepSize", 500). toInt ();
-	stepSize			-> setValue (k);
+	stepSize		-> setValue (k);
 
-	k	= spectrumSettings -> value ("delayBox", SCAN_DELAY). toInt ();
-	delayBox			-> setValue (k);
+	k	= spectrumSettings -> value ("delayBox", 10). toInt ();
+	delayBox		-> setValue (k);
 	scanDelayTime		= k;
 
 	ClearPanel		();
 
-	connect (deviceSelector, SIGNAL (activated (const QString &)),
-	         this, SLOT (setDevice (const QString &)));
-	connect (startButton, SIGNAL (clicked (void)),
-	         this, SLOT (setStart (void)));
-	connect (QuitButton, SIGNAL (clicked (void)),
-	         this, SLOT (TerminateProcess (void)));
+	connect (decimationSelector, SIGNAL (activated (QString)),
+	         this,  SLOT (decimationHandler (QString)));
+
 	connect (pauseButton, SIGNAL (clicked (void)),
 	         this, SLOT (clickPause (void)));
 	
-	connect (freezeButton, SIGNAL (clicked (void)),
-	         this, SLOT (toggle_Freezer (void)));
-	connect (delayBox, SIGNAL (valueChanged (int)),
-	         this, SLOT (setScanDelay (int)));
 /*
  *	connections for the console, first the digits
  */
@@ -198,6 +136,7 @@ int k;
 	connect (add_correct, SIGNAL (clicked() ), this, SLOT (addCorr() ) );
 	connect (add_clear,   SIGNAL (clicked() ), this, SLOT (addClear() ) );
 
+	displayRate	= 10;
 //	Create a timer for dealing with a non acting (or reacting) user
 //	on the keyboard
 	lcd_timer		= new QTimer ();
@@ -227,19 +166,19 @@ int k;
 	connect (displayTimer, SIGNAL (timeout ()),
 	         this, SLOT (updateTimeDisplay ()));
 
-	QString t = QString ("SDR-J spectrumviewer ");
+	QString t = QString ("spectrumviewer ");
 	t. append (CURRENT_VERSION);
-	systemindicator		-> setText (t);
+//	systemindicator		-> setText (t);
 	displayTimer		-> start (1000);
-//
+
+	
 //	all elements seem to exist: set the control state to
 //	its default values
-	runMode			= IDLE;
-	scanner			= false;
-	freezer			= false;
+	running. store (false);
+	setStart ();
 }
 
-	RadioInterface::~RadioInterface (void) {
+	Viewer::~Viewer (void) {
 //	On normal program exit, we save some of the values
 	spectrumSettings -> setValue ("delayBox", delayBox -> value ());
 	spectrumSettings -> setValue ("currentFrequency",
@@ -255,223 +194,72 @@ int k;
 //
 //	and then we delete
 	delete		lcd_timer;
-	delete		theDevice;
 	delete		HFScope_1;
 	delete		HFScope_2;
+	delete		IFScope;
 	delete		displayTimer;
-	delete[]	Window;
 	delete		runTimer;
-	delete		X_axis;
-	delete		displayBuffer;
-	delete		freezeBuffer;
 }
 
-void	RadioInterface::setDevice (const QString &s) {
-bool	success	= false;
-
-	if (theDevice != NULL) {
-	   theDevice	-> stopReader ();
-	   delete	theDevice;
-	   theDevice	= NULL;
-	   runMode	= IDLE;
-	}
-
-	lcd_inputRate	-> display (0);
-
-	if (s == "no device")  {
-	   theDevice	= new deviceHandler ();
-	   inputRate	= MHz (100);
-	   return;
-	}
-
-
+deviceHandler	*Viewer::setDevice (void) {
+deviceHandler	*theDevice;
 #ifdef	HAVE_SDRPLAY
-	if (s == "sdrplay") {
-
-	   try {
-	      theDevice	= new sdrplayHandler (spectrumSettings);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening SDRplay failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-//	basically, ready to run
+	try {
+	   theDevice	= new sdrplayHandler (spectrumSettings);
+	   return theDevice;
+	} catch (int e) {
 	}
-	else
 #endif
 #ifdef	HAVE_DABSTICK
-	if (s == "dabstick") {
-	   try {
-	      theDevice	= new rtlsdrHandler (spectrumSettings);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening dabstick failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-//	basically, ready to run
+	try {
+	   theDevice	= new rtlsdrHandler (spectrumSettings);
+	   return theDevice;
+	} catch (int e) {
 	}
-	else
 #endif
 #ifdef	HAVE_AIRSPY
-	if (s == "airspy") {
-	   try {
-	      theDevice	= new airspyHandler (spectrumSettings);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening airspy failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
+	try {
+	   theDevice	= new airspyHandler (spectrumSettings);
+	   returntheDevice;
 	}
-	else
 #endif
 #ifdef	HAVE_HACKRF
-	if (s == "hackrf") {
-	   try {
-	      theDevice	= new hackrfHandler (spectrumSettings);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening hackrf failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
+	try {
+	   theDevice	= new hackrfHandler (spectrumSettings);
+	   return theDevice;
+	} catch (int e) {
 	}
-	else
 #endif
-#ifdef	HAVE_EXTIO
-	if (s == "extio") {
-	   try {
-	      theDevice	= new extioHandler (spectrumSettings);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening extio failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-	}
-	else
-#endif
-#ifdef	HAVE_ELAD_S1
-	if (s == "elad-192000") {
-	   try {
-	      theDevice	= new eladHandler (spectrumSettings, 192000);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening elad 192000 failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-	}
-	else
-	if (s == "elad-384000") {
-	   try {
-	      theDevice	= new eladHandler (spectrumSettings, 384000);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening elad 384000 failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-	}
-	else
-	if (s == "elad-768000") {
-	   try {
-	      theDevice	= new eladHandler (spectrumSettings, 768000);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening elad 768000 failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-	}
-	else
-	if (s == "elad-1536000") {
-	   try {
-	      theDevice	= new eladHandler (spectrumSettings, 1536000);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening elad 1536000 failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-	}
-	else
-	if (s == "elad-3072000") {
-	   try {
-	      theDevice	= new eladHandler (spectrumSettings, 3072000);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening elad 3072000 failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-	}
-	else
-	if (s == "elad-6144000") {
-	   try {
-	      theDevice	= new eladHandler (spectrumSettings, 6144000);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening elad 6144000 failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-        }
-	else	
-#endif
-#ifdef	HAVE_SOUNDCARD
-	if (s == "soundcard") { 
-	   try {
-	      theDevice	= new soundcard (spectrumSettings);
-	   } catch (int e) {
-	      QMessageBox::warning (this, tr ("sdr"),
-	                                  tr ("Opening soundcard failed\n"));
-	      theDevice = new deviceHandler ();
-	   }
-	   inputRate	= theDevice -> getRate ();
-	}
-	else
-#endif
-	   theDevice	= new deviceHandler ();
-
-	theDevice	-> setVFOFrequency (theDevice -> defaultFrequency ());
-	connect (theDevice, SIGNAL (set_changeRate (int)),
-	         this, SLOT (set_changeRate (int)));
-	inputRate	= theDevice -> getRate ();
-
-//	we are not running, so the X axis will be set when computing
-//	a new spectrum
-	lcd_inputRate	-> display (inputRate);
-	HFScope_1 -> setBitDepth (theDevice -> bitDepth ());
-	HFScope_2 -> setBitDepth (theDevice -> bitDepth ());
-	setTuner (theDevice -> defaultFrequency ());
+	return nullptr;
 }
 //
-void	RadioInterface::set_changeRate (int newRate) {
-	inputRate		= newRate;
-	setTuner (currentFrequency);
-	lcd_inputRate -> display (inputRate);
-	runTimer	-> stop ();
-	runMode		= IDLE;
+void	Viewer::set_changeRate (int newRate) {
+	(void)newRate;
 }
 
 //
-//	Now, "start" is only meaningful if we are not running already
-//	and the device isn't NULL
-void	RadioInterface::setStart	(void) {
-bool	r = 0;
+//	starting is used to start and to restart after selecting
+//	a different bandwidth.
+//	We assume the system is not running
 
-	if (theDevice == NULL)
-	   return;
-	if (runMode != IDLE)
-	   return;
+void	Viewer::setStart (void) {
 
-	setTuner (currentFrequency);
+	if (running. load ())
+	   setStop ();
+//
+//	parameters to use a bandwidth, frequency and decimation
+//	to be done,
+//	then we move
+	int decimatedWidth = theDevice -> getRate () / 255;
+
+	theDevice	-> setVFOFrequency (currentFrequency);
 	Display (currentFrequency);
-	theDevice	-> stopReader ();	// just in case
-	r = theDevice	-> restartReader ();
+	lcd_rate_display	-> display (theDevice -> getRate ());
+	theFilter	= new decimatingFIR (127, 
+	                                     theDevice -> getRate () / 63,
+	                                     theDevice -> getRate (),
+	                                     63);
+	bool r = theDevice	-> restartReader ();
 	if (!r) {
 	   QMessageBox::warning (this, tr ("sdr"),
 	                               tr ("Opening  device failed\n"));
@@ -479,169 +267,64 @@ bool	r = 0;
 	}
 //	and we are on the move, so let the timer run
 	runTimer	-> start (1000 / displayRate);
-	runMode		= RUNNING;
+	running. store (true);
 }
 
-void	RadioInterface::TerminateProcess () {
-	runMode		= IDLE;
-	setDevice (QString ("no device"));
+void	Viewer::setStop	(void) {
+	if (!running. load ())
+	   return;
+	scanTimer	-> stop ();
+	theDevice	-> stopReader ();
 	runTimer	-> stop ();
+	if (theFilter != nullptr)
+	   delete	theFilter;
+	theFilter	= nullptr;
+	running. store (false);
+}
+
+void	Viewer::TerminateProcess () {
+	setStop ();
 	accept ();
+	delete	theDevice;
 	qDebug () <<  "End of termination procedure";
 }
 
-void	RadioInterface::abortSystem (int d) {
-	qDebug ("aborting for reason %d\n", d);
-	exit (11);
-	accept ();
-	
-}
-/*
- * 	Handling the numeric keypad is boring, but needed
- */
-void RadioInterface::addOne (void) {
-	AddtoPanel (1);
-}
-
-void RadioInterface::addTwo (void) {
-	AddtoPanel (2);
-}
-
-void RadioInterface::addThree (void) {
-	AddtoPanel (3);
-}
-
-void RadioInterface::addFour (void) {
-	AddtoPanel (4);
-}
-
-void RadioInterface::addFive (void) {
-	AddtoPanel (5);
-}
-
-void RadioInterface::addSix (void) {
-	AddtoPanel (6);
-}
-
-void RadioInterface::addSeven (void) {
-	AddtoPanel (7);
-}
-
-void RadioInterface::addEight (void) {
-	AddtoPanel (8);
-}
-
-void RadioInterface::addNine (void) {
-	AddtoPanel (9);
-}
-
-void RadioInterface::addZero (void) {
-	AddtoPanel (0);
-}
-//
-//	If we are keying, the lcd timer is on, so
-//	if it is not on, we are not keying and clear does not
-//	mean anything
-void RadioInterface::addClear (void) {
-	if (!lcd_timer -> isActive ())
-	   return;
-
-	stop_lcdTimer	();
-
-	ClearPanel ();
-	Display (currentFrequency);
-}
-//
-//
-void RadioInterface::AcceptFreqinKhz (void) {
-uint64_t	p;
-
-	if (!lcd_timer -> isActive ())
-	   return;
-
-	stop_lcdTimer	();
-//	we know that the increment timer is not running,
-//	so there is no reason to stop it
-	p = getPanel ();
-	ClearPanel ();
-	setTuner (Khz (p));
-	Display (currentFrequency);
-}
-
-void RadioInterface::AcceptFreqinMhz (void) {
-int32_t	p;
-
-	if (!lcd_timer -> isActive ())
-	   return;
-
-	stop_lcdTimer	();
-//	we know that the increment timer is not running,
-//	so there is no reason to stop it
-	p = getPanel ();
-	ClearPanel ();
-	setTuner (Mhz (p));
-	Display (currentFrequency);
-}
-
-void RadioInterface::addCorr (void) {
-	if (!lcd_timer -> isActive ()) 
-	   return;
-
-	stop_lcdTimer	();
-//	increment timer cannot run now so no reason
-//	to stop it
-	Panel = (Panel - (Panel % 10)) / 10;
-	Display	(Panel, true);
-	lcd_timer	-> start (5000);		// restart timer
-}
-//
 //	In AddtoPanel, we might have any of the two
 //	timers running, do not know which one though
-void	RadioInterface::AddtoPanel (int16_t n) {
+void	Viewer::AddtoPanel (int16_t n) {
 	stop_lcdTimer	();
 	Panel		= 10 * Panel + n;
 	Display (Panel, true);
 	lcd_timer	-> start (5000);		// restart timer
 }
 
-void	RadioInterface::ClearPanel (void) {
+void	Viewer::ClearPanel (void) {
 	Panel = 0;
 }
 
-int	RadioInterface::getPanel (void) {
+int	Viewer::getPanel (void) {
 	return Panel;
 }
 
-void	RadioInterface::adjustFrequency (int n) {
+void	Viewer::adjustFrequency (int n) {
 	stop_lcdTimer ();
-	setTuner (currentFrequency + Khz (n));
+	setTuner (theDevice -> getVFOFrequency () + Khz (n));
 	Display (currentFrequency);
 }
 
 //	SetTuner accepts freq in Hz.
 //
-void	RadioInterface::setTuner (uint64_t n) {
-int32_t	i;
+void	Viewer::setTuner (uint64_t n) {
 //	if (!theDevice -> legalFrequency (n - inputRate / 2) ||
 //	    !theDevice -> legalFrequency (n + inputRate / 2))
 //	   return;
 	scanTimer	-> stop ();
 	theDevice	-> setVFOFrequency (n);
 	currentFrequency = theDevice -> getVFOFrequency ();
-
-//	a new frequency implies a new X_axis
-	for (i = 0; i < displaySize; i ++) {
-	   X_axis [i] = (currentFrequency  - inputRate / 2 +
-	                 i * (inputRate / displaySize)) / ((double)KHz (1));
-	   displayBuffer [i] = 0;
-	}
-	if (freezer)
-	   toggle_Freezer	();	// just  ensure 
 }
-//	setnextFrequency () is almost identical to setTuner
 //
-void	RadioInterface::setnextFrequency (uint64_t n) {
-int32_t	i;
+//	
+void	Viewer::setnextFrequency (uint64_t n) {
 
 	if (!theDevice -> legalFrequency (n - inputRate / 2) ||
 	    !theDevice -> legalFrequency (n + inputRate / 2))
@@ -650,141 +333,86 @@ int32_t	i;
 	currentFrequency	= theDevice -> getVFOFrequency ();
 
 	Display (currentFrequency);
-//	a new frequency implies a new X_axis
-	for (i = 0; i < displaySize; i ++) {
-	   X_axis [i] = (currentFrequency  - inputRate / 2 +
-	                 i * (inputRate / displaySize)) / ((double)KHz (1));
-	   displayBuffer [i] = 0;
-	}
-	if (freezer)
-	   toggle_Freezer	();	// just  ensure 
 }
 //
-void	RadioInterface::stop_lcdTimer (void) {
+void	Viewer::stop_lcdTimer (void) {
 	if (lcd_timer -> isActive ())
 	   lcd_timer -> stop ();
 }
 
-void	RadioInterface::updateTimeDisplay (void) {
+void	Viewer::updateTimeDisplay (void) {
 QDateTime	currentTime = QDateTime::currentDateTime ();
 
 	timeDisplay	-> setText (currentTime.
 	                            toString (QString ("dd.MM.yy:hh:mm:ss")));
 }
 
-void	RadioInterface::lcd_timeout (void) {
+void	Viewer::lcd_timeout (void) {
 	Panel		= 0;			// throw away anything
 	Display (currentFrequency / KHz (1));
 }
 
-void	RadioInterface::clickPause (void) {
-	if (runMode == IDLE)
-	   return;
-
-	if (runMode == RUNNING) {
-	   theDevice	-> stopReader ();
-	   pauseButton	-> setText (QString ("Continue"));
-	   if (runTimer -> isActive ())
-	      runTimer -> stop ();
-	   runMode = PAUSED;
-	   return;
-	}
-	if (runMode == PAUSED) {
-	   theDevice	-> restartReader ();
-	   pauseButton	-> setText (QString ("Pause"));
-	   setTuner (currentFrequency);
-	   Display (currentFrequency);
-//	   and we are on the move, so let the timer run
-	   runTimer	-> start (50);
-	   runMode = RUNNING;
-	   return;
-	}
-//
-//	We should not be here
+void	Viewer::clickPause (void) {
 }
 	
-static inline
-DSPFLOAT	decayingAverage (DSPFLOAT old,
-	                         DSPFLOAT input, DSPFLOAT weight) {
-	if (weight <= 1)
-	   return input;
-	return input * (1.0 / weight) + old * (1.0 - (1.0 / weight));
-}
 //
 //	we want to process inputRate / 10 length  segments,
 //	which may amount to up to 800000 samples,
 //	so the _I_Buffer should be large enough.
-static bool	gezet	= false;
-void	RadioInterface::handleSamples (void) {
-DSPCOMPLEX	dataIn [spectrumSize];
-double hulp [displaySize];
-int32_t i, j;
+void	Viewer::handleSamples (void) {
+std::complex<float>	dataIn [displaySize];
+std::complex<float>	x [displaySize * 8];
+int32_t i;
+double showDisplay [displaySize];
+int	currentFrequency	= theDevice -> getVFOFrequency ();
 
-	if ((runMode != RUNNING) || (theDevice == NULL))
+	if (!running. load ())
 	   return;
 
 	if (theDevice -> Samples () < inputRate / displayRate)
 	   return;
 
-	theDevice -> getSamples (dataIn, spectrumSize, inputRate / displayRate);
-	for (i = 0; i < spectrumSize; i ++)
-	   spectrumBuffer [i] = dataIn [i] * Window [i];
-	spectrum_fft	-> do_FFT ();
-//
-//	first map the negative frequencies
-	for (i = 0; i < displaySize / 2; i ++) {
-	   displayBuffer [i] = 0;
-	   for (j = 0; j < spectrumFactor; j ++)
-	      displayBuffer [i] +=
-	         abs (spectrumBuffer [spectrumSize / 2 + spectrumFactor * i + j]);
-	   displayBuffer [i] /= spectrumFactor;
-	}
-//
-//	then the positive ones
-	for (i = 0; i < displaySize / 2; i ++) {
-	   displayBuffer [displaySize / 2 + i] = 0;
-	   for (j = 0; j < spectrumFactor; j ++)
-	      displayBuffer [displaySize / 2 + i] +=
-	         abs (spectrumBuffer [spectrumFactor * i + j]);
-	   displayBuffer [displaySize / 2 + i] /= spectrumFactor;
-	}
-//
-//	OK, the displaybuffer is set
-	if (freezer)
-	   doFreeze (displayBuffer, freezeBuffer, freezeCount ++);
-	else
-	   doFreeze (displayBuffer, freezeBuffer, 5);
-//
-//	and finally
-	memcpy (hulp, displayBuffer, displaySize * sizeof (double));
-	HFScope_2 -> Display (X_axis,
-	                      displayBuffer,
-	                      spectrumAmplitudeSlider -> value (),
-	                      currentFrequency / Khz (1));
-	HFScope_1 -> Display  (X_axis,
-	                       hulp,
-	                       spectrumAmplitudeSlider -> value (),
-	                       currentFrequency / Khz (1));
+	theDevice -> getSamples (dataIn, displaySize);
+	theMapper	-> convert (dataIn, showDisplay);
 
-	if (!gezet) {
-	   gezet = true;
-	   HFScope_2	-> SelectView (WATERFALL_MODE);
+//	we have the buffer, the scopes can do the work
+	HFScope_1	-> showFrame (showDisplay,
+	                              theDevice	-> getRate (),
+                                      currentFrequency,
+	                              spectrumAmplitudeSlider -> value ());
+	HFScope_2	-> showFrame (showDisplay,
+	                              theDevice	-> getRate (),
+	                              currentFrequency,
+	                              spectrumAmplitudeSlider -> value ());
+	int fillP	= 0;
+	while (theDevice -> Samples () > displaySize * 8) {
+	   double show_2 [displaySize];
+	   std::complex<float> hulp [displaySize];
+	   theDevice -> getSamples (x, displaySize * 8);
+	   for (i = 0; i < displaySize * 8; i ++) {
+	      std::complex<float> y;
+	      if (theFilter -> Pass (x [i], &y)) {
+	         hulp [fillP ++] = y;
+	         if (fillP >= displaySize) {
+	            int rwidth = theDevice -> getRate () /
+	                        decimationSelector -> currentText (). toInt ();	
+	            theMapper	-> convert (hulp, show_2);
+	            IFScope	-> showFrame (show_2,
+	                                      rwidth,
+	                                      0,
+	                              spectrumAmplitudeSlider -> value ());
+	            goto L1;
+	         }
+	      }
+	   }
 	}
+L1:
+	theDevice	-> resetBuffer ();
 }
 
 //
-void	RadioInterface::doFreeze (double *bufferIn,
+void	Viewer::doFreeze (double *bufferIn,
 	                          double *bufferRes, int32_t count) {
-
-int32_t	i;
-
-	for (i = 0; i < displaySize; i ++) {
-	   if (bufferIn [i] == bufferIn [i])
-	   bufferRes [i] =
-	                ((double)(count - 1)) / count * bufferRes [i] +
-	                1.0f / count * bufferIn [i];
-	   bufferIn [i] = bufferRes [i];
-	}
 }
 //
 //	For displaying values, we use different scales, depending
@@ -802,69 +430,190 @@ int32_t numberofDigits (uint64_t f) {
 	   return 10;
 }
 
-void	RadioInterface::Display (uint64_t freq, bool b) {
+void	Viewer::Display (uint64_t freq, bool b) {
 int32_t nd	= numberofDigits (freq);
 	(void)b;
-	lcd_Frequency	-> setDigitCount (nd);
-	lcd_Frequency	-> display ((int32_t)freq);
+	lcd_freq_display	-> setDigitCount (nd);
+	lcd_freq_display	-> display ((int32_t)freq);
 }
 
-void	RadioInterface::Display (uint64_t freq) {
+void	Viewer::Display (uint64_t freq) {
 int32_t nd	= numberofDigits (freq);
-	lcd_Frequency	-> setDigitCount (nd);
-	lcd_Frequency	-> display ((int)freq / Khz (1));
+	lcd_freq_display	-> setDigitCount (nd);
+	lcd_freq_display	-> display ((int)freq / Khz (1));
 }
 
-void	RadioInterface::toggle_Freezer	(void) {
-int16_t	i;
-	freezer = !freezer;
-	if (freezer)
-	   freezeButton	-> setText ("Freezing On");
-	else 
-	   freezeButton	-> setText ("Freeze");
-	freezeCount = 5;
-	for (i = 0; i < displaySize; i ++)
-	   freezeBuffer [i] = 0;
+void	Viewer::toggle_Freezer	(void) {
 }
 
-void	RadioInterface::nextFrequency 	(void) {
-int32_t temp = currentFrequency +  Khz (stepSize -> value ());
-int32_t	lowerBound	= Mhz (lowerLimit -> value ());
-int32_t	upperBound	= Mhz (upperLimit -> value ());
+/*
+ * 	Handling the numeric keypad is boring, but needed
+ */
+void Viewer::addOne (void) {
+	AddtoPanel (1);
+}
 
-	if (!theDevice -> legalFrequency (lowerBound) ||
-	    !theDevice -> legalFrequency (upperBound))
+void Viewer::addTwo (void) {
+	AddtoPanel (2);
+}
+
+void Viewer::addThree (void) {
+	AddtoPanel (3);
+}
+
+void Viewer::addFour (void) {
+	AddtoPanel (4);
+}
+
+void Viewer::addFive (void) {
+	AddtoPanel (5);
+}
+
+void Viewer::addSix (void) {
+	AddtoPanel (6);
+}
+
+void Viewer::addSeven (void) {
+	AddtoPanel (7);
+}
+
+void Viewer::addEight (void) {
+	AddtoPanel (8);
+}
+
+void Viewer::addNine (void) {
+	AddtoPanel (9);
+}
+
+void Viewer::addZero (void) {
+	AddtoPanel (0);
+}
+//
+//	If we are keying, the lcd timer is on, so
+//	if it is not on, we are not keying and clear does not
+//	mean anything
+void Viewer::addClear (void) {
+	if (!lcd_timer -> isActive ())
 	   return;
 
-	if (lowerBound >= upperBound)
+	stop_lcdTimer	();
+
+	ClearPanel ();
+	Display (currentFrequency);
+}
+//
+//
+void Viewer::AcceptFreqinKhz (void) {
+uint64_t	p;
+
+	if (!lcd_timer -> isActive ())
 	   return;
 
-	if (temp > upperBound)
-	   temp = lowerBound;
-	if (temp < lowerBound)
-	   temp = upperBound;
-
-	setnextFrequency (temp);
+	stop_lcdTimer	();
+//	we know that the increment timer is not running,
+//	so there is no reason to stop it
+	p = getPanel ();
+	ClearPanel ();
+	setTuner (Khz (p));
+	Display (currentFrequency);
 }
 
-void	RadioInterface::switchScanner	(void) {
-	scanner	= !scanner;
-	scanstartButton -> setText (scanner ? "scanning" : "set scan");
-	if (scanner) {
-	   scanTimer	-> start (scanDelayTime * 100);
-	   if (freezer)
-	      toggle_Freezer ();	// will be switched off
-	}
+void Viewer::AcceptFreqinMhz (void) {
+int32_t	p;
+
+	if (!lcd_timer -> isActive ())
+	   return;
+
+	stop_lcdTimer	();
+//	we know that the increment timer is not running,
+//	so there is no reason to stop it
+	p = getPanel ();
+	ClearPanel ();
+	setTuner (Mhz (p));
+	Display (currentFrequency);
+}
+
+void Viewer::addCorr (void) {
+	if (!lcd_timer -> isActive ()) 
+	   return;
+
+	stop_lcdTimer	();
+//	increment timer cannot run now so no reason
+//	to stop it
+	Panel = (Panel - (Panel % 10)) / 10;
+	Display	(Panel, true);
+	lcd_timer	-> start (5000);		// restart timer
+}
+
+void	Viewer::decimationHandler	(QString s) {
+int	decimate	= s. toInt ();
+	delete theFilter;
+	theFilter	= new decimatingFIR (2 * decimate + 1, 
+	                                     theDevice -> getRate () / decimate,
+	                                     theDevice -> getRate (),
+	                                     decimate);
+}
+
+//
+//      Whenever the mousewheel is changed, the frequency
+//      is adapted
+void    Viewer::wheelEvent (QWheelEvent *e) {
+        if (e -> delta () > 0)
+           adjustFrequency (10);
+        else
+           adjustFrequency (-10);
+}
+
+#include <QCloseEvent>
+void Viewer::closeEvent (QCloseEvent *event) {
+
+        QMessageBox::StandardButton resultButton =
+                        QMessageBox::question (this, "spectrumViewer",
+                                               tr("Are you sure?\n"),
+                                               QMessageBox::No | QMessageBox::Yes,
+                                               QMessageBox::Yes);
+        if (resultButton != QMessageBox::Yes) {
+           event -> ignore();
+        } else {
+           TerminateProcess ();
+           event -> accept ();
+        }
+}
+
+/////////////////////////////////////////////////////////////////////////
+//
+static inline
+bool    frequencyInBounds (int32_t f, int32_t l, int32_t u) {
+        return l <= f && f <= u;
+}
+
+void	Viewer::switchScanner	(void) {
+	if (scanTimer -> isActive ())
+	   scanTimer -> stop ();
 	else
-	   scanTimer	-> stop ();
+	   scanTimer -> start (delayBox -> value () * 1000);
 }
 
-void	RadioInterface::setScanDelay	(int d) {
-	scanDelayTime	= d;
-	if (scanner) {
-	   scanTimer	-> stop ();
-	   scanTimer	-> start (scanDelayTime * 100);
-	}
+void	Viewer::nextFrequency (void) {
+int32_t	amount;
+int32_t	frequency;
+int32_t	low, high;
+
+	low	= MHz (lowerLimit -> value ());
+	high	= MHz (upperLimit -> value ());
+	frequency	= theDevice -> getVFOFrequency () + 
+	                               KHz (stepSize -> value ());
+	if ((stepSize -> value () < 0) &&
+	   !frequencyInBounds (frequency, low, high))
+	   frequency = high;
+
+	if ((stepSize -> value () > 0) &&
+	   !frequencyInBounds (frequency, low, high))
+	   frequency = low;
+
+	setTuner (frequency);
+	Display (theDevice -> getVFOFrequency ());
+	scanTimer	-> start (delayBox -> value () * 1000);
 }
 
 

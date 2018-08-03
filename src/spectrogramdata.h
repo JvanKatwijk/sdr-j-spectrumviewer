@@ -24,8 +24,8 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef	__SPECTROGRAM
-#define	__SPECTROGRAM
+#ifndef	__SPECTROGRAM__
+#define	__SPECTROGRAM__
 
 #include	"spectrum-constants.h"
 #include	<qwt_interval.h>

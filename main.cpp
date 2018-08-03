@@ -32,7 +32,7 @@
 #include	"spectrum-constants.h"
 #include	"viewer.h"
 
-#define	DEFAULT_INI	".jsdr-spectrumviewer.ini"
+#define	DEFAULT_INI	".spectrumviewer.ini"
 
 QString	fullPathfor (QString v) {
 QString	fileName;
@@ -60,7 +60,7 @@ int	main (int argc, char **argv) {
  */
 QSettings	*ISettings;		/* input .ini file	*/
 QString	initFileName	= fullPathfor (QString (DEFAULT_INI));
-RadioInterface	*MyRadioInterface;
+Viewer	*myRadioInterface;
 
 	ISettings	= new QSettings (initFileName, QSettings::IniFormat);
 /*
@@ -68,12 +68,12 @@ RadioInterface	*MyRadioInterface;
  *	instantiate
  */
 	QApplication a (argc, argv);
-	MyRadioInterface = new RadioInterface (ISettings);
+	myRadioInterface = new Viewer (ISettings);
 
 #if QT_VERSION >= 0x050600
 	QGuiApplication::setAttribute (Qt::AA_EnableHighDpiScaling);
 #endif
-	MyRadioInterface -> show ();
+	myRadioInterface -> show ();
 	a. exec ();
 /*
  *	done:
@@ -82,6 +82,6 @@ RadioInterface	*MyRadioInterface;
 	fflush (stderr);
 	qDebug ("It is done\n");
 	ISettings	-> sync ();
-	MyRadioInterface	-> ~RadioInterface ();
+	delete	myRadioInterface;
 }
 

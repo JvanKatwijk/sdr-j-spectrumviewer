@@ -5,41 +5,45 @@
 ######################################################################
 
 TEMPLATE	= app
-TARGET		= sdr-j-spectrumviewer
+TARGET		= spectrumviewer
 QT		+= widgets
 CONFIG		+= console 
-QMAKE_CFLAGS    +=  -flto -ffast-math
-QMAKE_CXXFLAGS  +=  -flto -ffast-math
-QMAKE_LFLAGS    +=  -flto
-#QMAKE_CFLAGS   +=  -g
-#QMAKE_CXXFLAGS +=  -g
-#QMAKE_LFLAGS   +=  -g
+#QMAKE_CFLAGS    +=  -flto -ffast-math
+#QMAKE_CXXFLAGS  +=  -flto -ffast-math
+#QMAKE_LFLAGS    +=  -flto
+QMAKE_CFLAGS   +=  -g
+QMAKE_CXXFLAGS +=  -g
+QMAKE_LFLAGS   +=  -g
 
 
 DEPENDPATH += . \
 	      ./src \
-	      ./includes \
 	      ./devices
 
 INCLUDEPATH += . \
-	      ./includes \
+	      ./src \
 	      ./devices
 
 # Input
 HEADERS += ./viewer.h \
-	   ./includes/spectrum-constants.h \
-           ./includes/fft.h \
-           ./includes/ringbuffer.h \
-	   ./includes/spectrogramdata.h \
-	   ./includes/scope.h  \
+           ./src/fft.h \
+           ./src/ringbuffer.h \
+	   ./src/spectrogramdata.h \
+	   ./src/spectrum-scope.h  \
+	   ./src/waterfall-scope.h  \
+	   ./src/mapper.h \
+	   ./src/fir-filters.h \
 	   ./devices/device-handler.h
 
 FORMS += ./sdrgui.ui 
 
 SOURCES += ./main.cpp \
            ./viewer.cpp \
+	   ./src/mapper.cpp \
            ./src/fft.cpp \
-	   ./src/scope.cpp \
+	   ./src/spectrum-scope.cpp \
+	   ./src/waterfall-scope.cpp \
+	   ./src/fir-filters.cpp \
 	   ./devices/device-handler.cpp 
 
 #for Fedora and Ubuntu use
@@ -49,6 +53,8 @@ INCLUDEPATH	+= /usr/include/qt5/qwt
 INCLUDEPATH	+= /usr/local/include
 #LIBS		+= -lqwt -lusb-1.0 -lrt -lfftw3f -ldl		# ubuntu 15.04
 LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 25
+LIBS            += -lsndfile
+LIBS            += -lsamplerate
 #CONFIG		+= dabstick
 #CONFIG		+= airspy
 CONFIG		+= sdrplay

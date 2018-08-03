@@ -1,4 +1,3 @@
-#
 /*
  *    Copyright (C)  2010, 2011, 2012
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
@@ -27,7 +26,6 @@
 #ifndef __SPECTRUM_VIEWER__
 #define __SPECTRUM_VIEWER__
 
-#include	"spectrum-constants.h"
 #include	<QDialog>
 #include	"ui_sdrgui.h"
 #include	<qwt.h>
@@ -40,44 +38,42 @@
 #include	<qwt_plot_spectrogram.h>
 #include	<QTimer>
 #include	<QWheelEvent>
-#include	"scope.h"
-#include	"fft.h"
+#include	"waterfall-scope.h"
+#include	"spectrum-scope.h"
+#include	"mapper.h"
+#include	"fir-filters.h"
+#include	<atomic>
+#include	<complex>
+#include <QCloseEvent>
 //
 #include	<QObject>
 
 class	QSettings;
-class	Scope;
 class	deviceHandler;
 /*
  *	The main gui object. It inherits from
  *	QDialog and the generated form
  */
-class RadioInterface: public QDialog,
+class Viewer: public QDialog,
 		      private Ui_SDRplayViewer {
 Q_OBJECT
 public:
-		RadioInterface		(QSettings	*,
-	                                 QWidget *parent = NULL);
-		~RadioInterface		();
+		Viewer	(QSettings *, QWidget *parent = NULL);
+		~Viewer	(void);
 
 private:
 	QSettings	*spectrumSettings;
-	Scope		*HFScope_1;
-	Scope		*HFScope_2;
-	DSPFLOAT	*Window;
+	spectrumScope	*HFScope_1;
+	waterfallScope	*HFScope_2;
+	spectrumScope	*IFScope;
+	float		*Window;
 	int32_t		inputRate;
 	int32_t		bandWidth;
 	int32_t		displaySize;
 	int16_t		displayRate;
 	int16_t		rasterSize;
 	int32_t		spectrumSize;
-	int16_t		spectrumFactor;
-	double		*X_axis;
-	common_fft	*spectrum_fft;
-	DSPCOMPLEX	*spectrumBuffer;
-	double		*displayBuffer;
-	double		*freezeBuffer;
-	int32_t		totalAmount;
+	std::atomic<bool>	running;
 	deviceHandler	*theDevice;
 	int64_t		currentFrequency;
 	int16_t		scanDelayTime;
@@ -85,11 +81,10 @@ private:
 	void		AddtoPanel		(int16_t);
 	int		getPanel		(void);
 	void		CorrectPanel		(void);
-
+	freqmapper	*theMapper;
+	decimatingFIR	*theFilter;
 	void		setTuner		(uint64_t);
 	void		setnextFrequency	(uint64_t);
-	void		Display			(uint64_t);
-	void		Display			(uint64_t, bool);
 	QTimer		*lcd_timer;
 	QTimer		*scanTimer;
 	QTimer		*displayTimer;
@@ -104,9 +99,10 @@ private:
 /*
  */
 private slots:
-	void	setDevice		(const QString &);
+	deviceHandler	*setDevice		(void);
 	void	stop_lcdTimer		(void);
 	void	setStart		(void);
+	void	setStop			(void);
 	void	lcd_timeout		(void);
 	void	updateTimeDisplay	(void);
 	void	clickPause		(void);
@@ -126,16 +122,19 @@ private slots:
 	void	AcceptFreqinMhz		(void);
 	void	addCorr			(void);
 
-	void	abortSystem		(int);
 	void	TerminateProcess	(void);
 	void	toggle_Freezer		(void);
 	void	nextFrequency		(void);
 	void	switchScanner		(void);
-	void	setScanDelay		(int);
 
+	void	Display			(uint64_t);
+	void	Display			(uint64_t, bool);
 public slots:
 	void	handleSamples		(void);
 	void	set_changeRate		(int);
+	void	decimationHandler	(QString);
+	void	closeEvent		(QCloseEvent *event);
+        void    wheelEvent              (QWheelEvent *);
 };
 
 #endif
