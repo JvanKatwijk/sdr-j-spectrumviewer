@@ -29,7 +29,6 @@
 #define	DEFAULT_GAIN	30
 
 	hackrfHandler::hackrfHandler  (QSettings *s) {
-int	err;
 int	res;
 	hackrfSettings			= s;
 	this	-> myFrame		= new QFrame (NULL);
@@ -249,7 +248,7 @@ int	res;
 
 	res	= this -> hackrf_stop_rx (theDevice);
 	if (res != HACKRF_SUCCESS) {
-	   fprintf (stderr, "Problem with hackrf_stop_rx :\n", res);
+	   fprintf (stderr, "Problem with hackrf_stop_rx: %d\n", res);
 	   fprintf (stderr, "%s \n",
 	                 this -> hackrf_error_name (hackrf_error (res)));
 	   return;
@@ -266,8 +265,9 @@ int32_t	hackrfHandler::getSamples (std::complex<float> *V, int32_t size) {
 
 int32_t	hackrfHandler::getSamples (std::complex<float> *V,
 	                         int32_t size, int32_t segmentSize) { 
-	_I_Buffer	-> getDataFromBuffer (V, size);
+int32_t amount	= _I_Buffer	-> getDataFromBuffer (V, size);
 	_I_Buffer	-> skipDataInBuffer (segmentSize - size);
+	return amount;
 }
 
 int32_t	hackrfHandler::Samples	(void) {
@@ -283,7 +283,7 @@ int32_t hackrfHandler::getRate  (void) {
 }
 
 bool	hackrfHandler::legalFrequency (uint64_t f) {
-        return  Mhz (1) <= f && f <= Mhz (6000);
+        return  Mhz (1) <= f && f <= Mhz ((uint64_t)6000);
 }
 
 uint64_t hackrfHandler::defaultFrequency (void) {

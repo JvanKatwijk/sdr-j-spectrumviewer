@@ -63,7 +63,7 @@ int k;
 	spectrumSettings		= Si;
 	this	-> rasterSize		= 50;
 	this	-> displaySize =
-	             spectrumSettings -> value ("displaySize", 2048). toInt ();
+	             spectrumSettings -> value ("displaySize", 4096). toInt ();
 //	if ((displaySize & (displaySize - 1)) != 0)
 //	   displaySize	= 1024;
 
@@ -88,6 +88,7 @@ int k;
 	theDevice	-> setVFOFrequency (theDevice -> defaultFrequency ());
 	currentFrequency	= theDevice -> defaultFrequency ();
 	HFScope_1	-> setBitDepth (theDevice -> bitDepth ());
+	IFScope		-> setBitDepth (theDevice -> bitDepth () / 2);
 
 //	set some sliders to their values
 	k	= spectrumSettings -> value ("spectrumAmplitudeSlider", 20). toInt ();
@@ -249,9 +250,6 @@ void	Viewer::setStart (void) {
 //
 //	parameters to use a bandwidth, frequency and decimation
 //	to be done,
-//	then we move
-	int decimatedWidth = theDevice -> getRate () / 255;
-
 	theDevice	-> setVFOFrequency (currentFrequency);
 	Display (currentFrequency);
 	lcd_rate_display	-> display (theDevice -> getRate ());
@@ -413,6 +411,7 @@ L1:
 //
 void	Viewer::doFreeze (double *bufferIn,
 	                          double *bufferRes, int32_t count) {
+	(void)bufferIn; (void)bufferRes;(void)count;
 }
 //
 //	For displaying values, we use different scales, depending
@@ -595,7 +594,6 @@ void	Viewer::switchScanner	(void) {
 }
 
 void	Viewer::nextFrequency (void) {
-int32_t	amount;
 int32_t	frequency;
 int32_t	low, high;
 
