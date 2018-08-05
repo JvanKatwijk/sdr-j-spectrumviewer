@@ -13,7 +13,6 @@ such as the SDRplay, showing a bandwidth of 10 Mhz in the picture.
 The program allows "scanning" over a selected band, with a selected
 interval and a selected frequency step. The programs shows
 at the same time a frequency spectrum and a waterfall.
-It - obviously - supports freezing the image.
 
 The current version has three "scopes", the top one showing the
 spectrum of the signal, with the second one showing the spectrum
@@ -21,6 +20,7 @@ as a waterfall.
 The third one, smaller, shows a fraction of the spectrum. The fraction
 is determined by a selector. The picture shows a franction of 1/30,
 so a resulting width of app 300 KHz.
+
 -----------------------------------------------------------------------
 
 The program can be configured to handle the SDRplay, DABsticks, the AIRspy
