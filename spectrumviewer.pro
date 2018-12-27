@@ -8,12 +8,11 @@ TEMPLATE	= app
 TARGET		= spectrumviewer
 QT		+= widgets
 CONFIG		+= console 
-#QMAKE_CFLAGS    +=  -flto -ffast-math
-#QMAKE_CXXFLAGS  +=  -flto -ffast-math
-#QMAKE_LFLAGS    +=  -flto
-QMAKE_CFLAGS   +=  -g
-QMAKE_CXXFLAGS +=  -g
-QMAKE_LFLAGS   +=  -g
+QMAKE_CFLAGS    +=  -O3 -ffast-math
+QMAKE_CXXFLAGS  +=  -O3 -ffast-math
+#QMAKE_CFLAGS   +=  -g
+#QMAKE_CXXFLAGS +=  -g
+#QMAKE_LFLAGS   +=  -g
 
 
 DEPENDPATH += . \
@@ -55,8 +54,8 @@ INCLUDEPATH	+= /usr/local/include
 LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 25
 LIBS            += -lsndfile
 LIBS            += -lsamplerate
-#CONFIG		+= dabstick
-#CONFIG		+= airspy
+CONFIG		+= dabstick
+CONFIG		+= airspy
 CONFIG		+= sdrplay
 #CONFIG		+= elad-s1
 #CONFIG		+= soundcard
@@ -80,7 +79,7 @@ LIBS 		+= -lstdc++
 LIBS		+= -lusb-1.0
 LIBS		+= -lpthread
 CONFIG		+= dabstick
-#CONFIG		+= airspy
+CONFIG		+= airspy
 CONFIG		+= sdrplay
 #CONFIG		+= soundcard
 CONFIG		+= hackrf
@@ -113,7 +112,7 @@ DEFINES		+= HAVE_SDRPLAY
 airspy {
 	DEFINES		+= HAVE_AIRSPY
 	INCLUDEPATH	+= ./devices/airspy-handler \
-	                   /usr/local/include/libairspy
+	                   ./devices/airspy-handler/libairspy
 	HEADERS		+= ./devices/airspy-handler/airspy-handler.h 
 	SOURCES		+= ./devices/airspy-handler/airspy-handler.cpp 
 	FORMS		+= ./devices/airspy-handler/airspy-widget.ui

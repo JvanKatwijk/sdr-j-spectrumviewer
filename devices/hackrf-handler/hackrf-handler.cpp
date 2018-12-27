@@ -59,6 +59,7 @@ int	res;
            dlclose (Handle);
 #endif
            delete myFrame;
+	   fprintf (stderr, "loading library functions failed\n");
            throw (21);
         }
 //

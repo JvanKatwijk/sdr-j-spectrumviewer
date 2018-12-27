@@ -36,8 +36,8 @@
 #ifdef	HAVE_AIRSPY
 #include	"airspy-handler.h"
 #endif
-#ifdef	HAVE_DABSTICK
-#include	"dabstick.h"
+#ifdef	HAVE_RTLSDR
+#include	"rtlsdr-handler.h"
 #endif
 #ifdef	HAVE_HACKRF
 #include	"hackrf-handler.h"
@@ -83,6 +83,9 @@ int k;
 	theDevice	= setDevice ();
 	if (theDevice == nullptr) {
 	   fprintf (stderr, "no device found\n");
+	   delete IFScope;
+	   delete HFScope_2;
+	   delete HFScope_1;
 	   exit (21);
 	}
 	theDevice	-> setVFOFrequency (theDevice -> defaultFrequency ());
@@ -207,11 +210,13 @@ deviceHandler	*theDevice;
 #ifdef	HAVE_SDRPLAY
 	try {
 	   theDevice	= new sdrplayHandler (spectrumSettings);
+	   connect (theDevice, SIGNAL (set_changeRate (int)),
+	            this, SLOT (set_changeRate (int)));
 	   return theDevice;
 	} catch (int e) {
 	}
 #endif
-#ifdef	HAVE_DABSTICK
+#ifdef	HAVE_RTLSDR
 	try {
 	   theDevice	= new rtlsdrHandler (spectrumSettings);
 	   return theDevice;
@@ -221,7 +226,8 @@ deviceHandler	*theDevice;
 #ifdef	HAVE_AIRSPY
 	try {
 	   theDevice	= new airspyHandler (spectrumSettings);
-	   returntheDevice;
+	   return theDevice;
+	} catch (int e) {
 	}
 #endif
 #ifdef	HAVE_HACKRF
@@ -229,12 +235,15 @@ deviceHandler	*theDevice;
 	   theDevice	= new hackrfHandler (spectrumSettings);
 	   return theDevice;
 	} catch (int e) {
+	   fprintf (stderr, "geen hackrf\n");
 	}
 #endif
 	return nullptr;
 }
 //
 void	Viewer::set_changeRate (int newRate) {
+	lcd_rate_display	-> display (theDevice -> getRate ());
+	fprintf (stderr, "newRate = %d\n", newRate);
 	(void)newRate;
 }
 

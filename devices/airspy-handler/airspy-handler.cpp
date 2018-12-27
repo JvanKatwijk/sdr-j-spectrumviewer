@@ -230,7 +230,7 @@ bool	airspyHandler::legalFrequency (uint64_t f) {
 	return Khz (24000) <= f && f <= Khz (1750000);
 }
 
-int64_t	airspyHandler::defaultFrequency (void) {
+uint64_t	airspyHandler::defaultFrequency (void) {
 	return Khz (94700);
 }
 
