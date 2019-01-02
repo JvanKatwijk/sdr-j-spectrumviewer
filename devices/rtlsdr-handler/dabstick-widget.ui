@@ -123,6 +123,16 @@
     </property>
     <item>
      <property name="text">
+      <string>2000</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2500</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
       <string>960</string>
      </property>
     </item>
@@ -134,16 +144,6 @@
     <item>
      <property name="text">
       <string>1536</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>2000</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>2500</string>
      </property>
     </item>
     <item>

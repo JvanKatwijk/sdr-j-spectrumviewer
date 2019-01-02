@@ -188,7 +188,7 @@ int16_t	i;
 	gainSlider	-> setMaximum (gainsCount);
 	for (i = gainsCount; i > 0; i--)
 		fprintf(stderr, "%.1f ", gains [i - 1] / 10.0);
-	rtlsdr_set_tuner_gain_mode (device, 1);
+	rtlsdr_set_tuner_gain_mode (device, 0);
 	rtlsdr_set_tuner_gain (device, gains [gainsCount / 2]);
 
 	_I_Buffer		= new RingBuffer<uint8_t>(2048 * 1024);
@@ -304,7 +304,7 @@ int32_t	r;
 	   r	= this -> rtlsdr_get_sample_rate (device);
 	fprintf (stderr, "samplerate = %d\n", r);
 //	ok all set, continue
-//	   restartReader (); we need a proper restart from the user
+	   restartReader (); 	// we need a proper restart from the user
 	}
 
 	inputRate	= newRate;
