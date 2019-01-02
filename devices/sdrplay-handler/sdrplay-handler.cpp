@@ -76,31 +76,37 @@ sdrplaySelect	*sdrplaySelector;
 HKEY APIkey;
 wchar_t APIkeyValue [256];
 ULONG APIkeyValue_length = 255;
-	if (RegOpenKey (HKEY_LOCAL_MACHINE,
-	                TEXT("Software\\MiricsSDR\\API"),
-	                &APIkey) != ERROR_SUCCESS) {
-	  fprintf (stderr,
-	           "failed to locate API registry entry, error = %d\n",
-	           (int)GetLastError());
-	   return;
-	}
-	RegQueryValueEx (APIkey,
-	                 (wchar_t *)L"Install_Dir",
-	                 NULL,
-	                 NULL,
-	                 (LPBYTE)&APIkeyValue,
-	                 (LPDWORD)&APIkeyValue_length);
-//	Ok, make explicit it is in the 64 or 32 bits section
-	wchar_t *x = wcscat (APIkeyValue, (wchar_t *)L"\\x86\\mir_sdr_api.dll");
-//	wchar_t *x = wcscat (APIkeyValue, (wchar_t *)L"\\x64\\mir_sdr_api.dll");
-//	fprintf (stderr, "Length of APIkeyValue = %d\n", APIkeyValue_length);
-//	wprintf (L"API registry entry: %s\n", APIkeyValue);
-	RegCloseKey(APIkey);
 
-	Handle	= LoadLibrary (x);
+        wchar_t *libname = (wchar_t *)L"mir_sdr_api.dll";
+        Handle  = LoadLibrary (libname);
 	if (Handle == NULL) {
-	  fprintf (stderr, "Failed to open mir_sdr_api.dll\n");
-	  return;
+	   if (RegOpenKey (HKEY_LOCAL_MACHINE,
+	                   TEXT("Software\\MiricsSDR\\API"),
+	                   &APIkey) != ERROR_SUCCESS) {
+	      fprintf (stderr,
+	               "failed to locate API registry entry, error = %d\n",
+	               (int)GetLastError ());
+	      delete myFrame;
+	      throw (21);
+	   }
+	
+	   RegQueryValueEx (APIkey,
+	                    (wchar_t *)L"Install_Dir",
+	                    NULL,
+	                    NULL,
+	                    (LPBYTE)&APIkeyValue,
+	                    (LPDWORD)&APIkeyValue_length);
+//	Ok, make explicit it is in the 64 or 32 bits section
+	   wchar_t *x =
+	          wcscat (APIkeyValue, (wchar_t *)L"\\x86\\mir_sdr_api.dll");
+	   RegCloseKey(APIkey);
+
+	   Handle	= LoadLibrary (x);
+	   if (Handle == NULL) {
+	      fprintf (stderr, "Failed to open mir_sdr_api.dll\n");
+	      delete myFrame;
+	      throw (22);
+	   }
 	}
 #else
 //	Ǹote that under Ubuntu, the Mirics shared object does not seem to be
@@ -113,7 +119,7 @@ ULONG APIkeyValue_length = 255;
 
 	if (Handle == NULL) {
 	   fprintf (stderr, "error report %s\n", dlerror ());
-	   return;
+	   throw (23);
 	}
 #endif
 //
@@ -154,10 +160,8 @@ ULONG APIkeyValue_length = 255;
 	vfoFrequency	= Khz (94700);
 
 	sdrplaySettings		-> beginGroup ("sdrplaySettings");
-	ifgainSlider            -> setValue (
+	GRdBSelector            -> setValue (
 	            sdrplaySettings -> value ("sdrplay-ifgrdb", 20). toInt ());
-//      show the value
-	GRdBDisplay             -> display (ifgainSlider -> value ());
 
 	lnaGainSetting          -> setValue (
 	            sdrplaySettings -> value ("sdrplay-lnastate", 0). toInt ());
@@ -172,7 +176,7 @@ ULONG APIkeyValue_length = 255;
 	      sdrplaySettings -> value ("sdrplay-agcMode", 0). toInt () != 0;
 	if (agcMode) {
 	   agcControl -> setChecked (true);
-	   ifgainSlider         -> hide ();
+	   GRdBSelector         -> hide ();
 	   gainsliderLabel      -> hide ();
 	}
 	sdrplaySettings	-> endGroup ();
@@ -288,7 +292,7 @@ ULONG APIkeyValue_length = 255;
 	connect (rateSelector, SIGNAL (activated (const QString &)),
 	         this, SLOT (setExternalRate (const QString &)));
 //      and be prepared for future changes in the settings
-	connect (ifgainSlider, SIGNAL (valueChanged (int)),
+	connect (GRdBSelector, SIGNAL (valueChanged (int)),
 	         this, SLOT (set_ifgainReduction (int)));
 	connect (lnaGainSetting, SIGNAL (valueChanged (int)),
 	         this, SLOT (set_lnagainReduction (int)));
@@ -310,10 +314,9 @@ ULONG APIkeyValue_length = 255;
 	sdrplaySettings	-> beginGroup ("sdrplaySettings");
 	sdrplaySettings	-> setValue ("sdrplayRate",
 	                              rateSelector -> currentText ());
-	sdrplaySettings -> setValue ("sdrplayGain", ifgainSlider -> value ());
 	sdrplaySettings -> setValue ("sdrplay-ppm", ppmControl -> value ());
 	sdrplaySettings -> setValue ("sdrplay-ifgrdb",
-	                                    ifgainSlider -> value ());
+	                                    GRdBSelector -> value ());
 	sdrplaySettings -> setValue ("sdrplay-lnastate",
 	                              lnaGainSetting -> value ());
 	sdrplaySettings -> setValue ("sdrplay-agcMode",
@@ -390,7 +393,7 @@ mir_sdr_ErrT	err;
 uint64_t realFreq = newFrequency;
 int	gRdBSystem;
 int	samplesPerPacket;
-int     GRdB            = ifgainSlider          -> value ();
+int     GRdB            = GRdBSelector          -> value ();
 int     lnaState        = lnaGainSetting        -> value ();
 
 	if (bankFor_sdr (realFreq) == -1)
@@ -429,7 +432,7 @@ uint64_t	sdrplayHandler::getVFOFrequency	(void) {
 
 void    sdrplayHandler::set_ifgainReduction     (int newGain) {
 mir_sdr_ErrT    err;
-int     GRdB            = ifgainSlider  -> value ();
+int     GRdB            = GRdBSelector  -> value ();
 int     lnaState        = lnaGainSetting -> value ();
 
 	(void)newGain;
@@ -439,7 +442,6 @@ int     lnaState        = lnaGainSetting -> value ();
 	   fprintf (stderr, "Error at set_ifgain %s\n",
 	                    errorCodes (err). toLatin1 (). data ());
 	else {
-	   GRdBDisplay          -> display (GRdB);
 	   lnaGRdBDisplay       -> display (get_lnaGRdB (hwVersion, lnaState));
 	}
 }
@@ -470,12 +472,12 @@ bool agcMode      = agcControl -> isChecked ();
 	                       -30,
 	                       0, 0, 0, 0, lnaGainSetting -> value ());
 	if (!agcMode) {
-	   ifgainSlider         -> show ();
+	   GRdBSelector         -> show ();
 	   gainsliderLabel      -> show ();
 	   set_ifgainReduction (0);
 	}
 	else {
-	   ifgainSlider         -> hide ();
+	   GRdBSelector         -> hide ();
 	   gainsliderLabel      -> hide ();
 	}
 }
@@ -537,7 +539,6 @@ void    myGainChangeCallback (uint32_t  GRdB,
 	                      uint32_t  lnaGRdB,
 	                      void      *cbContext) {
 sdrplayHandler  *p      = static_cast<sdrplayHandler *> (cbContext);
-	p -> GRdBDisplay        -> display ((int)GRdB);
 	(void)lnaGRdB;
 //      p -> lnaGRdBDisplay     -> display ((int)lnaGRdB);
 }
@@ -547,7 +548,7 @@ bool	sdrplayHandler::restartReader	(void) {
 int     gRdBSystem;
 int     samplesPerPacket;
 mir_sdr_ErrT    err;
-int     GRdB            = ifgainSlider  -> value ();
+int     GRdB            = GRdBSelector  -> value ();
 int     lnaState        = lnaGainSetting -> value ();
 
 	if (running. load ())
@@ -571,7 +572,7 @@ int     lnaState        = lnaGainSetting -> value ();
 	                errorCodes (err). toLatin1 (). data ());
 	   return false;
 	}
-	fprintf (stderr, "starting gelukt, bw = %d\n", inputRate);
+
 	err     = my_mir_sdr_SetPpm (double (ppmControl -> value ()));
 	if (err != mir_sdr_Success)
 	   fprintf (stderr, "error = %s\n",
@@ -580,7 +581,7 @@ int     lnaState        = lnaGainSetting -> value ();
 	   my_mir_sdr_AgcControl (mir_sdr_AGC_100HZ,
 	                          -30,
 	                          0, 0, 0, 0, lnaGainSetting -> value ());
-	   ifgainSlider         -> hide ();
+	   GRdBSelector         -> hide ();
 	   gainsliderLabel      -> hide ();
 	}
 

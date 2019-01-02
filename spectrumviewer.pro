@@ -52,7 +52,6 @@ SOURCES += ./main.cpp \
 unix { 
 CONFIG		+= console 
 DESTDIR		= ./linux-bin
-DESTDIR         = ./linux-bin
 exists ("./.git") {
    GITHASHSTRING = $$system(git rev-parse --short HEAD)
    !isEmpty(GITHASHSTRING) {
@@ -70,8 +69,8 @@ INCLUDEPATH	+= /usr/local/include
 LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 25
 LIBS            += -lsndfile
 LIBS            += -lsamplerate
-#CONFIG		+= dabstick
-#CONFIG		+= airspy
+CONFIG		+= dabstick
+CONFIG		+= airspy
 CONFIG		+= sdrplay
 #CONFIG		+= elad-s1
 #CONFIG		+= soundcard
@@ -82,6 +81,7 @@ CONFIG		+= hackrf
 win32 {
 CONFIG		-= console 
 DESTDIR		= ../../windows-spectrumviewer
+
 exists ("./.git") {
    GITHASHSTRING = $$system(git rev-parse --short HEAD)
    !isEmpty(GITHASHSTRING) {

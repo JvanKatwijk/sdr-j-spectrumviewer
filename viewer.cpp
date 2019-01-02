@@ -83,6 +83,9 @@ int k;
 	theDevice	= setDevice ();
 	if (theDevice == nullptr) {
 	   fprintf (stderr, "no device found\n");
+	   delete IFScope;
+	   delete HFScope_2;
+	   delete HFScope_1;
 	   exit (21);
 	}
 	theDevice	-> setVFOFrequency (theDevice -> defaultFrequency ());
@@ -232,6 +235,7 @@ deviceHandler	*theDevice;
 	   theDevice	= new hackrfHandler (spectrumSettings);
 	   return theDevice;
 	} catch (int e) {
+	   fprintf (stderr, "geen hackrf\n");
 	}
 #endif
 	return nullptr;
