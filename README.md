@@ -21,22 +21,25 @@ The third one, smaller, shows a fraction of the spectrum. The fraction
 is determined by a selector. The picture shows a franction of 1/30,
 so a resulting width of app 300 KHz.
 
+---------------------------------------------------------------------------
+Windows
+-----------------------------------------------------------------------------
+
+The releases section contains an installer, setup-spectrumviewer.exe. The installer
+will install the executable and the required libraries. Note that the installer
+will call the official installer for the dll implementing the api to get access to
+the SDRplay device.
+
+----------------------------------------------------------------------------------
+Linux
 -----------------------------------------------------------------------
 
 The program can be configured to handle the SDRplay, DABsticks, the AIRspy
 and the HACKrf devices.
 
---------------------------------------------------------------------------
-
 To construct the spectrumviewer adapt the ".pro" file to your needs
 For the devices included (by uncommenting the appropriate lines
 in the ".pro" file) you need to install the appropriate libraries
-
---------------------------------------------------------------------------
-*Windows*
---------------------------------------------------------------------------
-
-For windows there is an installer, in the releases section
 
 
 
