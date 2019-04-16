@@ -7,13 +7,16 @@
 TEMPLATE	= app
 TARGET		= spectrumviewer
 QT		+= widgets
-CONFIG		+= console 
 QMAKE_CFLAGS    +=  -O3 -ffast-math
 QMAKE_CXXFLAGS  +=  -O3 -ffast-math
 #QMAKE_CFLAGS   +=  -g
 #QMAKE_CXXFLAGS +=  -g
 #QMAKE_LFLAGS   +=  -g
+QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]
+RC_ICONS        =  viewer.ico
+RESOURCES       += resources.qrc
 
+TRANSLATIONS = i18n/de_DE.ts i18n/it_IT.ts i18n/hu_HU.ts
 
 DEPENDPATH += . \
 	      ./src \
@@ -47,7 +50,19 @@ SOURCES += ./main.cpp \
 
 #for Fedora and Ubuntu use
 unix { 
+CONFIG		+= console 
 DESTDIR		= ./linux-bin
+exists ("./.git") {
+   GITHASHSTRING = $$system(git rev-parse --short HEAD)
+   !isEmpty(GITHASHSTRING) {
+       message("Current git hash = $$GITHASHSTRING")
+       DEFINES += GITHASH=\\\"$$GITHASHSTRING\\\"
+   }
+}
+isEmpty(GITHASHSTRING) {
+    DEFINES += GITHASH=\\\"------\\\"
+}
+
 INCLUDEPATH	+= /usr/include/qt5/qwt
 INCLUDEPATH	+= /usr/local/include
 #LIBS		+= -lqwt -lusb-1.0 -lrt -lfftw3f -ldl		# ubuntu 15.04
@@ -64,7 +79,21 @@ CONFIG		+= hackrf
 
 ## and for windows32 we use:
 win32 {
-DESTDIR	= ../../windows-bin
+CONFIG		-= console 
+DESTDIR		= ../../windows-spectrumviewer
+
+exists ("./.git") {
+   GITHASHSTRING = $$system(git rev-parse --short HEAD)
+   !isEmpty(GITHASHSTRING) {
+       message("Current git hash = $$GITHASHSTRING")
+       DEFINES += GITHASH=\\\"$$GITHASHSTRING\\\"
+   }
+}
+
+isEmpty(GITHASHSTRING) {
+    DEFINES += GITHASH=\\\"------\\\"
+}
+
 # includes in mingw differ from the includes in fedora linux
 INCLUDEPATH 	+= /usr/i686-w64-mingw32/sys-root/mingw/include
 INCLUDEPATH 	+= /usr/i686-w64-mingw32/sys-root/mingw/include/qt5/qwt

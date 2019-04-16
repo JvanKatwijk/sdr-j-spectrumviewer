@@ -83,5 +83,6 @@ Viewer	*myRadioInterface;
 	qDebug ("It is done\n");
 	ISettings	-> sync ();
 	delete	myRadioInterface;
+	exit (1);
 }
 
