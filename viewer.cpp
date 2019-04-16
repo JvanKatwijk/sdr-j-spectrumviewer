@@ -309,7 +309,7 @@ void	Viewer::ClearPanel (void) {
 	Panel = 0;
 }
 
-int	Viewer::getPanel (void) {
+uint64_t	Viewer::getPanel (void) {
 	return Panel;
 }
 
@@ -371,7 +371,7 @@ std::complex<float>	dataIn [displaySize];
 std::complex<float>	x [displaySize * 8];
 int32_t i;
 double showDisplay [displaySize];
-int	currentFrequency	= theDevice -> getVFOFrequency ();
+	currentFrequency	= theDevice -> getVFOFrequency ();
 
 	if (!running. load ())
 	   return;
@@ -442,13 +442,13 @@ void	Viewer::Display (uint64_t freq, bool b) {
 int32_t nd	= numberofDigits (freq);
 	(void)b;
 	lcd_freq_display	-> setDigitCount (nd);
-	lcd_freq_display	-> display ((int32_t)freq);
+	lcd_freq_display	-> display ((int)((uint64_t)freq));
 }
 
 void	Viewer::Display (uint64_t freq) {
 int32_t nd	= numberofDigits (freq);
 	lcd_freq_display	-> setDigitCount (nd);
-	lcd_freq_display	-> display ((int)freq / Khz (1));
+	lcd_freq_display	-> display ((int)((uint64_t)freq / Khz (1)));
 }
 
 void	Viewer::toggle_Freezer	(void) {
@@ -527,7 +527,7 @@ uint64_t	p;
 }
 
 void Viewer::AcceptFreqinMhz (void) {
-int32_t	p;
+uint64_t	p;
 
 	if (!lcd_timer -> isActive ())
 	   return;

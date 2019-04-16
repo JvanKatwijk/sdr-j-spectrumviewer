@@ -25,6 +25,7 @@
  */
 #include	"spectrum-scope.h"
 #include	<qwt_picker_machine.h>
+#include	<inttypes.h>
 /*
  *	The "scope" combines the Qwt widgets and control for both
  *	the spectrumdisplay and the waterfall display.
@@ -130,12 +131,11 @@ void	spectrumScope::showFrame (double	*Y1_value,
 uint16_t	i;
 double	X_axis	[displaySize];
 double	Y_Values [displaySize];
-int32_t	frequency	= (int32_t)freq;
 
-	IndexforMarker	= frequency / 1000;
+	IndexforMarker	= (float)freq / 1000;
 	for (i = 0; i < displaySize; i ++) 
-	   X_axis [i] = ((double)frequency 
-	                - (double)rate / 2 +  rate / displaySize * i ) / 1000;
+	   X_axis [i] = (float)(freq / 1000) 
+	                - ((double)rate / 2 - rate / displaySize * i) / 1000;
 
 	amp		= amp / 50 * (-get_db (0));
 	plotgrid	-> setAxisScale (QwtPlot::xBottom,

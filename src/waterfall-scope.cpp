@@ -122,9 +122,9 @@ int	i;
 	   return;
 	}
 	a = true;
-	IndexforMarker	= (int32_t)freq / 1000;
+	IndexforMarker	= freq / 1000;
 	for (i = 0; i < displaySize; i ++)
-	   X_axis [i] = ((int32_t)freq -
+	   X_axis [i] = (freq -
 	                (float)rate / 2 + rate / displaySize * i) / 1000;
 	orig	= (int)(X_axis [0]);
 	width	= (int)(X_axis [displaySize - 1] - orig);

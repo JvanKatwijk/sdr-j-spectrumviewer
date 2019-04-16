@@ -74,6 +74,7 @@ uint32_t	rateCount;
 	Handle		= dlopen ("libusb-1.0.so", RTLD_NOW | RTLD_GLOBAL);
 	if (Handle == NULL) {
 	   fprintf (stderr, "libusb cannot be loaded\n");
+	   delete myFrame;
 	   throw (21);
 	}
 	   
@@ -85,8 +86,10 @@ uint32_t	rateCount;
 #ifndef	__MINGW32__
 	   fprintf (stderr, "Error = %s\n", dlerror ());
 #endif
+	   delete myFrame;
 	   throw (21);
 	}
+
 	libraryLoaded	= true;
 
 	if (!load_airspyFunctions ()) {
@@ -96,19 +99,21 @@ uint32_t	rateCount;
 #else
 	   dlclose (Handle);
 #endif
+	   delete myFrame;
 	   throw (22);
 	}
 
 	strcpy (serial,"");
 	result = this -> my_airspy_init ();
 	if (result != AIRSPY_SUCCESS) {
-	   printf("my_airspy_init () failed: %s (%d)\n",
-	             my_airspy_error_name((airspy_error)result), result);
+	   printf ("my_airspy_init () failed: %s (%d)\n",
+	             my_airspy_error_name ((airspy_error)result), result);
 #ifdef __MINGW32__
 	   FreeLibrary (Handle);
 #else
 	   dlclose (Handle);
 #endif
+	   delete myFrame;
 	   throw (23);
 	}
 	
@@ -121,6 +126,7 @@ uint32_t	rateCount;
 #else
 	   dlclose (Handle);
 #endif
+	   delete myFrame;
 	   throw (24);
 	}
 //
@@ -142,6 +148,7 @@ uint32_t	rateCount;
 #else
 	   dlclose (Handle);
 #endif
+	   delete myFrame;
 	   throw (25);
 	}
 

@@ -116,6 +116,7 @@ int16_t	i;
 
 	if (Handle == NULL) {
 	   fprintf (stderr, "failed to open %s\n", libraryString);
+	   delete myFrame;
 	   throw (21);
 	}
 
@@ -126,6 +127,7 @@ int16_t	i;
 #else
 	   dlclose (Handle);
 #endif
+	   delete myFrame;
 	   throw (22);
 	}
 
@@ -140,6 +142,8 @@ int16_t	i;
 #else
 	   dlclose (Handle);
 #endif
+	   delete myFrame;
+	   throw (23);
 	}
 
 	deviceIndex = 0;	// default
@@ -163,6 +167,8 @@ int16_t	i;
 #else
 	   dlclose (Handle);
 #endif
+	   delete myFrame;
+	   throw (24);
 	}
 
 	open			= true;

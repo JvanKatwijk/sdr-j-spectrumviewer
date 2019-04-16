@@ -24,6 +24,7 @@
 #include	<QSettings>
 #include	<QHBoxLayout>
 #include	<QLabel>
+#include	<QDebug>
 #include	"hackrf-handler.h"
 
 #define	DEFAULT_GAIN	30
@@ -34,7 +35,7 @@ int	res;
 	this	-> myFrame		= new QFrame (NULL);
 	setupUi (this -> myFrame);
 	this	-> myFrame	-> show ();
-	this	-> inputRate		= Khz (2048);
+	this	-> inputRate		= Khz (10000);
 	_I_Buffer			= NULL;
 
 #ifdef  __MINGW32__
@@ -74,6 +75,18 @@ int	res;
 	            hackrfSettings -> value ("hack_lnaGain", DEFAULT_GAIN). toInt ());
 	vgagainSlider 		-> setValue (
 	            hackrfSettings -> value ("hack_vgaGain", DEFAULT_GAIN). toInt ());
+//      contributed by Fabio
+        bool isChecked =
+            hackrfSettings -> value ("hack_AntEnable", false). toBool ();
+        AntEnableButton -> setCheckState (isChecked ? Qt::Checked :
+                                                      Qt::Unchecked);
+        isChecked       =
+           hackrfSettings -> value ("hack_AmpEnable", false). toBool();
+        AmpEnableButton -> setCheckState (isChecked ? Qt::Checked :
+                                                      Qt::Unchecked);
+        ppm_correction      -> setValue (
+                  hackrfSettings -> value ("hack_ppmCorrection", 0). toInt ());
+//      end
 
 	hackrfSettings	-> endGroup ();
 
@@ -96,7 +109,7 @@ int	res;
 	   throw (22);
 	}
 
-	res	= this -> hackrf_set_sample_rate (theDevice, 2048000.0);
+	res	= this -> hackrf_set_sample_rate (theDevice, (float)inputRate);
 	if (res != HACKRF_SUCCESS) {
 	   fprintf (stderr, "Problem with hackrf_set_samplerate:");
 	   fprintf (stderr, "%s \n",
@@ -106,7 +119,7 @@ int	res;
 	}
 
 	res	= this -> hackrf_set_baseband_filter_bandwidth (theDevice,
-	                                                        1536000);
+	                                                        10000000);
 	if (res != HACKRF_SUCCESS) {
 	   fprintf (stderr, "Problem with hackrf_set_bw:");
 	   fprintf (stderr, "%s \n",
@@ -124,13 +137,60 @@ int	res;
 	   throw (25);
 	}
 
+	res = this -> hackrf_set_antenna_enable (theDevice, 1);
+        if (res != HACKRF_SUCCESS) {
+           fprintf (stderr, "Problem with hackrf_set_antenna_enable: ");
+           fprintf (stderr, "%s \n",
+                        this -> hackrf_error_name (hackrf_error (res)));
+           delete myFrame;
+           throw (26);
+        }
+
+        res = this -> hackrf_set_amp_enable (theDevice, 1);
+        if (res != HACKRF_SUCCESS) {
+           fprintf (stderr, "Problem with hackrf_set_antenna_enable: ");
+           fprintf (stderr, "%s \n",
+                        this -> hackrf_error_name (hackrf_error (res)));
+           delete myFrame;
+           throw (27);
+        }
+
+	uint16_t regValue;
+        res = this -> hackrf_si5351c_read (theDevice, 162, &regValue);
+        if (res != HACKRF_SUCCESS) {
+           fprintf (stderr, "Problem with hackrf_si5351c_read: ");
+           fprintf (stderr, "%s \n",
+                     this -> hackrf_error_name (hackrf_error (res)));
+           delete myFrame;
+           throw (28);
+        }
+
+        res = this -> hackrf_si5351c_write (theDevice, 162, regValue);
+        if (res != HACKRF_SUCCESS) {
+           fprintf (stderr, "Problem with hackrf_si5351c_write: ");
+           fprintf (stderr, "%s \n",
+                      this -> hackrf_error_name (hackrf_error (res)));
+           delete myFrame;
+           throw (29);
+        }
+
 	setLNAGain	(lnagainSlider	-> value ());
 	setVGAGain	(vgagainSlider	-> value ());
+	EnableAntenna   (1);            // value is a dummy really
+        EnableAmpli     (1);            // value is a dummy, really
+        set_ppmCorrection (ppm_correction       -> value ());
+
 //	and be prepared for future changes in the settings
 	connect (lnagainSlider, SIGNAL (valueChanged (int)),
 	         this, SLOT (setLNAGain (int)));
 	connect (vgagainSlider, SIGNAL (valueChanged (int)),
 	         this, SLOT (setVGAGain (int)));
+	connect (AntEnableButton, SIGNAL (stateChanged (int)),
+                 this, SLOT (EnableAntenna (int)));
+        connect (AmpEnableButton, SIGNAL (stateChanged (int)),
+                 this, SLOT (EnableAmpli (int)));
+        connect (ppm_correction, SIGNAL (valueChanged (int)),
+                 this, SLOT (set_ppmCorrection  (int)));
 
 	hackrf_device_list_t *deviceList = this -> hackrf_device_list ();
 	if (deviceList != NULL) {
@@ -155,6 +215,13 @@ int	res;
 	                                 lnagainSlider -> value ());
 	hackrfSettings -> setValue ("hack_vgaGain",
 	                                 vgagainSlider	-> value ());
+	hackrfSettings -> setValue ("hack_AntEnable",
+                                      AntEnableButton -> checkState () == Qt::Checked);
+        hackrfSettings -> setValue ("hack_AmpEnable",
+                                      AmpEnableButton -> checkState () == Qt::Checked);
+        hackrfSettings  -> setValue ("hack_ppmCorrection",
+                                      ppm_correction -> value ());
+
 	hackrfSettings	-> endGroup ();
 	this	-> hackrf_close (theDevice);
 	this	-> hackrf_exit ();
@@ -170,11 +237,17 @@ int	res;
 	                 this -> hackrf_error_name (hackrf_error (res)));
 	   return;
 	}
-	lastFrequency = newFrequency;
+
+//
+//      It seems that after changing the frequency, the preamp is switched off
+        if (AmpEnableButton -> checkState () == Qt::Checked)
+           EnableAmpli (1);
+
+	vfoFrequency = newFrequency;
 }
 
 uint64_t	hackrfHandler::getVFOFrequency	(void) {
-	return lastFrequency;
+	return vfoFrequency;
 }
 
 void	hackrfHandler::setLNAGain	(int newGain) {
@@ -204,6 +277,57 @@ int	res;
 	   vgagainDisplay	-> display (newGain);
 	}
 }
+void    hackrfHandler::EnableAntenna (int d) {
+int res;
+bool    b;
+
+        (void)d;
+        b = AntEnableButton     -> checkState () == Qt::Checked;
+        res = this -> hackrf_set_antenna_enable (theDevice, b);
+//      fprintf(stderr,"Passed %d\n",(int)b);
+        if (res != HACKRF_SUCCESS) {
+           fprintf (stderr, "Problem with hackrf_set_antenna_enable :\n");
+           fprintf (stderr, "%s \n",
+                            this -> hackrf_error_name (hackrf_error (res)));
+           return;
+        }
+//      AntEnableButton -> setChecked (b);
+}
+
+void    hackrfHandler::EnableAmpli (int a) {
+int res;
+bool    b;
+
+        (void)a;
+        b = AmpEnableButton     -> checkState () == Qt::Checked;
+        res = this -> hackrf_set_amp_enable (theDevice, b);
+        if (res != HACKRF_SUCCESS) {
+           fprintf (stderr, "Problem with hackrf_set_amp_enable :\n");
+           fprintf (stderr, "%s \n",
+                           this -> hackrf_error_name (hackrf_error (res)));
+           return;
+        }
+//      AmpEnableButton->setChecked (b);
+}
+
+//      correction is in Hz
+// This function has to be modified to implement ppm correction
+// writing in the si5351 register does not seem to work yet
+// To be completed
+
+void    hackrfHandler::set_ppmCorrection        (int32_t ppm) {
+int res;
+uint16_t value;
+
+        res = this -> hackrf_si5351c_write (theDevice,
+                                            162,
+                                            static_cast<uint16_t>(ppm));
+        res = this -> hackrf_si5351c_read (theDevice,
+                                           162, &value);
+        (void) res;
+        qDebug() << "Read si5351c register 162 : " << value <<"\n";
+}
+
 //
 //	we use a static large buffer, rather than trying to allocate
 //	a buffer on the stack
@@ -400,6 +524,35 @@ bool	hackrfHandler::load_hackrfFunctions (void) {
 	   fprintf (stderr, "Could not find hackrf_usb_board_id_name\n");
 	   return false;
 	}
+
+// Aggiunta Fabio
+        this -> hackrf_set_antenna_enable = (pfn_hackrf_set_antenna_enable)
+                          GETPROCADDRESS (Handle, "hackrf_set_antenna_enable");
+        if (this -> hackrf_set_antenna_enable == nullptr) {
+           fprintf (stderr, "Could not find hackrf_set_antenna_enable\n");
+           return false;
+        }
+
+        this -> hackrf_set_amp_enable = (pfn_hackrf_set_amp_enable)
+                          GETPROCADDRESS (Handle, "hackrf_set_amp_enable");
+        if (this -> hackrf_set_amp_enable == nullptr) {
+           fprintf (stderr, "Could not find hackrf_set_amp_enable\n");
+           return false;
+        }
+
+	this -> hackrf_si5351c_read = (pfn_hackrf_si5351c_read)
+                         GETPROCADDRESS (Handle, "hackrf_si5351c_read");
+        if (this -> hackrf_si5351c_read == nullptr) {
+           fprintf (stderr, "Could not find hackrf_si5351c_read\n");
+           return false;
+        }
+
+        this -> hackrf_si5351c_write = (pfn_hackrf_si5351c_write)
+                         GETPROCADDRESS (Handle, "hackrf_si5351c_write");
+        if (this -> hackrf_si5351c_write == nullptr) {
+           fprintf (stderr, "Could not find hackrf_si5351c_write\n");
+           return false;
+        }
 
 	fprintf (stderr, "OK, functions seem to be loaded\n");
 	return true;

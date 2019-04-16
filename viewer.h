@@ -75,11 +75,11 @@ private:
 	int32_t		spectrumSize;
 	std::atomic<bool>	running;
 	deviceHandler	*theDevice;
-	int64_t		currentFrequency;
+	uint64_t	currentFrequency;
 	int16_t		scanDelayTime;
 	void		ClearPanel		(void);
 	void		AddtoPanel		(int16_t);
-	int		getPanel		(void);
+	uint64_t	getPanel		(void);
 	void		CorrectPanel		(void);
 	freqmapper	*theMapper;
 	decimatingFIR	*theFilter;
@@ -89,7 +89,7 @@ private:
 	QTimer		*scanTimer;
 	QTimer		*displayTimer;
 	QTimer		*runTimer;
-	int		Panel;
+	int64_t		Panel;
 	uint8_t		runMode;
 	bool		freezer;
 	bool		scanner;
