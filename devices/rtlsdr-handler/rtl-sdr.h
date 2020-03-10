@@ -255,7 +255,6 @@ RTLSDR_API int rtlsdr_set_tuner_if_gain(rtlsdr_dev_t *dev, int stage, int gain);
  */
 RTLSDR_API int rtlsdr_set_tuner_gain_mode(rtlsdr_dev_t *dev, int manual);
 
-<<<<<<< HEAD
 /*!
  * Set the sample rate for the device, also selects the baseband filters
  * according to the requested sample rate for tuners where this is possible.
@@ -267,9 +266,6 @@ RTLSDR_API int rtlsdr_set_tuner_gain_mode(rtlsdr_dev_t *dev, int manual);
  * 		    sample loss is to be expected for rates > 2400000
  * \return 0 on success, -EINVAL on invalid rate
  */
-=======
-/* this will select the baseband filters according to the requested sample rate */
->>>>>>> 6cc5b8c50ae5d5488225c1de46ca97b82f06d54a
 RTLSDR_API int rtlsdr_set_sample_rate(rtlsdr_dev_t *dev, uint32_t rate);
 
 /*!

@@ -34,6 +34,8 @@ HEADERS += ./viewer.h \
 	   ./src/spectrum-scope.h  \
 	   ./src/waterfall-scope.h  \
 	   ./src/mapper.h \
+	   ./src/decimator.h \
+	   ./src/popup-keypad.h \
 	   ./src/fir-filters.h \
 	   ./devices/device-handler.h
 
@@ -45,6 +47,8 @@ SOURCES += ./main.cpp \
            ./src/fft.cpp \
 	   ./src/spectrum-scope.cpp \
 	   ./src/waterfall-scope.cpp \
+	   ./src/decimator.cpp \
+	   ./src/popup-keypad.cpp \
 	   ./src/fir-filters.cpp \
 	   ./devices/device-handler.cpp 
 
@@ -73,8 +77,9 @@ CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
 #CONFIG		+= elad-s1
-#CONFIG		+= soundcard
+CONFIG		+= soundcard
 CONFIG		+= hackrf
+CONFIG		+= lime
 }
 
 ## and for windows32 we use:
@@ -107,11 +112,12 @@ LIBS		+= -lwinmm
 LIBS 		+= -lstdc++
 LIBS		+= -lusb-1.0
 LIBS		+= -lpthread
-#CONFIG		+= dabstick
+CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
 #CONFIG		+= soundcard
 CONFIG		+= hackrf
+CONFIG		+= lime
 #CONFIG		+= extio
 }
 #
@@ -205,5 +211,19 @@ hackrf {
         HEADERS         += ./devices/hackrf-handler/hackrf-handler.h
         SOURCES         += ./devices/hackrf-handler/hackrf-handler.cpp
         FORMS           += ./devices/hackrf-handler/hackrf-widget.ui
+}
+
+#
+#       the HACKRF One
+#
+lime {
+        DEFINES         += HAVE_LIME
+        DEPENDPATH      += ./devices/lime-handler
+        INCLUDEPATH     += ./devices/lime-handler
+        HEADERS         += ./devices/lime-handler/lime-handler.h \
+       	                   ./devices/lime-handler/lime-reader.h
+        SOURCES         += ./devices/lime-handler/lime-handler.cpp \
+	                   ./devices/lime-handler/lime-reader.cpp
+        FORMS           += ./devices/lime-handler/lime-widget.ui
 }
 

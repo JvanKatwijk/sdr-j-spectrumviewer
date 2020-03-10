@@ -1,25 +1,23 @@
+#
 /*
  *    Copyright (C)  2010, 2011, 2012
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair Computing
  *
- *    This file is part of the SDR-J.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
+ *    This file is part of the spectrumviewer
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    spectrumviewer is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    spectrumviewer is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with SDR-J; if not, write to the Free Software
+ *    along with spectrumviewer; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
@@ -50,6 +48,8 @@
 
 class	QSettings;
 class	deviceHandler;
+class	decimator;
+class	keyPad;
 /*
  *	The main gui object. It inherits from
  *	QDialog and the generated form
@@ -66,6 +66,7 @@ private:
 	spectrumScope	*HFScope_1;
 	waterfallScope	*HFScope_2;
 	spectrumScope	*IFScope;
+	keyPad		*mykeyPad;
 	float		*Window;
 	int32_t		inputRate;
 	int32_t		bandWidth;
@@ -82,7 +83,8 @@ private:
 	uint64_t	getPanel		(void);
 	void		CorrectPanel		(void);
 	freqmapper	*theMapper;
-	decimatingFIR	*theFilter;
+	freqmapper	*theMapper_2;
+	decimator	*theDecimator;
 	void		setTuner		(uint64_t);
 	void		setnextFrequency	(uint64_t);
 	QTimer		*lcd_timer;
@@ -107,20 +109,6 @@ private slots:
 	void	updateTimeDisplay	(void);
 	void	clickPause		(void);
 	void	adjustFrequency		(int);
-	void	addOne			(void);
-	void	addTwo			(void);
-	void	addThree		(void);
-	void	addFour			(void);
-	void	addFive			(void);
-	void	addSix			(void);
-	void	addSeven		(void);
-	void	addEight		(void);
-	void	addNine			(void);
-	void	addZero			(void);
-	void	addClear		(void);
-	void	AcceptFreqinKhz		(void);
-	void	AcceptFreqinMhz		(void);
-	void	addCorr			(void);
 
 	void	TerminateProcess	(void);
 	void	toggle_Freezer		(void);
@@ -131,6 +119,8 @@ private slots:
 	void	Display			(uint64_t, bool);
 public slots:
 	void	handleSamples		(void);
+	void	handle_freqButton	();
+	void	newFrequency		(int);
 	void	set_changeRate		(int);
 	void	decimationHandler	(QString);
 	void	closeEvent		(QCloseEvent *event);

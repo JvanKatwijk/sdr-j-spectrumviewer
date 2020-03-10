@@ -67,12 +67,12 @@ Viewer	*myRadioInterface;
  *	Before we connect control to the gui, we have to
  *	instantiate
  */
-	QApplication a (argc, argv);
-	myRadioInterface = new Viewer (ISettings);
-
 #if QT_VERSION >= 0x050600
 	QGuiApplication::setAttribute (Qt::AA_EnableHighDpiScaling);
 #endif
+	QApplication a (argc, argv);
+	myRadioInterface = new Viewer (ISettings);
+
 	myRadioInterface -> show ();
 	a. exec ();
 /*

@@ -2,25 +2,22 @@
 /*
  *    Copyright (C) 2014 - 2018
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
- *    This file is part of the SDR-J
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
+ *    This file is part of the spectrumviewer
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    spectrumviewer is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    spectrumviewer is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with SDR-J; if not, write to the Free Software
+ *    along with spectrumviewer; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include	"viewer.h"
@@ -30,6 +27,8 @@
 #include	<QDebug>
 #include	<QDateTime>
 #include	"device-handler.h"
+#include	"decimator.h"
+#include	"popup-keypad.h"
 #ifdef	HAVE_SDRPLAY
 #include	"sdrplay-handler.h"
 #endif
@@ -41,6 +40,9 @@
 #endif
 #ifdef	HAVE_HACKRF
 #include	"hackrf-handler.h"
+#endif
+#ifdef	HAVE_LIME
+#include	"lime-handler.h"
 #endif
 #include	"spectrum-scope.h"
 #include	"waterfall-scope.h"
@@ -77,9 +79,10 @@ int k;
 	connect (HFScope_2, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustFrequency (int)));
 
-	IFScope		= new spectrumScope (detailscope, displaySize);
+	IFScope		= new spectrumScope (detailScope, displaySize);
 
 	theMapper	= new freqmapper (displaySize);
+	theMapper_2	= new freqmapper (4 * displaySize);
 	theDevice	= setDevice ();
 	if (theDevice == nullptr) {
 	   fprintf (stderr, "no device found\n");
@@ -91,7 +94,7 @@ int k;
 	theDevice	-> setVFOFrequency (theDevice -> defaultFrequency ());
 	currentFrequency	= theDevice -> defaultFrequency ();
 	HFScope_1	-> setBitDepth (theDevice -> bitDepth ());
-	IFScope		-> setBitDepth (theDevice -> bitDepth () / 2);
+	IFScope		-> setBitDepth (theDevice -> bitDepth ());
 
 //	set some sliders to their values
 	k	= spectrumSettings -> value ("spectrumAmplitudeSlider", 20). toInt ();
@@ -116,29 +119,10 @@ int k;
 
 	connect (pauseButton, SIGNAL (clicked (void)),
 	         this, SLOT (clickPause (void)));
-	
-/*
- *	connections for the console, first the digits
- */
-	connect (add_one,   SIGNAL (clicked() ), this, SLOT (addOne() ) );
-	connect (add_two,   SIGNAL (clicked() ), this, SLOT (addTwo() ) );
-	connect (add_three, SIGNAL (clicked() ), this, SLOT (addThree() ) );
-	connect (add_four,  SIGNAL (clicked() ), this, SLOT (addFour() ) );
-	connect (add_five,  SIGNAL (clicked() ), this, SLOT (addFive() ) );
-	connect (add_six,   SIGNAL (clicked() ), this, SLOT (addSix() ) );
-	connect (add_seven, SIGNAL (clicked() ), this, SLOT (addSeven() ) );
-	connect (add_eight, SIGNAL (clicked() ), this, SLOT (addEight() ) );
-	connect (add_nine,  SIGNAL (clicked() ), this, SLOT (addNine() ) );
-	connect (add_zero,  SIGNAL (clicked() ), this, SLOT (addZero() ) );
-/*
- *	function buttons
- */
-	connect (khzSelector, SIGNAL (clicked ()),
-	                      this, SLOT (AcceptFreqinKhz ()));
-	connect (mhzSelector, SIGNAL (clicked ()),
-	                      this, SLOT (AcceptFreqinMhz ()));
-	connect (add_correct, SIGNAL (clicked() ), this, SLOT (addCorr() ) );
-	connect (add_clear,   SIGNAL (clicked() ), this, SLOT (addClear() ) );
+
+	mykeyPad	= new keyPad (this);
+	connect (freqButton, SIGNAL (clicked (void)),
+	         this, SLOT (handle_freqButton (void)));
 
 	displayRate	= 10;
 //	Create a timer for dealing with a non acting (or reacting) user
@@ -197,6 +181,7 @@ int k;
 	                              stepSize -> value ());
 //
 //	and then we delete
+	delete		mykeyPad;
 	delete		lcd_timer;
 	delete		HFScope_1;
 	delete		HFScope_2;
@@ -235,7 +220,14 @@ deviceHandler	*theDevice;
 	   theDevice	= new hackrfHandler (spectrumSettings);
 	   return theDevice;
 	} catch (int e) {
-	   fprintf (stderr, "geen hackrf\n");
+	}
+#endif
+#ifdef	HAVE_LIME
+	try {
+	   theDevice	= new limeHandler	(spectrumSettings);
+	   return theDevice;
+	} catch (int e) {
+	   fprintf (stderr, "it seems there is no device\n");
 	}
 #endif
 	return nullptr;
@@ -262,10 +254,7 @@ void	Viewer::setStart (void) {
 	theDevice	-> setVFOFrequency (currentFrequency);
 	Display (currentFrequency);
 	lcd_rate_display	-> display (theDevice -> getRate ());
-	theFilter	= new decimatingFIR (127, 
-	                                     theDevice -> getRate () / 63,
-	                                     theDevice -> getRate (),
-	                                     63);
+	theDecimator	= new decimator (theDevice -> getRate (), 20);
 	bool r = theDevice	-> restartReader ();
 	if (!r) {
 	   QMessageBox::warning (this, tr ("sdr"),
@@ -283,9 +272,9 @@ void	Viewer::setStop	(void) {
 	scanTimer	-> stop ();
 	theDevice	-> stopReader ();
 	runTimer	-> stop ();
-	if (theFilter != nullptr)
-	   delete	theFilter;
-	theFilter	= nullptr;
+	if (theDecimator != nullptr)
+	   delete	theDecimator;
+	theDecimator	= nullptr;
 	running. store (false);
 }
 
@@ -368,7 +357,6 @@ void	Viewer::clickPause (void) {
 //	so the _I_Buffer should be large enough.
 void	Viewer::handleSamples (void) {
 std::complex<float>	dataIn [displaySize];
-std::complex<float>	x [displaySize * 8];
 int32_t i;
 double showDisplay [displaySize];
 	currentFrequency	= theDevice -> getVFOFrequency ();
@@ -391,30 +379,39 @@ double showDisplay [displaySize];
 	                              theDevice	-> getRate (),
 	                              currentFrequency,
 	                              spectrumAmplitudeSlider -> value ());
-	int fillP	= 0;
-	while (theDevice -> Samples () > displaySize * 8) {
-	   double show_2 [displaySize];
-	   std::complex<float> hulp [displaySize];
-	   theDevice -> getSamples (x, displaySize * 8);
-	   for (i = 0; i < displaySize * 8; i ++) {
-	      std::complex<float> y;
-	      if (theFilter -> Pass (x [i], &y)) {
-	         hulp [fillP ++] = y;
-	         if (fillP >= displaySize) {
-	            int rwidth = theDevice -> getRate () /
-	                        decimationSelector -> currentText (). toInt ();	
-	            theMapper	-> convert (hulp, show_2);
-	            IFScope	-> showFrame (show_2,
-	                                      rwidth,
+	int decimationFactor	= decimationSelector -> currentText(). toInt ();
+	int bufferSize		= decimationFactor * displaySize;
+	if (theDevice -> Samples () < bufferSize)
+	   return;
+
+	int fillP = 0;
+	std::complex<float> xbuf [4 * displaySize];
+	while (true) {
+	   std::complex<float> temp;
+	   std::complex<float> lbuf [displaySize];
+	   double theDisplay [4 * displaySize];
+	   theDevice	-> getSamples (lbuf, displaySize);
+	   for (int i = 0; i < displaySize; i ++) {
+	      if (theDecimator -> Pass (lbuf [i], &temp)) {
+	         xbuf [fillP] = temp;
+	         fillP ++;
+	         if (fillP >= 4 * displaySize) {
+	            theMapper_2	-> convert (xbuf, theDisplay);
+//	            for (int k = 0; k < displaySize; i ++)
+//	              theDisplay [k] +=
+//	                       theDisplay [displaySize + k] +
+//	                       theDisplay [2 * displaySize + k] +
+//	                       theDisplay [3 * displaySize + k];
+	            IFScope	-> showFrame (theDisplay,
+	                                      theDevice -> getRate () / decimationFactor,
 	                                      0,
-	                              spectrumAmplitudeSlider -> value ());
-	            goto L1;
+	                                      spectrumAmplitudeSlider -> value ());
+	            theDevice -> resetBuffer ();
+	            return;
 	         }
 	      }
 	   }
 	}
-L1:
-	theDevice	-> resetBuffer ();
 }
 
 //
@@ -454,112 +451,16 @@ int32_t nd	= numberofDigits (freq);
 void	Viewer::toggle_Freezer	(void) {
 }
 
-/*
- * 	Handling the numeric keypad is boring, but needed
- */
-void Viewer::addOne (void) {
-	AddtoPanel (1);
-}
-
-void Viewer::addTwo (void) {
-	AddtoPanel (2);
-}
-
-void Viewer::addThree (void) {
-	AddtoPanel (3);
-}
-
-void Viewer::addFour (void) {
-	AddtoPanel (4);
-}
-
-void Viewer::addFive (void) {
-	AddtoPanel (5);
-}
-
-void Viewer::addSix (void) {
-	AddtoPanel (6);
-}
-
-void Viewer::addSeven (void) {
-	AddtoPanel (7);
-}
-
-void Viewer::addEight (void) {
-	AddtoPanel (8);
-}
-
-void Viewer::addNine (void) {
-	AddtoPanel (9);
-}
-
-void Viewer::addZero (void) {
-	AddtoPanel (0);
-}
 //
-//	If we are keying, the lcd timer is on, so
-//	if it is not on, we are not keying and clear does not
-//	mean anything
-void Viewer::addClear (void) {
-	if (!lcd_timer -> isActive ())
-	   return;
-
-	stop_lcdTimer	();
-
-	ClearPanel ();
-	Display (currentFrequency);
-}
-//
-//
-void Viewer::AcceptFreqinKhz (void) {
-uint64_t	p;
-
-	if (!lcd_timer -> isActive ())
-	   return;
-
-	stop_lcdTimer	();
-//	we know that the increment timer is not running,
-//	so there is no reason to stop it
-	p = getPanel ();
-	ClearPanel ();
-	setTuner (Khz (p));
-	Display (currentFrequency);
-}
-
-void Viewer::AcceptFreqinMhz (void) {
-uint64_t	p;
-
-	if (!lcd_timer -> isActive ())
-	   return;
-
-	stop_lcdTimer	();
-//	we know that the increment timer is not running,
-//	so there is no reason to stop it
-	p = getPanel ();
-	ClearPanel ();
-	setTuner (Mhz (p));
-	Display (currentFrequency);
-}
-
-void Viewer::addCorr (void) {
-	if (!lcd_timer -> isActive ()) 
-	   return;
-
-	stop_lcdTimer	();
-//	increment timer cannot run now so no reason
-//	to stop it
-	Panel = (Panel - (Panel % 10)) / 10;
-	Display	(Panel, true);
-	lcd_timer	-> start (5000);		// restart timer
+void	Viewer::newFrequency	(int newFreq) {
+	setTuner (newFreq);
+        Display (currentFrequency);
 }
 
 void	Viewer::decimationHandler	(QString s) {
 int	decimate	= s. toInt ();
-	delete theFilter;
-	theFilter	= new decimatingFIR (2 * decimate + 1, 
-	                                     theDevice -> getRate () / decimate,
-	                                     theDevice -> getRate (),
-	                                     decimate);
+	delete theDecimator;
+	theDecimator	= new decimator (theDevice -> getRate (), decimate);
 }
 
 //
@@ -623,4 +524,10 @@ int32_t	low, high;
 	scanTimer	-> start (delayBox -> value () * 1000);
 }
 
+void    Viewer::handle_freqButton (void) {
+        if (mykeyPad -> isVisible ())
+           mykeyPad -> hidePad ();
+        else
+           mykeyPad     -> showPad ();
+}
 

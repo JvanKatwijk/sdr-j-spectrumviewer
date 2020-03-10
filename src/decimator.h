@@ -13,14 +13,9 @@
 
 class	decimator {
 public:
-	decimator	(int32_t, int32_t, int16_t);
+	decimator	(int32_t, int32_t);
 	~decimator	(void);
-int	getRate		(void);
-void	addBuffer	(std::complex<float> *buffer, int32_t amount);
-bool	handleBuffer	(std::complex<float> *inBuffer,
-	                 int32_t amount,
-	                 std::complex<float> *outBuffer);
-	LowPassFIR	filter;
+bool	Pass		(std::complex<float>, std::complex<float> *);
 	int32_t         inRate;
         int32_t         outRate;
         double          ratio;
@@ -32,6 +27,9 @@ bool	handleBuffer	(std::complex<float> *inBuffer,
         std::vector<float> outBuffer;
         int32_t         inp;
 	int32_t		inSize;
+	int		outP;
+	int		outAvail;
+	decimatingFIR	*theFilter;
 };
 
 #endif
