@@ -21,8 +21,8 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=E:\sdr-j-development\windows-spectrumviewer\COPYRIGHT.this_software
-InfoBeforeFile=E:\sdr-j-development\windows-spectrumviewer\preamble.txt
+LicenseFile=D:\sdr-j-development\windows-spectrumviewer\COPYRIGHT.this_software
+InfoBeforeFile=D:\sdr-j-development\windows-spectrumviewer\preamble.txt
 OutputBaseFilename=setup-spectrumviewer
 Compression=lzma
 SolidCompression=yes
@@ -34,9 +34,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "E:\sdr-j-development\windows-spectrumviewer\spectrumviewer.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\sdr-j-development\windows-spectrumviewer\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "E:\sdr-j-development\SDRplay_RSP_API-Windows-2.13.1.exe"; DestDir: "{app}"; AfterInstall : install_sdrplayApi
+Source:  "D:\sdr-j-development\windows-spectrumviewer\spectrumviewer.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\sdr-j-development\windows-spectrumviewer\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\JvanK\Downloads\SDRplay_RSP_API-Windows-2.13.1.exe"; DestDir: "{app}"; AfterInstall : install_sdrplayApi
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

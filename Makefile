@@ -14,7 +14,7 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DGITHASH=\"ef089b8\" -DHAVE_RTLSDR -DHAVE_SDRPLAY -DHAVE_AIRSPY -DHAVE_SOUNDCARD -DHAVE_HACKRF -DHAVE_LIME -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DGITHASH=\"303cf9d\" -DHAVE_RTLSDR -DHAVE_SDRPLAY -DHAVE_AIRSPY -DHAVE_SOUNDCARD -DHAVE_HACKRF -DHAVE_LIME -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O3 -ffast-math -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O3 -ffast-math -isystem /usr/include/qt5 -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I. -Isrc -Idevices -I../../../../include/qt5/qwt -I../../../../local/include -Idevices/rtlsdr-handler -Idevices/sdrplay-handler -Idevices/airspy-handler -Idevices/airspy-handler/libairspy -Idevices/soundcard -Idevices/hackrf-handler -Idevices/lime-handler -I../../../../include/qt5 -I../../../../include/qt5/QtWidgets -I../../../../include/qt5/QtGui -I../../../../include/qt5/QtCore -I. -I../../../../include/libdrm -I. -I../../../../lib64/qt5/mkspecs/linux-g++
@@ -205,7 +205,6 @@ DIST          = ../../../../lib64/qt5/mkspecs/features/spec_pre.prf \
 		../../../../lib64/qt5/mkspecs/features/qt_config.prf \
 		../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf \
 		../../../../lib64/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf \
 		../../../../lib64/qt5/mkspecs/features/toolchain.prf \
 		../../../../lib64/qt5/mkspecs/features/default_pre.prf \
@@ -358,7 +357,6 @@ Makefile: spectrumviewer.pro ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf 
 		../../../../lib64/qt5/mkspecs/features/qt_config.prf \
 		../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf \
 		../../../../lib64/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf \
 		../../../../lib64/qt5/mkspecs/features/toolchain.prf \
 		../../../../lib64/qt5/mkspecs/features/default_pre.prf \
@@ -462,7 +460,6 @@ Makefile: spectrumviewer.pro ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf 
 ../../../../lib64/qt5/mkspecs/features/qt_config.prf:
 ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf:
 ../../../../lib64/qt5/mkspecs/features/spec_post.prf:
-.qmake.stash:
 ../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf:
 ../../../../lib64/qt5/mkspecs/features/toolchain.prf:
 ../../../../lib64/qt5/mkspecs/features/default_pre.prf:
@@ -722,7 +719,7 @@ moc_viewer.cpp: viewer.h \
 		../../../../include/qt5/QtGui/QCloseEvent \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include viewer.h -o moc_viewer.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include viewer.h -o moc_viewer.cpp
 
 moc_spectrum-scope.cpp: src/spectrum-scope.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -877,7 +874,7 @@ moc_spectrum-scope.cpp: src/spectrum-scope.h \
 		../../../../include/qt5/qwt/qwt_picker_machine.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include src/spectrum-scope.h -o moc_spectrum-scope.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include src/spectrum-scope.h -o moc_spectrum-scope.cpp
 
 moc_waterfall-scope.cpp: src/waterfall-scope.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -1036,7 +1033,7 @@ moc_waterfall-scope.cpp: src/waterfall-scope.h \
 		src/spectrum-constants.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include src/waterfall-scope.h -o moc_waterfall-scope.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include src/waterfall-scope.h -o moc_waterfall-scope.cpp
 
 moc_popup-keypad.cpp: src/popup-keypad.h \
 		../../../../include/qt5/QtWidgets/QWidget \
@@ -1159,7 +1156,7 @@ moc_popup-keypad.cpp: src/popup-keypad.h \
 		../../../../include/qt5/QtWidgets/qframe.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include src/popup-keypad.h -o moc_popup-keypad.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include src/popup-keypad.h -o moc_popup-keypad.cpp
 
 moc_device-handler.cpp: devices/device-handler.h \
 		src/spectrum-constants.h \
@@ -1272,7 +1269,7 @@ moc_device-handler.cpp: devices/device-handler.h \
 		../../../../include/qt5/QtGui/qtouchdevice.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/device-handler.h -o moc_device-handler.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/device-handler.h -o moc_device-handler.cpp
 
 moc_rtlsdr-handler.cpp: devices/rtlsdr-handler/rtlsdr-handler.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -1417,7 +1414,7 @@ moc_rtlsdr-handler.cpp: devices/rtlsdr-handler/rtlsdr-handler.h \
 		ui_dabstick-widget.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/rtlsdr-handler/rtlsdr-handler.h -o moc_rtlsdr-handler.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/rtlsdr-handler/rtlsdr-handler.h -o moc_rtlsdr-handler.cpp
 
 moc_dongleselect.cpp: devices/rtlsdr-handler/dongleselect.h \
 		../../../../include/qt5/QtWidgets/QDialog \
@@ -1551,7 +1548,7 @@ moc_dongleselect.cpp: devices/rtlsdr-handler/dongleselect.h \
 		../../../../include/qt5/QtCore/QStringList \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/rtlsdr-handler/dongleselect.h -o moc_dongleselect.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/rtlsdr-handler/dongleselect.h -o moc_dongleselect.cpp
 
 moc_sdrplay-handler.cpp: devices/sdrplay-handler/sdrplay-handler.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -1673,7 +1670,7 @@ moc_sdrplay-handler.cpp: devices/sdrplay-handler/sdrplay-handler.h \
 		devices/sdrplay-handler/mirsdrapi-rsp.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/sdrplay-handler/sdrplay-handler.h -o moc_sdrplay-handler.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/sdrplay-handler/sdrplay-handler.h -o moc_sdrplay-handler.cpp
 
 moc_sdrplayselect.cpp: devices/sdrplay-handler/sdrplayselect.h \
 		../../../../include/qt5/QtWidgets/QDialog \
@@ -1807,7 +1804,7 @@ moc_sdrplayselect.cpp: devices/sdrplay-handler/sdrplayselect.h \
 		../../../../include/qt5/QtCore/QStringList \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/sdrplay-handler/sdrplayselect.h -o moc_sdrplayselect.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/sdrplay-handler/sdrplayselect.h -o moc_sdrplayselect.cpp
 
 moc_airspy-handler.cpp: devices/airspy-handler/airspy-handler.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -1930,7 +1927,7 @@ moc_airspy-handler.cpp: devices/airspy-handler/airspy-handler.h \
 		devices/airspy-handler/libairspy/airspy_commands.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/airspy-handler/airspy-handler.h -o moc_airspy-handler.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/airspy-handler/airspy-handler.h -o moc_airspy-handler.cpp
 
 moc_pa-reader.cpp: devices/soundcard/pa-reader.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -1988,7 +1985,7 @@ moc_pa-reader.cpp: devices/soundcard/pa-reader.h \
 		src/ringbuffer.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/soundcard/pa-reader.h -o moc_pa-reader.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/soundcard/pa-reader.h -o moc_pa-reader.cpp
 
 moc_soundcard.cpp: devices/soundcard/soundcard.h \
 		../../../../include/qt5/QtWidgets/QWidget \
@@ -2123,7 +2120,7 @@ moc_soundcard.cpp: devices/soundcard/soundcard.h \
 		ui_soundcard-widget.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/soundcard/soundcard.h -o moc_soundcard.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/soundcard/soundcard.h -o moc_soundcard.cpp
 
 moc_hackrf-handler.cpp: devices/hackrf-handler/hackrf-handler.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -2245,7 +2242,7 @@ moc_hackrf-handler.cpp: devices/hackrf-handler/hackrf-handler.h \
 		devices/hackrf-handler/libhackrf/hackrf.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/hackrf-handler/hackrf-handler.h -o moc_hackrf-handler.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/hackrf-handler/hackrf-handler.h -o moc_hackrf-handler.cpp
 
 moc_lime-handler.cpp: devices/lime-handler/lime-handler.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -2366,45 +2363,9 @@ moc_lime-handler.cpp: devices/lime-handler/lime-handler.h \
 		../../../../include/qt5/QtWidgets/QDialog \
 		../../../../include/qt5/QtWidgets/qdialog.h \
 		ui_lime-widget.h \
-		../../../../include/qt5/QtCore/QVariant \
-		../../../../include/qt5/QtWidgets/QApplication \
-		../../../../include/qt5/QtWidgets/qapplication.h \
-		../../../../include/qt5/QtCore/qcoreapplication.h \
-		../../../../include/qt5/QtCore/qeventloop.h \
-		../../../../include/qt5/QtWidgets/qdesktopwidget.h \
-		../../../../include/qt5/QtGui/qguiapplication.h \
-		../../../../include/qt5/QtGui/qinputmethod.h \
-		../../../../include/qt5/QtWidgets/QComboBox \
-		../../../../include/qt5/QtWidgets/qcombobox.h \
-		../../../../include/qt5/QtWidgets/qabstractitemdelegate.h \
-		../../../../include/qt5/QtWidgets/qstyleoption.h \
-		../../../../include/qt5/QtWidgets/qabstractspinbox.h \
-		../../../../include/qt5/QtGui/qvalidator.h \
-		../../../../include/qt5/QtCore/qregularexpression.h \
-		../../../../include/qt5/QtGui/qicon.h \
-		../../../../include/qt5/QtWidgets/qslider.h \
-		../../../../include/qt5/QtWidgets/qabstractslider.h \
-		../../../../include/qt5/QtWidgets/qstyle.h \
-		../../../../include/qt5/QtWidgets/qtabbar.h \
-		../../../../include/qt5/QtWidgets/qtabwidget.h \
-		../../../../include/qt5/QtWidgets/qrubberband.h \
-		../../../../include/qt5/QtCore/qabstractitemmodel.h \
-		../../../../include/qt5/QtWidgets/QHBoxLayout \
-		../../../../include/qt5/QtWidgets/qboxlayout.h \
-		../../../../include/qt5/QtWidgets/qlayout.h \
-		../../../../include/qt5/QtWidgets/qlayoutitem.h \
-		../../../../include/qt5/QtWidgets/qgridlayout.h \
-		../../../../include/qt5/QtWidgets/QLCDNumber \
-		../../../../include/qt5/QtWidgets/qlcdnumber.h \
-		../../../../include/qt5/QtWidgets/QLabel \
-		../../../../include/qt5/QtWidgets/qlabel.h \
-		../../../../include/qt5/QtWidgets/QSpinBox \
-		../../../../include/qt5/QtWidgets/qspinbox.h \
-		../../../../include/qt5/QtWidgets/QVBoxLayout \
-		../../../../include/qt5/QtWidgets/QWidget \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/lime-handler/lime-handler.h -o moc_lime-handler.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/lime-handler/lime-handler.h -o moc_lime-handler.cpp
 
 moc_lime-reader.cpp: devices/lime-handler/lime-reader.h \
 		../../../../include/qt5/QtCore/QThread \
@@ -2464,7 +2425,7 @@ moc_lime-reader.cpp: devices/lime-handler/lime-reader.h \
 		../../../../local/include/lime/LMS7002M_parameters.h \
 		moc_predefs.h \
 		../../../../lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/c++/8/x86_64-redhat-linux -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-redhat-linux/8/include -I/usr/local/include -I/usr/include devices/lime-handler/lime-reader.h -o moc_lime-reader.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include /usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/src -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices -I/usr/include/qt5/qwt -I/usr/local/include -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/rtlsdr-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/sdrplay-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/airspy-handler/libairspy -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/soundcard -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/hackrf-handler -I/usr/shared/sdr-j-development/systems/sdr-j-spectrumviewer/devices/lime-handler -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/c++/9/x86_64-redhat-linux -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-redhat-linux/9/include -I/usr/local/include -I/usr/include devices/lime-handler/lime-reader.h -o moc_lime-reader.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -3844,21 +3805,7 @@ viewer.o: viewer.cpp viewer.h \
 		devices/lime-handler/lime-handler.h \
 		../../../../local/include/lime/LimeSuite.h \
 		../../../../local/include/lime/LMS7002M_parameters.h \
-		ui_lime-widget.h \
-		../../../../include/qt5/QtCore/QVariant \
-		../../../../include/qt5/QtWidgets/QApplication \
-		../../../../include/qt5/QtWidgets/qapplication.h \
-		../../../../include/qt5/QtCore/qcoreapplication.h \
-		../../../../include/qt5/QtCore/qeventloop.h \
-		../../../../include/qt5/QtWidgets/qdesktopwidget.h \
-		../../../../include/qt5/QtGui/qguiapplication.h \
-		../../../../include/qt5/QtGui/qinputmethod.h \
-		../../../../include/qt5/QtWidgets/QComboBox \
-		../../../../include/qt5/QtWidgets/qcombobox.h \
-		../../../../include/qt5/QtWidgets/QHBoxLayout \
-		../../../../include/qt5/QtWidgets/QSpinBox \
-		../../../../include/qt5/QtWidgets/qspinbox.h \
-		../../../../include/qt5/QtWidgets/QVBoxLayout
+		ui_lime-widget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o viewer.o viewer.cpp
 
 mapper.o: src/mapper.cpp src/mapper.h \
@@ -5690,42 +5637,6 @@ lime-handler.o: devices/lime-handler/lime-handler.cpp devices/lime-handler/lime-
 		../../../../include/qt5/QtWidgets/QDialog \
 		../../../../include/qt5/QtWidgets/qdialog.h \
 		ui_lime-widget.h \
-		../../../../include/qt5/QtCore/QVariant \
-		../../../../include/qt5/QtWidgets/QApplication \
-		../../../../include/qt5/QtWidgets/qapplication.h \
-		../../../../include/qt5/QtCore/qcoreapplication.h \
-		../../../../include/qt5/QtCore/qeventloop.h \
-		../../../../include/qt5/QtWidgets/qdesktopwidget.h \
-		../../../../include/qt5/QtGui/qguiapplication.h \
-		../../../../include/qt5/QtGui/qinputmethod.h \
-		../../../../include/qt5/QtWidgets/QComboBox \
-		../../../../include/qt5/QtWidgets/qcombobox.h \
-		../../../../include/qt5/QtWidgets/qabstractitemdelegate.h \
-		../../../../include/qt5/QtWidgets/qstyleoption.h \
-		../../../../include/qt5/QtWidgets/qabstractspinbox.h \
-		../../../../include/qt5/QtGui/qvalidator.h \
-		../../../../include/qt5/QtCore/qregularexpression.h \
-		../../../../include/qt5/QtGui/qicon.h \
-		../../../../include/qt5/QtWidgets/qslider.h \
-		../../../../include/qt5/QtWidgets/qabstractslider.h \
-		../../../../include/qt5/QtWidgets/qstyle.h \
-		../../../../include/qt5/QtWidgets/qtabbar.h \
-		../../../../include/qt5/QtWidgets/qtabwidget.h \
-		../../../../include/qt5/QtWidgets/qrubberband.h \
-		../../../../include/qt5/QtCore/qabstractitemmodel.h \
-		../../../../include/qt5/QtWidgets/QHBoxLayout \
-		../../../../include/qt5/QtWidgets/qboxlayout.h \
-		../../../../include/qt5/QtWidgets/qlayout.h \
-		../../../../include/qt5/QtWidgets/qlayoutitem.h \
-		../../../../include/qt5/QtWidgets/qgridlayout.h \
-		../../../../include/qt5/QtWidgets/QLCDNumber \
-		../../../../include/qt5/QtWidgets/qlcdnumber.h \
-		../../../../include/qt5/QtWidgets/QLabel \
-		../../../../include/qt5/QtWidgets/qlabel.h \
-		../../../../include/qt5/QtWidgets/QSpinBox \
-		../../../../include/qt5/QtWidgets/qspinbox.h \
-		../../../../include/qt5/QtWidgets/QVBoxLayout \
-		../../../../include/qt5/QtWidgets/QWidget \
 		devices/lime-handler/lime-reader.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o lime-handler.o devices/lime-handler/lime-handler.cpp
 
@@ -5848,43 +5759,7 @@ lime-reader.o: devices/lime-handler/lime-reader.cpp devices/lime-handler/lime-re
 		devices/device-handler.h \
 		../../../../include/qt5/QtWidgets/QDialog \
 		../../../../include/qt5/QtWidgets/qdialog.h \
-		ui_lime-widget.h \
-		../../../../include/qt5/QtCore/QVariant \
-		../../../../include/qt5/QtWidgets/QApplication \
-		../../../../include/qt5/QtWidgets/qapplication.h \
-		../../../../include/qt5/QtCore/qcoreapplication.h \
-		../../../../include/qt5/QtCore/qeventloop.h \
-		../../../../include/qt5/QtWidgets/qdesktopwidget.h \
-		../../../../include/qt5/QtGui/qguiapplication.h \
-		../../../../include/qt5/QtGui/qinputmethod.h \
-		../../../../include/qt5/QtWidgets/QComboBox \
-		../../../../include/qt5/QtWidgets/qcombobox.h \
-		../../../../include/qt5/QtWidgets/qabstractitemdelegate.h \
-		../../../../include/qt5/QtWidgets/qstyleoption.h \
-		../../../../include/qt5/QtWidgets/qabstractspinbox.h \
-		../../../../include/qt5/QtGui/qvalidator.h \
-		../../../../include/qt5/QtCore/qregularexpression.h \
-		../../../../include/qt5/QtGui/qicon.h \
-		../../../../include/qt5/QtWidgets/qslider.h \
-		../../../../include/qt5/QtWidgets/qabstractslider.h \
-		../../../../include/qt5/QtWidgets/qstyle.h \
-		../../../../include/qt5/QtWidgets/qtabbar.h \
-		../../../../include/qt5/QtWidgets/qtabwidget.h \
-		../../../../include/qt5/QtWidgets/qrubberband.h \
-		../../../../include/qt5/QtCore/qabstractitemmodel.h \
-		../../../../include/qt5/QtWidgets/QHBoxLayout \
-		../../../../include/qt5/QtWidgets/qboxlayout.h \
-		../../../../include/qt5/QtWidgets/qlayout.h \
-		../../../../include/qt5/QtWidgets/qlayoutitem.h \
-		../../../../include/qt5/QtWidgets/qgridlayout.h \
-		../../../../include/qt5/QtWidgets/QLCDNumber \
-		../../../../include/qt5/QtWidgets/qlcdnumber.h \
-		../../../../include/qt5/QtWidgets/QLabel \
-		../../../../include/qt5/QtWidgets/qlabel.h \
-		../../../../include/qt5/QtWidgets/QSpinBox \
-		../../../../include/qt5/QtWidgets/qspinbox.h \
-		../../../../include/qt5/QtWidgets/QVBoxLayout \
-		../../../../include/qt5/QtWidgets/QWidget
+		ui_lime-widget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o lime-reader.o devices/lime-handler/lime-reader.cpp
 
 qrc_resources.o: qrc_resources.cpp 

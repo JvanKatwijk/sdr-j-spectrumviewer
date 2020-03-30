@@ -3,25 +3,22 @@
  *
  *    Copyright (C) 2010, 2011, 2012
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
- *    This file is part of the SDR-J.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
+ *    This file is part of the spectrumviewer
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    spectrumviewer is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    spectrumviewer is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with SDR-J; if not, write to the Free Software
+ *    along with spectrumviewer; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
@@ -69,17 +66,16 @@ float	sum	= 0.0;
 bool	decimatingFIR::Pass (std::complex<float> z_in,
 	                     std::complex<float> *z_out) {
 int16_t         i;
-std::complex<float>      tmp     = 0;
+std::complex<float>      tmp     = std::complex<float>(0, 0);
 int16_t         index;
 
         Buffer [ip] = z_in;
+        ip =  (ip + 1) % filterSize;
         if (++ decimationCounter < decimationFactor) {
-           ip =  (ip + 1) % filterSize;
            return false;
         }
 
         decimationCounter = 0;
-//
 //
 //      we are working with a circular buffer, we take two steps
 //      we move from ip - 1 .. 0 with i going from 0 .. ip -1

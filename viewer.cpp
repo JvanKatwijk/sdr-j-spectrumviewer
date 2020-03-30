@@ -79,7 +79,9 @@ int k;
 	connect (HFScope_2, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustFrequency (int)));
 
-	IFScope		= new spectrumScope (detailScope, displaySize);
+	IFScope		= new spectrumScope (detailScope, 4 * displaySize);
+	connect (IFScope, SIGNAL (leftClicked (int)),
+	         this, SLOT (adjustinLoupe (int)));
 
 	theMapper	= new freqmapper (displaySize);
 	theMapper_2	= new freqmapper (4 * displaySize);
@@ -114,8 +116,10 @@ int k;
 
 	ClearPanel		();
 
-	connect (decimationSelector, SIGNAL (activated (QString)),
-	         this,  SLOT (decimationHandler (QString)));
+//	connect (decimationSelector, SIGNAL (activated (QString)),
+//	         this,  SLOT (decimationHandler (QString)));
+	connect (decimationSpinner, SIGNAL (valueChanged (int)),
+	         this, SLOT (decimationHandler (int)));
 
 	connect (pauseButton, SIGNAL (clicked (void)),
 	         this, SLOT (clickPause (void)));
@@ -308,6 +312,15 @@ void	Viewer::adjustFrequency (int n) {
 	Display (currentFrequency);
 }
 
+void	Viewer::adjustinLoupe	(int n) {
+int	rate	= theDecimator	-> rateOut ();
+	stop_lcdTimer ();
+
+	setTuner (theDevice -> getVFOFrequency () + n * rate / 100);
+	Display (currentFrequency);
+}
+
+
 //	SetTuner accepts freq in Hz.
 //
 void	Viewer::setTuner (uint64_t n) {
@@ -379,7 +392,8 @@ double showDisplay [displaySize];
 	                              theDevice	-> getRate (),
 	                              currentFrequency,
 	                              spectrumAmplitudeSlider -> value ());
-	int decimationFactor	= decimationSelector -> currentText(). toInt ();
+	int decimationFactor	= decimationSpinner -> value ();
+//	int decimationFactor	= decimationSelector -> currentText(). toInt ();
 	int bufferSize		= decimationFactor * displaySize;
 	if (theDevice -> Samples () < bufferSize)
 	   return;
@@ -397,14 +411,9 @@ double showDisplay [displaySize];
 	         fillP ++;
 	         if (fillP >= 4 * displaySize) {
 	            theMapper_2	-> convert (xbuf, theDisplay);
-//	            for (int k = 0; k < displaySize; i ++)
-//	              theDisplay [k] +=
-//	                       theDisplay [displaySize + k] +
-//	                       theDisplay [2 * displaySize + k] +
-//	                       theDisplay [3 * displaySize + k];
 	            IFScope	-> showFrame (theDisplay,
 	                                      theDevice -> getRate () / decimationFactor,
-	                                      0,
+	                                      theDevice -> getVFOFrequency (),
 	                                      spectrumAmplitudeSlider -> value ());
 	            theDevice -> resetBuffer ();
 	            return;
@@ -463,14 +472,18 @@ int	decimate	= s. toInt ();
 	theDecimator	= new decimator (theDevice -> getRate (), decimate);
 }
 
+void	Viewer::decimationHandler	(int amount) {
+	delete theDecimator;
+	theDecimator	= new decimator (theDevice -> getRate (), amount);
+}
 //
 //      Whenever the mousewheel is changed, the frequency
 //      is adapted
 void    Viewer::wheelEvent (QWheelEvent *e) {
         if (e -> delta () > 0)
-           adjustFrequency (10);
+           adjustFrequency (mouseIncrement -> value ());
         else
-           adjustFrequency (-10);
+           adjustFrequency (-mouseIncrement -> value ());
 }
 
 #include <QCloseEvent>

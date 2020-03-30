@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>856</width>
+    <width>914</width>
     <height>500</height>
    </rect>
   </property>
@@ -435,49 +435,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="decimationSelector">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;decimation factor. The amount of decimation on the section around the marker, and shown in the smaller scope at the bottom.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <widget class="QSpinBox" name="mouseIncrement">
+           <property name="minimum">
+            <number>1</number>
            </property>
-           <item>
-            <property name="text">
-             <string>10</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>30</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>50</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>100</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>150</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>200</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="scanstartButton">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scanner function. When pushed, the selected frequency will be increased periodically by the amount specified in the stepSize. When pushed while scanning, scanning will halt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>set scan</string>
+           <property name="value">
+            <number>5</number>
            </property>
           </widget>
          </item>
@@ -497,7 +460,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="0" column="1" colspan="2">
         <widget class="QSpinBox" name="upperLimit">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Top end of the scan range, expressed in mHz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -507,7 +470,17 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="0" column="3">
+        <widget class="QPushButton" name="scanstartButton">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scanner function. When pushed, the selected frequency will be increased periodically by the amount specified in the stepSize. When pushed while scanning, scanning will halt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>set scan</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
         <widget class="QSpinBox" name="stepSize">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stepsize while scanning, expressed in kHz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -520,13 +493,27 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="1" column="2">
         <widget class="QSpinBox" name="delayBox">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delay function, active while scanning. Expressed in seconds.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="minimum">
           <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QSpinBox" name="decimationSpinner">
+         <property name="toolTip">
+          <string>decimation spinbox. Determines the degree of decimation of the original signal to for showing the
+spectrum .</string>
+         </property>
+         <property name="minimum">
+          <number>5</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
          </property>
         </widget>
        </item>

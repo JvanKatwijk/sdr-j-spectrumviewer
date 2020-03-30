@@ -6,18 +6,18 @@
 	decimator::decimator (int32_t inRate, int decimation) {
 int	err;
  	this    -> inRate       = inRate;
-        this    -> outRate      = inRate / decimation;;
+        this    -> outRate      = inRate / decimation;
 	inSize			= 100000;
         inputLimit		= inSize;
         ratio                   = double(outRate) / inRate;
-	theFilter		= new decimatingFIR (decimation + 1,
+	theFilter		= new decimatingFIR (101,
 	                                             outRate / 2,
 	                                             inRate,
 	                                             decimation);
         outputLimit             = inSize * ratio;
 //      converter               = src_new (SRC_SINC_BEST_QUALITY, 2, &err);
-        converter               = src_new (SRC_LINEAR, 2, &err);
-//      converter               = src_new (SRC_SINC_MEDIUM_QUALITY, 2, &err);
+	converter               = src_new (SRC_LINEAR, 2, &err);
+//	converter               = src_new (SRC_SINC_MEDIUM_QUALITY, 2, &err);
         src_data                = new SRC_DATA;
         inBuffer. resize (2 * inputLimit + 20);
         outBuffer. resize (2 * outputLimit + 20);
@@ -36,13 +36,19 @@ int	err;
 	delete		theFilter;
 }
 
+int	decimator::rateOut	() {
+	return outRate;
+}
 
 bool	decimator::Pass	(std::complex<float> in, std::complex<float> *out) {
 bool	outVal	= false;
 	return (theFilter -> Pass (in, out));
+
+	std::complex<float> aa;
+	theFilter -> Pass (in, &aa);
 	   
-	inBuffer [2 * inp    ]       = real (in);
-	inBuffer [2 * inp + 1]       = imag (in);
+	inBuffer [2 * inp    ]       = real (aa);
+	inBuffer [2 * inp + 1]       = imag (aa);
 	if (outAvail > 0) {
 	   *out = std::complex<float> (outBuffer [2 * outP],
 	                               outBuffer [2 * outP + 1]);

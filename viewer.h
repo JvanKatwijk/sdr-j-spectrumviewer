@@ -100,8 +100,8 @@ private:
 	void		IncrementFrequency	(int32_t);
 /*
  */
-private slots:
 	deviceHandler	*setDevice		(void);
+private slots:
 	void	stop_lcdTimer		(void);
 	void	setStart		(void);
 	void	setStop			(void);
@@ -109,6 +109,7 @@ private slots:
 	void	updateTimeDisplay	(void);
 	void	clickPause		(void);
 	void	adjustFrequency		(int);
+	void	adjustinLoupe		(int);
 
 	void	TerminateProcess	(void);
 	void	toggle_Freezer		(void);
@@ -125,6 +126,7 @@ public slots:
 	void	decimationHandler	(QString);
 	void	closeEvent		(QCloseEvent *event);
         void    wheelEvent              (QWheelEvent *);
+	void	decimationHandler	(int);
 };
 
 #endif

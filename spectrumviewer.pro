@@ -117,7 +117,7 @@ CONFIG		+= airspy
 CONFIG		+= sdrplay
 #CONFIG		+= soundcard
 CONFIG		+= hackrf
-CONFIG		+= lime
+#CONFIG		+= lime
 #CONFIG		+= extio
 }
 #

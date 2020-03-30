@@ -13,9 +13,11 @@
 
 class	decimator {
 public:
-	decimator	(int32_t, int32_t);
-	~decimator	(void);
-bool	Pass		(std::complex<float>, std::complex<float> *);
+			decimator	(int32_t, int32_t);
+			~decimator	(void);
+	bool		Pass		(std::complex<float>, std::complex<float> *);
+	std::complex<float> Pass	(std::complex<float>);
+	int		rateOut		();
 	int32_t         inRate;
         int32_t         outRate;
         double          ratio;

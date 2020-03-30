@@ -2,7 +2,7 @@
 /*
  *    Copyright (C)  2012, 2013, 2014
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
  *    This file is part of the spectrumviewer
  *
@@ -132,7 +132,7 @@ double	Y_Values [displaySize];
 	IndexforMarker	= (float)freq / 1000;
 	for (i = 0; i < displaySize; i ++) 
 	   X_axis [i] = (float)(freq / 1000) 
-	                - ((double)rate / 2 - rate / displaySize * i) / 1000;
+	                - ((double)rate / 2 - ((double)rate) / displaySize * i) / 1000;
 
 	amp		= amp / 50 * (-get_db (0));
 	plotgrid	-> setAxisScale (QwtPlot::xBottom,
