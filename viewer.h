@@ -38,6 +38,7 @@
 #include	<QWheelEvent>
 #include	"waterfall-scope.h"
 #include	"spectrum-scope.h"
+#include	"signal-viewer.h"
 #include	"mapper.h"
 #include	"fir-filters.h"
 #include	<atomic>
@@ -66,6 +67,7 @@ private:
 	spectrumScope	*HFScope_1;
 	waterfallScope	*HFScope_2;
 	spectrumScope	*IFScope;
+	SignalView	*signalView;
 	keyPad		*mykeyPad;
 	float		*Window;
 	int32_t		inputRate;

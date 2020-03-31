@@ -32,6 +32,7 @@ HEADERS += ./viewer.h \
            ./src/ringbuffer.h \
 	   ./src/spectrogramdata.h \
 	   ./src/spectrum-scope.h  \
+	   ./src/signal-viewer.h  \
 	   ./src/waterfall-scope.h  \
 	   ./src/mapper.h \
 	   ./src/decimator.h \
@@ -46,6 +47,7 @@ SOURCES += ./main.cpp \
 	   ./src/mapper.cpp \
            ./src/fft.cpp \
 	   ./src/spectrum-scope.cpp \
+	   ./src/signal-viewer.cpp \
 	   ./src/waterfall-scope.cpp \
 	   ./src/decimator.cpp \
 	   ./src/popup-keypad.cpp \

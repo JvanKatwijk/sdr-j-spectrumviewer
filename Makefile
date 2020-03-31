@@ -14,7 +14,7 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DGITHASH=\"303cf9d\" -DHAVE_RTLSDR -DHAVE_SDRPLAY -DHAVE_AIRSPY -DHAVE_SOUNDCARD -DHAVE_HACKRF -DHAVE_LIME -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DGITHASH=\"9763350\" -DHAVE_RTLSDR -DHAVE_SDRPLAY -DHAVE_AIRSPY -DHAVE_SOUNDCARD -DHAVE_HACKRF -DHAVE_LIME -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O3 -ffast-math -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O3 -ffast-math -isystem /usr/include/qt5 -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I. -Isrc -Idevices -I../../../../include/qt5/qwt -I../../../../local/include -Idevices/rtlsdr-handler -Idevices/sdrplay-handler -Idevices/airspy-handler -Idevices/airspy-handler/libairspy -Idevices/soundcard -Idevices/hackrf-handler -Idevices/lime-handler -I../../../../include/qt5 -I../../../../include/qt5/QtWidgets -I../../../../include/qt5/QtGui -I../../../../include/qt5/QtCore -I. -I../../../../include/libdrm -I. -I../../../../lib64/qt5/mkspecs/linux-g++
@@ -57,6 +57,7 @@ SOURCES       = main.cpp \
 		src/mapper.cpp \
 		src/fft.cpp \
 		src/spectrum-scope.cpp \
+		src/signal-viewer.cpp \
 		src/waterfall-scope.cpp \
 		src/decimator.cpp \
 		src/popup-keypad.cpp \
@@ -92,6 +93,7 @@ OBJECTS       = main.o \
 		mapper.o \
 		fft.o \
 		spectrum-scope.o \
+		signal-viewer.o \
 		waterfall-scope.o \
 		decimator.o \
 		popup-keypad.o \
@@ -205,6 +207,7 @@ DIST          = ../../../../lib64/qt5/mkspecs/features/spec_pre.prf \
 		../../../../lib64/qt5/mkspecs/features/qt_config.prf \
 		../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf \
 		../../../../lib64/qt5/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf \
 		../../../../lib64/qt5/mkspecs/features/toolchain.prf \
 		../../../../lib64/qt5/mkspecs/features/default_pre.prf \
@@ -228,6 +231,7 @@ DIST          = ../../../../lib64/qt5/mkspecs/features/spec_pre.prf \
 		src/ringbuffer.h \
 		src/spectrogramdata.h \
 		src/spectrum-scope.h \
+		src/signal-viewer.h \
 		src/waterfall-scope.h \
 		src/mapper.h \
 		src/decimator.h \
@@ -248,6 +252,7 @@ DIST          = ../../../../lib64/qt5/mkspecs/features/spec_pre.prf \
 		src/mapper.cpp \
 		src/fft.cpp \
 		src/spectrum-scope.cpp \
+		src/signal-viewer.cpp \
 		src/waterfall-scope.cpp \
 		src/decimator.cpp \
 		src/popup-keypad.cpp \
@@ -357,6 +362,7 @@ Makefile: spectrumviewer.pro ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf 
 		../../../../lib64/qt5/mkspecs/features/qt_config.prf \
 		../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf \
 		../../../../lib64/qt5/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf \
 		../../../../lib64/qt5/mkspecs/features/toolchain.prf \
 		../../../../lib64/qt5/mkspecs/features/default_pre.prf \
@@ -460,6 +466,7 @@ Makefile: spectrumviewer.pro ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf 
 ../../../../lib64/qt5/mkspecs/features/qt_config.prf:
 ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf:
 ../../../../lib64/qt5/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf:
 ../../../../lib64/qt5/mkspecs/features/toolchain.prf:
 ../../../../lib64/qt5/mkspecs/features/default_pre.prf:
@@ -496,8 +503,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../lib64/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents viewer.h src/fft.h src/ringbuffer.h src/spectrogramdata.h src/spectrum-scope.h src/waterfall-scope.h src/mapper.h src/decimator.h src/popup-keypad.h src/fir-filters.h devices/device-handler.h devices/rtlsdr-handler/rtlsdr-handler.h devices/rtlsdr-handler/dongleselect.h devices/sdrplay-handler/sdrplay-handler.h devices/sdrplay-handler/sdrplayselect.h devices/airspy-handler/airspy-handler.h devices/soundcard/pa-reader.h devices/soundcard/soundcard.h devices/hackrf-handler/hackrf-handler.h devices/lime-handler/lime-handler.h devices/lime-handler/lime-reader.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp viewer.cpp src/mapper.cpp src/fft.cpp src/spectrum-scope.cpp src/waterfall-scope.cpp src/decimator.cpp src/popup-keypad.cpp src/fir-filters.cpp devices/device-handler.cpp devices/rtlsdr-handler/rtlsdr-handler.cpp devices/rtlsdr-handler/dongleselect.cpp devices/sdrplay-handler/sdrplay-handler.cpp devices/sdrplay-handler/sdrplayselect.cpp devices/airspy-handler/airspy-handler.cpp devices/soundcard/pa-reader.cpp devices/soundcard/soundcard.cpp devices/hackrf-handler/hackrf-handler.cpp devices/lime-handler/lime-handler.cpp devices/lime-handler/lime-reader.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents viewer.h src/fft.h src/ringbuffer.h src/spectrogramdata.h src/spectrum-scope.h src/signal-viewer.h src/waterfall-scope.h src/mapper.h src/decimator.h src/popup-keypad.h src/fir-filters.h devices/device-handler.h devices/rtlsdr-handler/rtlsdr-handler.h devices/rtlsdr-handler/dongleselect.h devices/sdrplay-handler/sdrplay-handler.h devices/sdrplay-handler/sdrplayselect.h devices/airspy-handler/airspy-handler.h devices/soundcard/pa-reader.h devices/soundcard/soundcard.h devices/hackrf-handler/hackrf-handler.h devices/lime-handler/lime-handler.h devices/lime-handler/lime-reader.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp viewer.cpp src/mapper.cpp src/fft.cpp src/spectrum-scope.cpp src/signal-viewer.cpp src/waterfall-scope.cpp src/decimator.cpp src/popup-keypad.cpp src/fir-filters.cpp devices/device-handler.cpp devices/rtlsdr-handler/rtlsdr-handler.cpp devices/rtlsdr-handler/dongleselect.cpp devices/sdrplay-handler/sdrplay-handler.cpp devices/sdrplay-handler/sdrplayselect.cpp devices/airspy-handler/airspy-handler.cpp devices/soundcard/pa-reader.cpp devices/soundcard/soundcard.cpp devices/hackrf-handler/hackrf-handler.cpp devices/lime-handler/lime-handler.cpp devices/lime-handler/lime-reader.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents sdrgui.ui devices/rtlsdr-handler/dabstick-widget.ui devices/sdrplay-handler/sdrplay-widget.ui devices/airspy-handler/airspy-widget.ui devices/soundcard/soundcard-widget.ui devices/hackrf-handler/hackrf-widget.ui devices/lime-handler/lime-widget.ui $(DISTDIR)/
 	$(COPY_FILE) --parents i18n/de_DE.ts i18n/it_IT.ts i18n/hu_HU.ts $(DISTDIR)/
 
@@ -713,6 +720,7 @@ moc_viewer.cpp: viewer.h \
 		src/spectrum-scope.h \
 		../../../../include/qt5/qwt/qwt_plot_textlabel.h \
 		../../../../include/qt5/qwt/qwt_picker_machine.h \
+		src/signal-viewer.h \
 		src/mapper.h \
 		src/fft.h \
 		src/fir-filters.h \
@@ -3557,6 +3565,7 @@ main.o: main.cpp ../../../../include/qt5/QtCore/Qt \
 		src/spectrum-scope.h \
 		../../../../include/qt5/qwt/qwt_plot_textlabel.h \
 		../../../../include/qt5/qwt/qwt_picker_machine.h \
+		src/signal-viewer.h \
 		src/mapper.h \
 		src/fft.h \
 		src/fir-filters.h \
@@ -3731,6 +3740,7 @@ viewer.o: viewer.cpp viewer.h \
 		src/spectrum-scope.h \
 		../../../../include/qt5/qwt/qwt_plot_textlabel.h \
 		../../../../include/qt5/qwt/qwt_picker_machine.h \
+		src/signal-viewer.h \
 		src/mapper.h \
 		src/fft.h \
 		src/fir-filters.h \
@@ -3969,6 +3979,158 @@ spectrum-scope.o: src/spectrum-scope.cpp src/spectrum-scope.h \
 		../../../../include/qt5/qwt/qwt_abstract_scale_draw.h \
 		../../../../include/qt5/qwt/qwt_picker_machine.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o spectrum-scope.o src/spectrum-scope.cpp
+
+signal-viewer.o: src/signal-viewer.cpp src/signal-viewer.h \
+		../../../../include/qt5/QtCore/QObject \
+		../../../../include/qt5/QtCore/qobject.h \
+		../../../../include/qt5/QtCore/qobjectdefs.h \
+		../../../../include/qt5/QtCore/qnamespace.h \
+		../../../../include/qt5/QtCore/qglobal.h \
+		../../../../include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../../include/qt5/QtCore/qconfig.h \
+		../../../../include/qt5/QtCore/qconfig-64.h \
+		../../../../include/qt5/QtCore/qtcore-config.h \
+		../../../../include/qt5/QtCore/qsystemdetection.h \
+		../../../../include/qt5/QtCore/qprocessordetection.h \
+		../../../../include/qt5/QtCore/qcompilerdetection.h \
+		../../../../include/qt5/QtCore/qtypeinfo.h \
+		../../../../include/qt5/QtCore/qsysinfo.h \
+		../../../../include/qt5/QtCore/qlogging.h \
+		../../../../include/qt5/QtCore/qflags.h \
+		../../../../include/qt5/QtCore/qatomic.h \
+		../../../../include/qt5/QtCore/qbasicatomic.h \
+		../../../../include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../../include/qt5/QtCore/qgenericatomic.h \
+		../../../../include/qt5/QtCore/qatomic_cxx11.h \
+		../../../../include/qt5/QtCore/qatomic_msvc.h \
+		../../../../include/qt5/QtCore/qglobalstatic.h \
+		../../../../include/qt5/QtCore/qmutex.h \
+		../../../../include/qt5/QtCore/qnumeric.h \
+		../../../../include/qt5/QtCore/qversiontagging.h \
+		../../../../include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../../include/qt5/QtCore/qstring.h \
+		../../../../include/qt5/QtCore/qchar.h \
+		../../../../include/qt5/QtCore/qbytearray.h \
+		../../../../include/qt5/QtCore/qrefcount.h \
+		../../../../include/qt5/QtCore/qarraydata.h \
+		../../../../include/qt5/QtCore/qstringliteral.h \
+		../../../../include/qt5/QtCore/qstringalgorithms.h \
+		../../../../include/qt5/QtCore/qstringview.h \
+		../../../../include/qt5/QtCore/qstringbuilder.h \
+		../../../../include/qt5/QtCore/qlist.h \
+		../../../../include/qt5/QtCore/qalgorithms.h \
+		../../../../include/qt5/QtCore/qiterator.h \
+		../../../../include/qt5/QtCore/qhashfunctions.h \
+		../../../../include/qt5/QtCore/qpair.h \
+		../../../../include/qt5/QtCore/qbytearraylist.h \
+		../../../../include/qt5/QtCore/qstringlist.h \
+		../../../../include/qt5/QtCore/qregexp.h \
+		../../../../include/qt5/QtCore/qstringmatcher.h \
+		../../../../include/qt5/QtCore/qcoreevent.h \
+		../../../../include/qt5/QtCore/qscopedpointer.h \
+		../../../../include/qt5/QtCore/qmetatype.h \
+		../../../../include/qt5/QtCore/qvarlengtharray.h \
+		../../../../include/qt5/QtCore/qcontainerfwd.h \
+		../../../../include/qt5/QtCore/qobject_impl.h \
+		../../../../include/qt5/qwt/qwt.h \
+		../../../../include/qt5/qwt/qwt_global.h \
+		../../../../include/qt5/qwt/qwt_plot.h \
+		../../../../include/qt5/qwt/qwt_text.h \
+		../../../../include/qt5/QtCore/qsize.h \
+		../../../../include/qt5/QtGui/qfont.h \
+		../../../../include/qt5/QtGui/qtguiglobal.h \
+		../../../../include/qt5/QtGui/qtgui-config.h \
+		../../../../include/qt5/QtGui/qwindowdefs.h \
+		../../../../include/qt5/QtGui/qwindowdefs_win.h \
+		../../../../include/qt5/QtCore/qsharedpointer.h \
+		../../../../include/qt5/QtCore/qshareddata.h \
+		../../../../include/qt5/QtCore/qhash.h \
+		../../../../include/qt5/QtCore/qsharedpointer_impl.h \
+		../../../../include/qt5/qwt/qwt_plot_dict.h \
+		../../../../include/qt5/qwt/qwt_plot_item.h \
+		../../../../include/qt5/qwt/qwt_legend_data.h \
+		../../../../include/qt5/qwt/qwt_graphic.h \
+		../../../../include/qt5/qwt/qwt_null_paintdevice.h \
+		../../../../include/qt5/QtGui/qpaintdevice.h \
+		../../../../include/qt5/QtCore/qrect.h \
+		../../../../include/qt5/QtCore/qmargins.h \
+		../../../../include/qt5/QtCore/qpoint.h \
+		../../../../include/qt5/QtGui/qpaintengine.h \
+		../../../../include/qt5/QtGui/qpainter.h \
+		../../../../include/qt5/QtGui/qpixmap.h \
+		../../../../include/qt5/QtGui/qcolor.h \
+		../../../../include/qt5/QtGui/qrgb.h \
+		../../../../include/qt5/QtGui/qrgba64.h \
+		../../../../include/qt5/QtGui/qimage.h \
+		../../../../include/qt5/QtGui/qpixelformat.h \
+		../../../../include/qt5/QtGui/qtransform.h \
+		../../../../include/qt5/QtGui/qmatrix.h \
+		../../../../include/qt5/QtGui/qpolygon.h \
+		../../../../include/qt5/QtCore/qvector.h \
+		../../../../include/qt5/QtGui/qregion.h \
+		../../../../include/qt5/QtCore/qdatastream.h \
+		../../../../include/qt5/QtCore/qiodevice.h \
+		../../../../include/qt5/QtCore/qline.h \
+		../../../../include/qt5/QtGui/qpainterpath.h \
+		../../../../include/qt5/QtGui/qtextoption.h \
+		../../../../include/qt5/QtGui/qpen.h \
+		../../../../include/qt5/QtGui/qbrush.h \
+		../../../../include/qt5/QtGui/qfontinfo.h \
+		../../../../include/qt5/QtGui/qfontmetrics.h \
+		../../../../include/qt5/QtCore/qvariant.h \
+		../../../../include/qt5/QtCore/qmap.h \
+		../../../../include/qt5/QtCore/qdebug.h \
+		../../../../include/qt5/QtCore/qtextstream.h \
+		../../../../include/qt5/QtCore/qlocale.h \
+		../../../../include/qt5/QtCore/qset.h \
+		../../../../include/qt5/QtCore/qcontiguouscache.h \
+		../../../../include/qt5/qwt/qwt_scale_map.h \
+		../../../../include/qt5/qwt/qwt_transform.h \
+		../../../../include/qt5/qwt/qwt_interval.h \
+		../../../../include/qt5/QtWidgets/qframe.h \
+		../../../../include/qt5/QtWidgets/qtwidgetsglobal.h \
+		../../../../include/qt5/QtWidgets/qtwidgets-config.h \
+		../../../../include/qt5/QtWidgets/qwidget.h \
+		../../../../include/qt5/QtGui/qpalette.h \
+		../../../../include/qt5/QtWidgets/qsizepolicy.h \
+		../../../../include/qt5/QtGui/qcursor.h \
+		../../../../include/qt5/QtGui/qkeysequence.h \
+		../../../../include/qt5/QtGui/qevent.h \
+		../../../../include/qt5/QtCore/qurl.h \
+		../../../../include/qt5/QtCore/qurlquery.h \
+		../../../../include/qt5/QtCore/qfile.h \
+		../../../../include/qt5/QtCore/qfiledevice.h \
+		../../../../include/qt5/QtGui/qvector2d.h \
+		../../../../include/qt5/QtGui/qtouchdevice.h \
+		../../../../include/qt5/qwt/qwt_plot_curve.h \
+		../../../../include/qt5/qwt/qwt_plot_seriesitem.h \
+		../../../../include/qt5/qwt/qwt_scale_div.h \
+		../../../../include/qt5/qwt/qwt_series_data.h \
+		../../../../include/qt5/qwt/qwt_samples.h \
+		../../../../include/qt5/qwt/qwt_point_3d.h \
+		../../../../include/qt5/qwt/qwt_point_polar.h \
+		../../../../include/qt5/qwt/qwt_math.h \
+		../../../../include/qt5/QtCore/qmath.h \
+		../../../../include/qt5/qwt/qwt_series_store.h \
+		../../../../include/qt5/qwt/qwt_plot_marker.h \
+		../../../../include/qt5/qwt/qwt_plot_grid.h \
+		../../../../include/qt5/qwt/qwt_color_map.h \
+		../../../../include/qt5/qwt/qwt_plot_spectrogram.h \
+		../../../../include/qt5/qwt/qwt_raster_data.h \
+		../../../../include/qt5/qwt/qwt_plot_rasteritem.h \
+		../../../../include/qt5/qwt/qwt_plot_zoomer.h \
+		../../../../include/qt5/qwt/qwt_plot_picker.h \
+		../../../../include/qt5/qwt/qwt_picker.h \
+		../../../../include/qt5/qwt/qwt_event_pattern.h \
+		../../../../include/qt5/QtCore/qstack.h \
+		../../../../include/qt5/qwt/qwt_plot_textlabel.h \
+		../../../../include/qt5/qwt/qwt_plot_panner.h \
+		../../../../include/qt5/qwt/qwt_panner.h \
+		../../../../include/qt5/qwt/qwt_plot_layout.h \
+		../../../../include/qt5/qwt/qwt_scale_widget.h \
+		../../../../include/qt5/qwt/qwt_scale_draw.h \
+		../../../../include/qt5/qwt/qwt_abstract_scale_draw.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o signal-viewer.o src/signal-viewer.cpp
 
 waterfall-scope.o: src/waterfall-scope.cpp src/waterfall-scope.h \
 		../../../../include/qt5/QtCore/QObject \
@@ -4315,6 +4477,7 @@ popup-keypad.o: src/popup-keypad.cpp src/popup-keypad.h \
 		src/spectrum-scope.h \
 		../../../../include/qt5/qwt/qwt_plot_textlabel.h \
 		../../../../include/qt5/qwt/qwt_picker_machine.h \
+		src/signal-viewer.h \
 		src/mapper.h \
 		src/fft.h \
 		src/fir-filters.h \

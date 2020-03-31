@@ -4,7 +4,7 @@
 A simple spectrumviewer
 ---------------------------------------------------------------------
 
-![spectrumviewer](/spectrumviewer-1.png?raw=true)
+![spectrumviewer](/spectrumviewer.png?raw=true)
 
 Since most of modern  sdr devices can handle signals with a substantial 
 bandwidth, it is desirable to be able to show such spectra.

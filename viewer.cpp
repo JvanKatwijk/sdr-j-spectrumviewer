@@ -82,6 +82,7 @@ int k;
 	IFScope		= new spectrumScope (detailScope, 4 * displaySize);
 	connect (IFScope, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustinLoupe (int)));
+	signalView	= new SignalView (signalScope);
 
 	theMapper	= new freqmapper (displaySize);
 	theMapper_2	= new freqmapper (4 * displaySize);
@@ -393,13 +394,13 @@ double showDisplay [displaySize];
 	                              currentFrequency,
 	                              spectrumAmplitudeSlider -> value ());
 	int decimationFactor	= decimationSpinner -> value ();
-//	int decimationFactor	= decimationSelector -> currentText(). toInt ();
 	int bufferSize		= decimationFactor * displaySize;
 	if (theDevice -> Samples () < bufferSize)
 	   return;
 
 	int fillP = 0;
 	std::complex<float> xbuf [4 * displaySize];
+	double ybuf [4 * displaySize];
 	while (true) {
 	   std::complex<float> temp;
 	   std::complex<float> lbuf [displaySize];
@@ -408,6 +409,7 @@ double showDisplay [displaySize];
 	   for (int i = 0; i < displaySize; i ++) {
 	      if (theDecimator -> Pass (lbuf [i], &temp)) {
 	         xbuf [fillP] = temp;
+	         ybuf [fillP] = real (temp);
 	         fillP ++;
 	         if (fillP >= 4 * displaySize) {
 	            theMapper_2	-> convert (xbuf, theDisplay);
@@ -415,6 +417,7 @@ double showDisplay [displaySize];
 	                                      theDevice -> getRate () / decimationFactor,
 	                                      theDevice -> getVFOFrequency (),
 	                                      spectrumAmplitudeSlider -> value ());
+	            signalView	-> showFrame (ybuf, displaySize);
 	            theDevice -> resetBuffer ();
 	            return;
 	         }
