@@ -20,9 +20,13 @@ at the same time a frequency spectrum and a waterfall.
 The current version has three "scopes", the top one showing the
 spectrum of the signal, with the second one showing the spectrum
 as a waterfall.
-The third one, smaller, shows a fraction of the spectrum. The fraction
-is determined by a selector. The picture shows a franction of 1/10,
-so a resulting width of app 300 KHz.
+
+The third one, smaller, allows you to look in greater detail to
+a segment of the spectrum. The amount of detail is determined by
+the decimation setting, a range between 5 and 100.
+
+Added is a view on the signal - as presented to the detailed viewer -
+as appearing in the time domain.
 
 The current version is a redesign and the GUI is modernized.
 

@@ -14,7 +14,7 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DGITHASH=\"9763350\" -DHAVE_RTLSDR -DHAVE_SDRPLAY -DHAVE_AIRSPY -DHAVE_SOUNDCARD -DHAVE_HACKRF -DHAVE_LIME -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DGITHASH=\"92a38fa\" -DHAVE_RTLSDR -DHAVE_SDRPLAY -DHAVE_AIRSPY -DHAVE_SOUNDCARD -DHAVE_HACKRF -DHAVE_LIME -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O3 -ffast-math -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O3 -ffast-math -isystem /usr/include/qt5 -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I. -Isrc -Idevices -I../../../../include/qt5/qwt -I../../../../local/include -Idevices/rtlsdr-handler -Idevices/sdrplay-handler -Idevices/airspy-handler -Idevices/airspy-handler/libairspy -Idevices/soundcard -Idevices/hackrf-handler -Idevices/lime-handler -I../../../../include/qt5 -I../../../../include/qt5/QtWidgets -I../../../../include/qt5/QtGui -I../../../../include/qt5/QtCore -I. -I../../../../include/libdrm -I. -I../../../../lib64/qt5/mkspecs/linux-g++
@@ -207,7 +207,6 @@ DIST          = ../../../../lib64/qt5/mkspecs/features/spec_pre.prf \
 		../../../../lib64/qt5/mkspecs/features/qt_config.prf \
 		../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf \
 		../../../../lib64/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf \
 		../../../../lib64/qt5/mkspecs/features/toolchain.prf \
 		../../../../lib64/qt5/mkspecs/features/default_pre.prf \
@@ -362,7 +361,6 @@ Makefile: spectrumviewer.pro ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf 
 		../../../../lib64/qt5/mkspecs/features/qt_config.prf \
 		../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf \
 		../../../../lib64/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf \
 		../../../../lib64/qt5/mkspecs/features/toolchain.prf \
 		../../../../lib64/qt5/mkspecs/features/default_pre.prf \
@@ -466,7 +464,6 @@ Makefile: spectrumviewer.pro ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf 
 ../../../../lib64/qt5/mkspecs/features/qt_config.prf:
 ../../../../lib64/qt5/mkspecs/linux-g++/qmake.conf:
 ../../../../lib64/qt5/mkspecs/features/spec_post.prf:
-.qmake.stash:
 ../../../../lib64/qt5/mkspecs/features/exclusive_builds.prf:
 ../../../../lib64/qt5/mkspecs/features/toolchain.prf:
 ../../../../lib64/qt5/mkspecs/features/default_pre.prf:

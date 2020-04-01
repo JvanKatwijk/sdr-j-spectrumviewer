@@ -46,9 +46,9 @@
 //	SpectrumCurve	-> setStyle	(QwtPlotCurve::Sticks);
 	SpectrumCurve	-> setOrientation (Qt::Horizontal);
 	SpectrumCurve	-> setBaseline	(-1);
-	ourBrush	= new QBrush (Qt::white);
-	ourBrush	-> setStyle (Qt::Dense3Pattern);
-	SpectrumCurve	-> setBrush (*ourBrush);
+//	ourBrush	= new QBrush (Qt::white);
+//	ourBrush	-> setStyle (Qt::Dense3Pattern);
+//	SpectrumCurve	-> setBrush (*ourBrush);
 	SpectrumCurve	-> attach (plotgrid);
 	plotgrid	-> enableAxis (QwtPlot::yLeft);
 }
