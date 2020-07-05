@@ -80,8 +80,8 @@
 	theDisplay	-> display (0);
 	connect (thePad, SIGNAL (buttonClicked (int)),
 	         this, SLOT (collectData (int)));
-	connect (this, SIGNAL (newFrequency (int)),
-	         mr, SLOT (newFrequency (int)));
+	connect (this, SIGNAL (newFrequency (qint64)),
+	         mr, SLOT (newFrequency (qint64)));
 //
 //	initially the keypad is not visible,
 	panel		= 0;
@@ -126,29 +126,29 @@ bool	keyPad::isVisible	(void) {
 void	keyPad::collectData	(int id) {
 	if (0 <= id && id < 10) {
 	   panel = 10 * panel + id;
-	   theDisplay	-> display (panel);
+	   theDisplay	-> display ((float)panel);
 	}
 	else
 	if (id == 101) {		// Khz button
-	   newFrequency (Khz (panel));
+	   newFrequency ((float)(Khz (panel)));
 	   panel = 0;
 	   hidePad ();
 	}
 	else
 	if (id == 102) {		// Mhz button
-	   newFrequency (Mhz (panel));
+	   newFrequency ((float)(Mhz (panel)));
 	   panel = 0;
 	   hidePad ();
 	}
 	else
 	if (id == 103) {		// clear Button
 	   panel = 0;
-	   theDisplay	-> display (panel);
+	   theDisplay	-> display ((float)panel);
 	}
 	else
 	if (id == 104) {		// correct Button
 	   panel = panel - panel % 10;
-	   theDisplay	-> display (panel);
+	   theDisplay	-> display ((float)panel);
 	}
 }
 

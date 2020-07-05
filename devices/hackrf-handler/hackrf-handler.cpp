@@ -230,6 +230,7 @@ int	res;
 
 void	hackrfHandler::setVFOFrequency	(uint64_t newFrequency) {
 int	res;
+	fprintf (stderr, "trying to set %lu\n", newFrequency);
 	res	= this -> hackrf_set_freq (theDevice, newFrequency);
 	if (res != HACKRF_SUCCESS) {
 	   fprintf (stderr, "Problem with hackrf_set_freq: \n");

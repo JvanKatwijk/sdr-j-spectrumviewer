@@ -464,7 +464,7 @@ void	Viewer::toggle_Freezer	(void) {
 }
 
 //
-void	Viewer::newFrequency	(int newFreq) {
+void	Viewer::newFrequency	(qint64 newFreq) {
 	setTuner (newFreq);
         Display (currentFrequency);
 }

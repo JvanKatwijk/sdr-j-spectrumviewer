@@ -123,7 +123,7 @@ private slots:
 public slots:
 	void	handleSamples		(void);
 	void	handle_freqButton	();
-	void	newFrequency		(int);
+	void	newFrequency		(qint64);
 	void	set_changeRate		(int);
 	void	decimationHandler	(QString);
 	void	closeEvent		(QCloseEvent *event);
