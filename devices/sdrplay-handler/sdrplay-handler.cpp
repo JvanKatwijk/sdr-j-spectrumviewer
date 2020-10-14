@@ -2,22 +2,22 @@
 /*
  *    Copyright (C) 2014
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
- *    This file is part of the SDR-J.
+ *    This file is part of the spectrum viewer
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    spectrumviewer is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    spectrumviewer is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with SDR-J; if not, write to the Free Software
+ *    along with spectrumviewer; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
@@ -53,7 +53,9 @@ int     get_lnaGRdB (int hwVersion, int lnaState) {
 	}
 }
 
-	sdrplayHandler::sdrplayHandler  (QSettings *s) {
+	sdrplayHandler::sdrplayHandler  (QSettings *s):
+	                                   _I_Buffer (2 * 1024 * 1024),
+	                                   myFrame (nullptr) {
 mir_sdr_ErrT err;
 float	ver;
 QString	str;
@@ -63,13 +65,11 @@ mir_sdr_GainValuesT gainDesc;
 sdrplaySelect	*sdrplaySelector;
 
 	sdrplaySettings		= s;
-	this	-> myFrame	= new QFrame (NULL);
-	setupUi (this -> myFrame);
-	this	-> myFrame	-> show ();
+	setupUi (&myFrame);
+	myFrame	. show ();
 	antennaSelector		-> hide ();
 	tunerSelector		-> hide ();
 
-	_I_Buffer	= NULL;
 	libraryLoaded	= false;
 
 #ifdef	__MINGW32__
@@ -86,7 +86,6 @@ ULONG APIkeyValue_length = 255;
 	      fprintf (stderr,
 	               "failed to locate API registry entry, error = %d\n",
 	               (int)GetLastError ());
-	      delete myFrame;
 	      throw (21);
 	   }
 	
@@ -104,7 +103,6 @@ ULONG APIkeyValue_length = 255;
 	   Handle	= LoadLibrary (x);
 	   if (Handle == NULL) {
 	      fprintf (stderr, "Failed to open mir_sdr_api.dll\n");
-	      delete myFrame;
 	      throw (22);
 	   }
 	}
@@ -140,7 +138,6 @@ ULONG APIkeyValue_length = 255;
 #else
 	   dlclose (Handle);
 #endif
-	   delete myFrame;
 	   throw (24);
 	}
 
@@ -151,12 +148,10 @@ ULONG APIkeyValue_length = 255;
 #else
 	   dlclose (Handle);
 #endif
-	   delete myFrame;
 	   throw (24);
 	}
 
 	api_version     -> display (ver);
-	_I_Buffer	= new RingBuffer<DSPCOMPLEX>(2 * 1024 * 1024);
 	vfoFrequency	= Khz (94700);
 
 	sdrplaySettings		-> beginGroup ("sdrplaySettings");
@@ -191,7 +186,6 @@ ULONG APIkeyValue_length = 255;
 #else
 	   dlclose (Handle);
 #endif
-	   delete myFrame;
 	   throw (25);
 	}
 
@@ -202,7 +196,6 @@ ULONG APIkeyValue_length = 255;
 #else
 	   dlclose (Handle);
 #endif
-	   delete myFrame;
 	   throw (25);
 	}
 	if (numofDevs > 1) {
@@ -234,7 +227,6 @@ ULONG APIkeyValue_length = 255;
 #else
 	   dlclose (Handle);
 #endif
-	   delete myFrame;
 	   throw (25);
 	}
 
@@ -324,13 +316,10 @@ ULONG APIkeyValue_length = 255;
 	sdrplaySettings -> endGroup ();
 	sdrplaySettings -> sync ();
 
-	delete myFrame;
 	if (!libraryLoaded)
 	   return;
 	if (numofDevs >= 1)
 	   my_mir_sdr_ReleaseDeviceIdx (deviceIndex);
-	if (_I_Buffer != NULL)
-	   delete _I_Buffer;
 #ifdef __MINGW32__
 	FreeLibrary (Handle);
 #else
@@ -526,7 +515,7 @@ float	denominator	= p -> denominator;
 	for (i = 0; i <  (int)numSamples; i ++)
 	   localBuf [i] = std::complex<float> (float (xi [i]) / denominator,
 	                                       float (xq [i]) / denominator);
-	p -> _I_Buffer -> putDataIntoBuffer (localBuf, numSamples);
+	p -> _I_Buffer. putDataIntoBuffer (localBuf, numSamples);
 
 	(void)	firstSampleNum;
 	(void)	grChanged;
@@ -616,20 +605,20 @@ mir_sdr_ErrT err;
 //	Note that the sdrPlay returns 10 bit values
 int32_t	sdrplayHandler::getSamples (DSPCOMPLEX *V, int32_t size) { 
 //
-	return _I_Buffer	-> getDataFromBuffer (V, size);
+	return _I_Buffer. getDataFromBuffer (V, size);
 }
 
 //	and especially for our beloved spectrum viewer we provide
 int32_t	sdrplayHandler::getSamples 	(DSPCOMPLEX  *V,
 	                         int32_t size, int32_t segmentSize) {
 int32_t	amount;
-	amount = _I_Buffer	-> getDataFromBuffer (V, size);
-	_I_Buffer	-> skipDataInBuffer (segmentSize - size);
+	amount = _I_Buffer. getDataFromBuffer (V, size);
+	_I_Buffer. skipDataInBuffer (segmentSize - size);
 	return amount;
 }
 
 int32_t	sdrplayHandler::Samples	(void) {
-	return _I_Buffer	-> GetRingBufferReadAvailable ();
+	return _I_Buffer. GetRingBufferReadAvailable ();
 }
 
 uint8_t	sdrplayHandler::myIdentity	(void) {
@@ -637,7 +626,7 @@ uint8_t	sdrplayHandler::myIdentity	(void) {
 }
 
 void	sdrplayHandler::resetBuffer	(void) {
-	_I_Buffer	-> FlushRingBuffer ();
+	_I_Buffer. FlushRingBuffer ();
 }
 
 int16_t	sdrplayHandler::bitDepth	(void) {

@@ -34,7 +34,7 @@ The current version is a redesign and the GUI is modernized.
 Windows
 -----------------------------------------------------------------------------
 
-Soon an installer for Windows will be created
+At some point in time an installer for Windows will be created
 
 --------------------------------------------------------------------------------
 Linux
@@ -49,7 +49,7 @@ Supported devices
 -----------------------------------------------------------------------
 
 The program can be configured to handle the SDRplay, DABsticks, the AIRspy,
-the HACKrf and the limeSDR.
+the HACKrf, the limeSDR and the Adalm Pluto
 
 The software will - on startup - perform a check to see which device
 is available, depending on the configured devices.

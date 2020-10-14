@@ -2,24 +2,23 @@
 /*
  *    Copyright (C) 2014
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair programming
+ *    Lazy Chair Computing
  *
- *    This file is part of the SDR-J.
+ *    This file is part of the spectrumviewer
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    spectrumviewer is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    spectrumviewer is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with SDR-J; if not, write to the Free Software
+ *    along with spectrumviewer; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 
 #ifndef __SDRPLAY_HANDLER__
@@ -112,9 +111,10 @@ public:
 	int16_t	maxGain			(void);
 	int16_t	bitDepth		(void);
 	int32_t	getRate			(void);
-	RingBuffer<DSPCOMPLEX>	*_I_Buffer;
+	RingBuffer<DSPCOMPLEX>	_I_Buffer;
 	int		denominator;
 private:
+	QFrame		myFrame;
 	pfn_mir_sdr_StreamInit	my_mir_sdr_StreamInit;
 	pfn_mir_sdr_Reinit	my_mir_sdr_Reinit;
 	pfn_mir_sdr_StreamUninit	my_mir_sdr_StreamUninit;
@@ -152,7 +152,6 @@ private:
 	int16_t		deviceIndex;
 	bool		loadFunctions	(void);
 	QSettings	*sdrplaySettings;
-	QFrame		*myFrame;
 	int32_t		inputRate;
 	int32_t		vfoFrequency;
 	int		currentGred;

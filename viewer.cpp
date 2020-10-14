@@ -32,6 +32,9 @@
 #ifdef	HAVE_SDRPLAY
 #include	"sdrplay-handler.h"
 #endif
+#ifdef	HAVE_PLUTO
+#include	"pluto-handler.h"
+#endif
 #ifdef	HAVE_AIRSPY
 #include	"airspy-handler.h"
 #endif
@@ -200,6 +203,15 @@ deviceHandler	*theDevice;
 #ifdef	HAVE_SDRPLAY
 	try {
 	   theDevice	= new sdrplayHandler (spectrumSettings);
+	   connect (theDevice, SIGNAL (set_changeRate (int)),
+	            this, SLOT (set_changeRate (int)));
+	   return theDevice;
+	} catch (int e) {
+	}
+#endif
+#ifdef	HAVE_PLUTO
+	try {
+	   theDevice	= new plutoHandler (spectrumSettings);
 	   connect (theDevice, SIGNAL (set_changeRate (int)),
 	            this, SLOT (set_changeRate (int)));
 	   return theDevice;

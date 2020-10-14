@@ -78,6 +78,7 @@ LIBS            += -lsamplerate
 CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
+CONFIG		+= pluto
 #CONFIG		+= elad-s1
 CONFIG		+= soundcard
 CONFIG		+= hackrf
@@ -117,6 +118,7 @@ LIBS		+= -lpthread
 CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
+CONFIG		+= pluto
 #CONFIG		+= soundcard
 CONFIG		+= hackrf
 #CONFIG		+= lime
@@ -145,6 +147,16 @@ DEFINES		+= HAVE_SDRPLAY
 	                   ./devices/sdrplay-handler/sdrplayselect.cpp
 	FORMS		+= ./devices/sdrplay-handler/sdrplay-widget.ui
 }
+pluto   {
+        DEFINES         += HAVE_PLUTO
+        QT              += network
+        INCLUDEPATH     += ./devices/pluto-handler
+        HEADERS         += ./devices/pluto-handler/pluto-handler.h
+        SOURCES         += ./devices/pluto-handler/pluto-handler.cpp
+        FORMS           += ./devices/pluto-handler/pluto-widget.ui
+        LIBS            += -liio -lad9361
+}
+
 #
 airspy {
 	DEFINES		+= HAVE_AIRSPY
