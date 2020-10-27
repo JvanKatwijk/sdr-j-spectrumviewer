@@ -47,6 +47,9 @@
 #ifdef	HAVE_LIME
 #include	"lime-handler.h"
 #endif
+#ifdef	HAVE_ELAD_S1
+#include	"elad-s1.h"
+#endif
 #include	"spectrum-scope.h"
 #include	"waterfall-scope.h"
 #ifdef __MINGW32__
@@ -244,9 +247,16 @@ deviceHandler	*theDevice;
 	   theDevice	= new limeHandler	(spectrumSettings);
 	   return theDevice;
 	} catch (int e) {
-	   fprintf (stderr, "it seems there is no device\n");
 	}
 #endif
+#ifdef	HAVE_ELAD_S1
+	try {
+	   theDevice	= new eladHandler (spectrumSettings, 3072000);
+	   return theDevice;
+	} catch (int e) {
+	}
+#endif
+	fprintf (stderr, "could not detect a device\n");
 	return nullptr;
 }
 //
