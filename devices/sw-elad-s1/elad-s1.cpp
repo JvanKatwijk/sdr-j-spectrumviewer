@@ -2,25 +2,22 @@
 /*
  *    Copyright (C) 2014
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
- *    This file is part of the SDR-J.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
+ *    This file is part of the spectrunviewer
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    spectrumviewer is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    spectrumviewer is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with SDR-J; if not, write to the Free Software
+ *    along with spectrumviewer; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
@@ -37,8 +34,8 @@
 
 #include	<stdio.h>
 
-DSPCOMPLEX	makeSample_31bits (uint8_t *);
-DSPCOMPLEX	makeSample_15bits (uint8_t *);
+std::complex<float>	makeSample_31bits (uint8_t *);
+std::complex<float>	makeSample_15bits (uint8_t *);
 
 // ADC output unsigned 14 bit input to FPGA output signed 32 bit
 // multiply output FPGA by SCALE_FACTOR to normalize 32bit signed values to ADC range signed 14 bit
@@ -50,17 +47,17 @@ DSPCOMPLEX	makeSample_15bits (uint8_t *);
 //	Currently, we do not have lots of settings,
 //	it just might change suddenly, but not today
 		eladHandler::eladHandler (QSettings	*s,
-	                                  int32_t	theRate) {
+	                                  int32_t	theRate):
+	                                      myFrame (nullptr),
+	                                      _I_Buffer (2048 * 2048) {
 int16_t	theSuccess;
 	this	-> eladSettings	= s;
 	this	-> inputRate	= theRate;
 	deviceOK		= false;
-	myFrame			= new QFrame;
-	setupUi (myFrame);
-	myFrame	-> show ();
-	_I_Buffer		= NULL;
-	theLoader		= NULL;
-	theWorker		= NULL;
+	setupUi (&myFrame);
+	myFrame. show ();
+	theLoader		= nullptr;
+	theWorker		= nullptr;
 	rateDisplay	-> display (inputRate);
 	conversionNumber	= inputRate == 192000 ? 1:
 	                          inputRate <= 3072000 ? 2 : 3;
@@ -75,19 +72,19 @@ int16_t	theSuccess;
 	fprintf (stderr, "we zijn terug\n");
 	if (theSuccess != 0) {
 	   if (theSuccess == -1)
-	   QMessageBox::warning (myFrame, tr ("viewer"),
+	   QMessageBox::warning (&myFrame, tr ("viewer"),
 	                         tr ("No success in loading libs\n"));
 	   else
 	   if (theSuccess == -2)
-	   QMessageBox::warning (myFrame, tr ("viewer"),
+	   QMessageBox::warning (&myFrame, tr ("viewer"),
 	                         tr ("No success in setting up USB\n"));
 	   else
 	   if (theSuccess == -3)
-	   QMessageBox::warning (myFrame, tr ("viewer"),
+	   QMessageBox::warning (&myFrame, tr ("viewer"),
 	                         tr ("No success in FPGA init\n"));
 	   else
 	   if (theSuccess == -4)
-	   QMessageBox::warning (myFrame, tr ("viewer"),
+	   QMessageBox::warning (&myFrame, tr ("viewer"),
 	                         tr ("No success in hardware init\n"));
 	
 	   statusLabel -> setText ("not functioning");
@@ -105,7 +102,6 @@ int16_t	theSuccess;
 //	of at least 153600 samples, which in terms of "uint8_t's" is
 //	8 * 153600 (which is 1228800), so we settle for a buffersize
 //	To handle a lower refreshrate we take an even larger buffer
-	_I_Buffer	= new RingBuffer<uint8_t>(2048 * 2048);
 	vfoFrequency	= Khz (94700);
 //
 //	since localFilter and gainReduced are also used as
@@ -129,8 +125,6 @@ int16_t	theSuccess;
 	eladSettings	-> setValue ("bitDepth", depth);
 	eladSettings	-> endGroup ();
 	stopReader ();
-	if (_I_Buffer != NULL)
-	   delete _I_Buffer;
 	if (theLoader != NULL)
 	   delete theLoader;
 	if (theWorker != NULL)
@@ -141,7 +135,7 @@ int32_t	eladHandler::getRate	(void) {
 	return inputRate;
 }
 
-void	eladHandler::setVFOFrequency	(int32_t newFrequency) {
+void	eladHandler::setVFOFrequency	(uint64_t newFrequency) {
 int32_t	realFreq = newFrequency - vfoOffset;
 
 	if (theWorker == NULL) {
@@ -153,7 +147,7 @@ int32_t	realFreq = newFrequency - vfoOffset;
 	vfoFrequency = theWorker -> getVFOFrequency ();
 }
 
-int32_t	eladHandler::getVFOFrequency	(void) {
+uint64_t	eladHandler::getVFOFrequency	(void) {
 	return vfoFrequency + vfoOffset;
 }
 
@@ -163,11 +157,11 @@ bool	success;
 	if ((theWorker != NULL) || !deviceOK)
 	   return true;
 
-	_I_Buffer	-> FlushRingBuffer ();
+	_I_Buffer. FlushRingBuffer ();
 	theWorker	= new eladWorker (inputRate,
 	                                  vfoFrequency,
 	                                  theLoader,
-	                                  _I_Buffer,
+	                                  &_I_Buffer,
 	                                  iqSize,
 	                                  &success);
 	connect (theWorker, SIGNAL (samplesAvailable (int)),
@@ -198,7 +192,7 @@ bool	eladHandler::legalFrequency	(int32_t f) {
 //	reading of the "raw" data (i.e. the bytes!!!), we use
 //	the "worker". Here we unpack and make the samples into I/Q samples
 
-DSPCOMPLEX	makeSample_31bits (uint8_t *buf) {
+std::complex<float>	makeSample_31bits (uint8_t *buf) {
 int ii = 0; int qq = 0;
 int16_t	i = 0;
 	
@@ -223,8 +217,8 @@ uint32_t uii=0, uqq=0;
 	ii =(int)uii;
         qq =(int)uqq;
 	
-	return DSPCOMPLEX ((float)ii * SCALE_FACTOR_32to14,
-	                   (float)qq * SCALE_FACTOR_32to14);
+	return std::complex<float> ((float)ii * SCALE_FACTOR_32to14,
+	                            (float)qq * SCALE_FACTOR_32to14);
 }
 /*Giovanni Franza recipe  --(short code)  c1 and c2 scale factor to Giovanni's app
 	if(m_bytes_per_sample==2) {
@@ -243,7 +237,7 @@ uint32_t uii=0, uqq=0;
 
 
 //
-DSPCOMPLEX	makeSample_15bits (uint8_t *buf) {
+std::complex<float>	makeSample_15bits (uint8_t *buf) {
 int16_t	i = 0;	
 	
 int32_t ii= 0 , qq= 0;
@@ -262,22 +256,22 @@ int16_t sqq=0 , sii=0;
 	ii  =(int)sii;
 	qq  =(int)sqq;
 
-	return DSPCOMPLEX ((float)ii * SCALE_FACTOR_16to14,
-			   (float)qq * SCALE_FACTOR_16to14);
+	return std::complex<float> ((float)ii * SCALE_FACTOR_16to14,
+			            (float)qq * SCALE_FACTOR_16to14);
 
 }
 //
 //	Please realize that the _I_Buffer contains BYTES rather than
 //	complex samples
 //	
-int32_t	eladHandler::getSamples (DSPCOMPLEX *V, int32_t size) { 
+int32_t	eladHandler::getSamples (std::complex<float> *V, int32_t size) { 
 int32_t		amount, i;
 uint8_t		buf [iqSize * size];
 
 	if (!deviceOK) 
 	   return 0;
 
-	amount = _I_Buffer	-> getDataFromBuffer (buf, iqSize * size);
+	amount = _I_Buffer. getDataFromBuffer (buf, iqSize * size);
 
 	for (i = 0; i < amount / iqSize; i ++)  {
 	   switch (conversionNumber) {
@@ -295,7 +289,7 @@ uint8_t		buf [iqSize * size];
 	return amount / iqSize;
 }
 
-int32_t	eladHandler::getSamples (DSPCOMPLEX *V,
+int32_t	eladHandler::getSamples (std::complex<float> *V,
 	                         int32_t size, int32_t segmentSize) { 
 int32_t	skipAmount = segmentSize - size;	// this is in IQ samples
 int32_t	amount;
@@ -306,14 +300,14 @@ int32_t	amount;
 	amount	= getSamples (V, size);
 //	so, we skip iqSize buffer elements
 	if (skipAmount > 0)
-	   _I_Buffer -> skipDataInBuffer (iqSize * skipAmount);
+	   _I_Buffer.  skipDataInBuffer (iqSize * skipAmount);
 	return amount;
 }
 
 int32_t	eladHandler::Samples	(void) {
 	if (!deviceOK)
 	   return 0;
-	return _I_Buffer	-> GetRingBufferReadAvailable () / iqSize;
+	return _I_Buffer. GetRingBufferReadAvailable () / iqSize;
 }
 //
 //	Although we are getting 30-more bits in, the adc in the

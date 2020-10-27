@@ -39,19 +39,19 @@
 class	QSettings;
 class	eladWorker;
 class	eladLoader;
-typedef	DSPCOMPLEX(*makeSampleP)(uint8_t *);
+typedef	std::complex<float>(*makeSampleP)(uint8_t *);
 
 class	eladHandler: public deviceHandler, public Ui_eladWidget {
 Q_OBJECT
 public:
 		eladHandler		(QSettings *, int32_t);
 		~eladHandler		(void);
-	void	setVFOFrequency		(int32_t);
-	int32_t	getVFOFrequency		(void);
+	void	setVFOFrequency		(uint64_t);
+	uint64_t	getVFOFrequency		(void);
 	bool	restartReader		(void);
 	void	stopReader		(void);
-	int32_t	getSamples		(DSPCOMPLEX *, int32_t);
-	int32_t	getSamples		(DSPCOMPLEX *, int32_t, int32_t);
+	int32_t	getSamples		(std::complex<float> *, int32_t);
+	int32_t	getSamples		(std::complex<float> *, int32_t, int32_t);
 	int32_t	Samples			(void);
 	int32_t	getRate			(void);
 	int16_t	bitDepth		(void);
@@ -63,13 +63,13 @@ private	slots:
 private:
 	QSettings	*eladSettings;
 	int32_t		inputRate;
+	QFrame		myFrame;
+	RingBuffer<uint8_t>	_I_Buffer;
 	int16_t		depth;
 	bool		deviceOK;
 	eladLoader	*theLoader;
 	eladWorker	*theWorker;
-	RingBuffer<uint8_t>	*_I_Buffer;
-	QFrame		*myFrame;
-	int32_t		vfoFrequency;
+	uint64_t	vfoFrequency;
 	int32_t		vfoOffset;
 	int		gainReduced;
 	int		localFilter;

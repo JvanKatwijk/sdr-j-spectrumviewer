@@ -2,30 +2,27 @@
 /*
  *    Copyright (C) 2014
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair programming
+ *    Lazy Chair Computing
  *
- *    This file is part of the SDR-J (JSDR).
- *    Many of the ideas as implemented in JSDR are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
+ *    This file is part of the spectrumViewer
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    spectrumViewer is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    spectrumViewer is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with SDR-J; if not, write to the Free Software
+ *    along with spectrumViewer; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __ELAD_WORKER
-#define	__ELAD_WORKER
+#ifndef __ELAD_WORKER__
+#define	__ELAD_WORKER__
 
 #include	<stdlib.h>
 #include	<stdio.h>
@@ -48,8 +45,8 @@ public:
 	                                 int16_t,	// iqSize
 	                                 bool *);
 			~eladWorker	(void);
-	void		setVFOFrequency	(int32_t);
-	int32_t		getVFOFrequency	(void);
+	void		setVFOFrequency	(uint64_t);
+	uint64_t	getVFOFrequency	(void);
 	void		stop		(void);
 private:
 	void			run	(void);
