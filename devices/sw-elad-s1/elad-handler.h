@@ -2,30 +2,27 @@
 /*
  *    Copyright (C) 2014
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair programming
+ *    Lazy Chair Computing
  *
- *    This file is part of the SDR-J.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
+ *    This file is part of spectrumviewer
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    spectrumviewer is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    spectrumviewer is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with SDR-J; if not, write to the Free Software
+ *    along with spectrumviewer; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __ELAD_S1__
-#define	__ELAD_S1__
+#ifndef __ELAD_HANDLER__
+#define	__ELAD_HANDLER__
 
 #include	<QObject>
 #include	<QFrame>
@@ -52,19 +49,22 @@ public:
 	void	stopReader		(void);
 	int32_t	getSamples		(std::complex<float> *, int32_t);
 	int32_t	getSamples		(std::complex<float> *, int32_t, int32_t);
-	int32_t	Samples			(void);
-	int32_t	getRate			(void);
-	int16_t	bitDepth		(void);
+	int32_t	Samples			();
+	int32_t	getRate			();
+	int16_t	bitDepth		();
 	bool	legalFrequency		(int32_t);
 private	slots:
 	void	setGainReduction	(void);
 	void	setOffset		(int);
-	void	setFilter		(void);
+	void	setFilter		();
+	void	handle_dumpButton	();
 private:
 	QSettings	*eladSettings;
 	int32_t		inputRate;
 	QFrame		myFrame;
 	RingBuffer<uint8_t>	_I_Buffer;
+	FILE		*dumpFile;
+	std::atomic<bool>	dumping;
 	int16_t		depth;
 	bool		deviceOK;
 	eladLoader	*theLoader;

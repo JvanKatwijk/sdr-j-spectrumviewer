@@ -75,14 +75,15 @@ INCLUDEPATH	+= /usr/local/include
 LIBS		+= -lqwt-qt5 -lusb-1.0 -lrt -lfftw3f -ldl	# fedora 25
 LIBS            += -lsndfile
 LIBS            += -lsamplerate
+
 CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
-CONFIG		+= pluto
+#CONFIG		+= pluto
 CONFIG		+= elad-s1
-CONFIG		+= soundcard
-CONFIG		+= hackrf
-CONFIG		+= lime
+#CONFIG		+= soundcard
+#CONFIG		+= hackrf
+$CONFIG		+= lime
 }
 
 ## and for windows32 we use:
@@ -195,10 +196,10 @@ rtl_tcp {
 elad-s1 {
 	DEFINES		+= HAVE_ELAD_S1
 	INCLUDEPATH	+= ./devices/sw-elad-s1
-	HEADERS		+= ./devices/sw-elad-s1/elad-s1.h \
+	HEADERS		+= ./devices/sw-elad-s1/elad-handler.h \
 	                   ./devices/sw-elad-s1/elad-worker.h \
 	                   ./devices/sw-elad-s1/elad-loader.h
-	SOURCES		+= ./devices/sw-elad-s1/elad-s1.cpp \
+	SOURCES		+= ./devices/sw-elad-s1/elad-handler.cpp \
 	                   ./devices/sw-elad-s1/elad-worker.cpp \
 	                   ./devices/sw-elad-s1/elad-loader.cpp
 	FORMS		+= ./devices/sw-elad-s1/elad-widget.ui

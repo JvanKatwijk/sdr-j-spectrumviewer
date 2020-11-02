@@ -48,7 +48,7 @@
 #include	"lime-handler.h"
 #endif
 #ifdef	HAVE_ELAD_S1
-#include	"elad-s1.h"
+#include	"elad-handler.h"
 #endif
 #include	"spectrum-scope.h"
 #include	"waterfall-scope.h"
