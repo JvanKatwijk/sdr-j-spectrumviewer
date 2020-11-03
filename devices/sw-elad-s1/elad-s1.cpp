@@ -28,7 +28,7 @@
 #include	<QMessageBox>
 #include	<QDir>
 
-#include	"elad-handler.h"	// our header
+#include	"elad-s1.h"	// our header
 #include	"elad-worker.h"	// the thread, reading in the data
 #include	"elad-loader.h"	// function loader
 

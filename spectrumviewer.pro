@@ -196,10 +196,10 @@ rtl_tcp {
 elad-s1 {
 	DEFINES		+= HAVE_ELAD_S1
 	INCLUDEPATH	+= ./devices/sw-elad-s1
-	HEADERS		+= ./devices/sw-elad-s1/elad-handler.h \
+	HEADERS		+= ./devices/sw-elad-s1/elad-s1.h \
 	                   ./devices/sw-elad-s1/elad-worker.h \
 	                   ./devices/sw-elad-s1/elad-loader.h
-	SOURCES		+= ./devices/sw-elad-s1/elad-handler.cpp \
+	SOURCES		+= ./devices/sw-elad-s1/elad-s1.cpp \
 	                   ./devices/sw-elad-s1/elad-worker.cpp \
 	                   ./devices/sw-elad-s1/elad-loader.cpp
 	FORMS		+= ./devices/sw-elad-s1/elad-widget.ui
