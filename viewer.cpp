@@ -47,6 +47,9 @@
 #ifdef	HAVE_LIME
 #include	"lime-handler.h"
 #endif
+#ifdef	HAVE_COLIBRI
+#include	"colibri-handler.h"
+#endif
 #ifdef	HAVE_ELAD_S1
 #include	"elad-s1.h"
 #endif
@@ -252,6 +255,15 @@ deviceHandler	*theDevice;
 #ifdef	HAVE_ELAD_S1
 	try {
 	   theDevice	= new eladHandler (spectrumSettings, 3072000);
+	   return theDevice;
+	} catch (int e) {
+	}
+#endif
+#ifdef	HAVE_COLIBRI
+	try {
+	   theDevice	= new colibriHandler (spectrumSettings);
+	   connect (theDevice, SIGNAL (set_changeRate (int)),
+	            this, SLOT (set_changeRate (int)));
 	   return theDevice;
 	} catch (int e) {
 	}

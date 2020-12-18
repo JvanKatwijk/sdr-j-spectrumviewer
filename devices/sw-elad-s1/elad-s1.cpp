@@ -119,6 +119,8 @@ int16_t	theSuccess;
 	         this, SLOT (setGainReduction (void)));
 	connect (filter, SIGNAL (clicked (void)),
 	         this, SLOT (setFilter (void)));
+	connect (dumpButton, SIGNAL (clicked (void)),
+	         this, SLOT (handle_dumpButton ()));
 }
 
 	eladHandler::~eladHandler	(void) {
@@ -344,7 +346,7 @@ void	eladHandler::setFilter	(void) {
 
 void	eladHandler::handle_dumpButton	() {
 	if (dumping. load ()) {
-	   dumping. store (true);
+	   dumping. store (false);
 	   fclose (dumpFile);
 	   dumpButton -> setText ("dumpButton");
 	   dumpFile	= nullptr;
