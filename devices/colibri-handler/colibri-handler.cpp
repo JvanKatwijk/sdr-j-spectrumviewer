@@ -35,7 +35,7 @@
 	                                  myFrame (nullptr) {
 	colibriSettings		= s;
 	setupUi (&myFrame);
-	QString libName = "/home/jan/Downloads/ColibriNANO_lib/library/linux64/libcolibrinano_lib.so";
+	QString libName = "libcolibrinano_lib.so";
 	if (!m_loader. load (libName. toLatin1 () .data ())) {
            QMessageBox::critical (nullptr, "colibri",
 	                          tr("Failed to load colibrinano_lib.so"));
