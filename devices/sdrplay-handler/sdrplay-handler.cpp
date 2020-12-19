@@ -515,7 +515,8 @@ float	denominator	= p -> denominator;
 	for (i = 0; i <  (int)numSamples; i ++)
 	   localBuf [i] = std::complex<float> (float (xi [i]) / denominator,
 	                                       float (xq [i]) / denominator);
-	p -> _I_Buffer. putDataIntoBuffer (localBuf, numSamples);
+	if (p -> _I_Buffer. GetRingBufferWriteAvailable () > numSamples)
+	   p -> _I_Buffer. putDataIntoBuffer (localBuf, numSamples);
 
 	(void)	firstSampleNum;
 	(void)	grChanged;
@@ -604,7 +605,6 @@ mir_sdr_ErrT err;
 //	size still in I/Q pairs
 //	Note that the sdrPlay returns 10 bit values
 int32_t	sdrplayHandler::getSamples (DSPCOMPLEX *V, int32_t size) { 
-//
 	return _I_Buffer. getDataFromBuffer (V, size);
 }
 

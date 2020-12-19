@@ -88,13 +88,13 @@ int k;
 	connect (HFScope_2, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustFrequency (int)));
 
-	IFScope		= new spectrumScope (detailScope, 4 * displaySize);
+	IFScope		= new spectrumScope (detailScope, 2 * displaySize);
 	connect (IFScope, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustinLoupe (int)));
 	signalView	= new SignalView (signalScope);
 
 	theMapper	= new freqmapper (displaySize);
-	theMapper_2	= new freqmapper (4 * displaySize);
+	theMapper_2	= new freqmapper (2 * displaySize);
 	theDevice	= setDevice ();
 	if (theDevice == nullptr) {
 	   fprintf (stderr, "no device found\n");
@@ -205,13 +205,13 @@ int k;
 }
 
 deviceHandler	*Viewer::setDevice (void) {
-deviceHandler	*theDevice;
+deviceHandler	*testDevice;
 #ifdef	HAVE_SDRPLAY
 	try {
-	   theDevice	= new sdrplayHandler (spectrumSettings);
-	   connect (theDevice, SIGNAL (set_changeRate (int)),
+	   testDevice	= new sdrplayHandler (spectrumSettings);
+	   connect (testDevice, SIGNAL (set_changeRate (int)),
 	            this, SLOT (set_changeRate (int)));
-	   return theDevice;
+	   return testDevice;
 	} catch (int e) {
 	}
 #endif
@@ -275,7 +275,7 @@ deviceHandler	*theDevice;
 void	Viewer::set_changeRate (int newRate) {
 	lcd_rate_display	-> display (theDevice -> getRate ());
 	fprintf (stderr, "newRate = %d\n", newRate);
-	(void)newRate;
+	inputRate	= newRate;
 }
 
 //
@@ -293,6 +293,7 @@ void	Viewer::setStart (void) {
 	theDevice	-> setVFOFrequency (currentFrequency);
 	Display (currentFrequency);
 	lcd_rate_display	-> display (theDevice -> getRate ());
+	inputRate		= theDevice -> getRate ();
 	theDecimator	= new decimator (theDevice -> getRate (), 20);
 	bool r = theDevice	-> restartReader ();
 	if (!r) {
@@ -301,8 +302,8 @@ void	Viewer::setStart (void) {
 	   exit (102);
 	}
 //	and we are on the move, so let the timer run
-	runTimer	-> start (1000 / displayRate);
 	running. store (true);
+	runTimer	-> start (1000 / displayRate);
 }
 
 void	Viewer::setStop	(void) {
@@ -405,7 +406,6 @@ void	Viewer::clickPause (void) {
 //	so the _I_Buffer should be large enough.
 void	Viewer::handleSamples (void) {
 std::complex<float>	dataIn [displaySize];
-int32_t i;
 double showDisplay [displaySize];
 	currentFrequency	= theDevice -> getVFOFrequency ();
 
@@ -438,21 +438,23 @@ double showDisplay [displaySize];
 	while (true) {
 	   std::complex<float> temp;
 	   std::complex<float> lbuf [displaySize];
-	   double theDisplay [4 * displaySize];
+	   double theDisplay [2 * displaySize];
 	   theDevice	-> getSamples (lbuf, displaySize);
 	   for (int i = 0; i < displaySize; i ++) {
 	      if (theDecimator -> Pass (lbuf [i], &temp)) {
 	         xbuf [fillP] = temp;
 	         ybuf [fillP] = real (temp);
 	         fillP ++;
-	         if (fillP >= 4 * displaySize) {
+	         if (fillP >= 2 * displaySize) {
 	            theMapper_2	-> convert (xbuf, theDisplay);
 	            IFScope	-> showFrame (theDisplay,
 	                                      theDevice -> getRate () / decimationFactor,
 	                                      theDevice -> getVFOFrequency (),
 	                                      spectrumAmplitudeSlider -> value ());
 	            signalView	-> showFrame (ybuf, displaySize);
-	            theDevice -> resetBuffer ();
+//	            theDevice -> getSamples (lbuf, displaySize,
+//	                                      30 * displaySize);
+	            theDevice	-> resetBuffer ();
 	            return;
 	         }
 	      }

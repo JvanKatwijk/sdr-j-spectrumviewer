@@ -90,7 +90,7 @@ CONFIG		+= colibri
 ## and for windows32 we use:
 win32 {
 CONFIG		-= console 
-DESTDIR		= ../../windows-spectrumviewer
+DESTDIR		= /usr/shared/w32-programs/windows-spectrumviewer
 
 exists ("./.git") {
    GITHASHSTRING = $$system(git rev-parse --short HEAD)
@@ -120,11 +120,12 @@ LIBS		+= -lpthread
 CONFIG		+= dabstick
 CONFIG		+= airspy
 CONFIG		+= sdrplay
-CONFIG		+= pluto
+#CONFIG		+= pluto
 #CONFIG		+= soundcard
 CONFIG		+= hackrf
 #CONFIG		+= lime
 #CONFIG		+= extio
+CONFIG		+= colibri
 }
 #
 #	the devices
@@ -247,10 +248,7 @@ colibri	{
 	DEFINES		+= HAVE_COLIBRI
         DEPENDPATH      += ./devices/colibri-handler
         INCLUDEPATH     += ./devices/colibri-handler
-        HEADERS         += ./devices/colibri-handler/colibri-handler.h \
-       	                   ./devices/colibri-handler/LibLoader.h \
-       	                   ./devices/colibri-handler/common.h
-        SOURCES         += ./devices/colibri-handler/colibri-handler.cpp \
-	                   ./devices/colibri-handler/LibLoader.cpp 
+        HEADERS         += ./devices/colibri-handler/colibri-handler.h 
+        SOURCES         += ./devices/colibri-handler/colibri-handler.cpp 
         FORMS           += ./devices/colibri-handler/colibri-widget.ui
 }
