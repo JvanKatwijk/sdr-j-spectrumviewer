@@ -109,7 +109,6 @@ private slots:
 	void	setStop			(void);
 	void	lcd_timeout		(void);
 	void	updateTimeDisplay	(void);
-	void	clickPause		(void);
 	void	adjustFrequency		(int);
 	void	adjustinLoupe		(int);
 

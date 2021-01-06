@@ -50,6 +50,11 @@ public:
 		~spectrumScope	(void);
 void		showFrame	(double		*Y1_value,
 	                         uint32_t	rate,
+	                         int		border,
+	                         uint64_t	freq,
+	                         double		amp);
+void		showFrame	(double		*Y1_value,
+	                         uint32_t	rate,
 	                         uint64_t	freq,
 	                         double		amp);
 void		setBitDepth	(int16_t d);

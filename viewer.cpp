@@ -133,9 +133,6 @@ int k;
 	connect (decimationSpinner, SIGNAL (valueChanged (int)),
 	         this, SLOT (decimationHandler (int)));
 
-	connect (pauseButton, SIGNAL (clicked (void)),
-	         this, SLOT (clickPause (void)));
-
 	connect (upButton, SIGNAL (clicked ()),
 	         this, SLOT (handle_upButton ()));
 	connect (downButton, SIGNAL (clicked ()),
@@ -403,9 +400,6 @@ void	Viewer::lcd_timeout (void) {
 	Display (currentFrequency / KHz (1));
 }
 
-void	Viewer::clickPause (void) {
-}
-	
 //
 //	we want to process inputRate / 10 length  segments,
 //	which may amount to up to 800000 samples,
@@ -427,6 +421,7 @@ double showDisplay [displaySize];
 //	we have the buffer, the scopes can do the work
 	HFScope_1	-> showFrame (showDisplay,
 	                              theDevice	-> getRate (),
+	                              reductor	-> value (),
                                       currentFrequency,
 	                              spectrumAmplitudeSlider -> value ());
 	HFScope_2	-> showFrame (showDisplay,
@@ -590,16 +585,22 @@ void    Viewer::handle_freqButton (void) {
 }
 
 void	Viewer::handle_upButton	() {
-	if (theDevice != nullptr)
-	   adjustFrequency (theDevice -> getRate () / KHz (1));
+	if (theDevice != nullptr) {
+	   int skipSize = (1.0 - 2 * reductor -> value () / 1000.0) * theDevice -> getRate ();
+	   adjustFrequency (skipSize / KHz (1));
+	}
 }
 
 void	Viewer::handle_downButton () {
-	if (theDevice != nullptr)
-	   adjustFrequency ( -theDevice -> getRate () / KHz (1));
+	if (theDevice != nullptr) {
+	   int skipSize = (1.0 - 2 * (reductor -> value ()) / 1000.0) * theDevice -> getRate ();
+	   adjustFrequency ( -skipSize / KHz (1));
+	}
 }
 
 void	Viewer::showStrength	(int x, int y) {
+	currentFreq	-> display (x);
+	signalStrength	-> display (y);
 	fprintf (stderr, "freq %d, signal strength %d\n", x, y);
 }
 
