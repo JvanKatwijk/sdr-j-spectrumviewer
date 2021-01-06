@@ -82,6 +82,8 @@ int k;
 	                                           displaySize);
 	connect (HFScope_1, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustFrequency (int)));
+	connect (HFScope_1, SIGNAL (rightClicked (int, int)),
+	         this, SLOT (showStrength (int, int)));
 
 	HFScope_2	= new waterfallScope (hf_waterfallscope, displaySize,
 	                                                         rasterSize);
@@ -134,6 +136,10 @@ int k;
 	connect (pauseButton, SIGNAL (clicked (void)),
 	         this, SLOT (clickPause (void)));
 
+	connect (upButton, SIGNAL (clicked ()),
+	         this, SLOT (handle_upButton ()));
+	connect (downButton, SIGNAL (clicked ()),
+	         this, SLOT (handle_downButton ()));
 	mykeyPad	= new keyPad (this);
 	connect (freqButton, SIGNAL (clicked (void)),
 	         this, SLOT (handle_freqButton (void)));
@@ -581,5 +587,19 @@ void    Viewer::handle_freqButton (void) {
            mykeyPad -> hidePad ();
         else
            mykeyPad     -> showPad ();
+}
+
+void	Viewer::handle_upButton	() {
+	if (theDevice != nullptr)
+	   adjustFrequency (theDevice -> getRate () / KHz (1));
+}
+
+void	Viewer::handle_downButton () {
+	if (theDevice != nullptr)
+	   adjustFrequency ( -theDevice -> getRate () / KHz (1));
+}
+
+void	Viewer::showStrength	(int x, int y) {
+	fprintf (stderr, "freq %d, signal strength %d\n", x, y);
 }
 

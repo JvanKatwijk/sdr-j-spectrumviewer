@@ -120,6 +120,10 @@ private slots:
 
 	void	Display			(uint64_t);
 	void	Display			(uint64_t, bool);
+
+	void	handle_upButton		();
+	void	handle_downButton	();
+	void	showStrength		(int, int);
 public slots:
 	void	handleSamples		(void);
 	void	handle_freqButton	();

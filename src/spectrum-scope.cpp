@@ -118,7 +118,7 @@ void	spectrumScope::leftMouseClick (const QPointF &point) {
 }
 
 void	spectrumScope::rightMouseClick (const QPointF &point) {
-	rightClicked ((int)(point. x()) - IndexforMarker);
+	rightClicked ((int)(point. x()), (int)(point. y()));
 }
 
 void	spectrumScope::showFrame (double	*Y1_value,
