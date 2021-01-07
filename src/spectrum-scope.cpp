@@ -32,6 +32,7 @@
 	plotgrid		= scope;
 	this	-> displaySize	= displaysize;
 	this	-> displayBuffer = new double [displaySize];
+	this	-> X_values	= new double [displaySize];
 	memset (displayBuffer, 0, displaySize * sizeof (double));
 	plotgrid-> setCanvasBackground (Qt::black);
 	grid	= new QwtPlotGrid;
@@ -118,7 +119,15 @@ void	spectrumScope::leftMouseClick (const QPointF &point) {
 }
 
 void	spectrumScope::rightMouseClick (const QPointF &point) {
-	rightClicked ((int)(point. x()), (int)(point. y()));
+int	i;
+double	res	= -1;
+	for (int i = 1; i < displaySize; i ++)
+	   if ((X_values [i - 1] <= point. x()) &&
+	       (point. x () <= X_values [i])) {
+	      res = displayBuffer [i];
+	      break;
+	}
+	rightClicked ((int)(point. x()), (int)res);
 }
 
 void	spectrumScope::showFrame (double	*Y1_value,
@@ -127,21 +136,17 @@ void	spectrumScope::showFrame (double	*Y1_value,
 	                          uint64_t	freq,
 	                          double	amp) {
 uint16_t	i;
-double	X_axis	[displaySize];
-double	Y_Values [displaySize];
 
 	IndexforMarker	= (float)freq / 1000;
 	for (i = 0; i < displaySize; i ++) 
-	   X_axis [i] = (float)(freq / 1000) 
+	   X_values [i] = (float)(freq / 1000) 
 	                - ((double)rate / 2 - ((double)rate) / displaySize * i) / 1000;
 
-	if (border == 0)
-	   fprintf (stderr, "rate = %d\n", rate);
 	amp		= amp / 50 * (-get_db (0));
 	double s = 0, max = 0;
 
 	for (i = 0; i < displaySize; i ++) {
-	   if (!(std::isnan (Y_Values [i]) || std::isinf (Y_Values [i])))
+	   if (!(std::isnan (Y1_value [i]) || std::isinf (Y1_value [i])))
 	      displayBuffer [i] =
 	               0.9 * displayBuffer [i] +
 	               0.1 * get_db (Y1_value [i]); 
@@ -162,7 +167,7 @@ double	Y_Values [displaySize];
 	   MarkerLabel_1.    setRenderFlags (Qt::AlignLeft | Qt::AlignTop);
 	   MarkerLabel_2.    setFont (font1);
 	   MarkerLabel_2.    setColor (Qt::white);
-	   MarkerLabel_2. setRenderFlags (Qt::AlignRight | Qt::AlignTop);
+	   MarkerLabel_2.    setRenderFlags (Qt::AlignRight | Qt::AlignTop);
 	   maxLabel     -> detach ();
 	   maxLabel     -> setText (MarkerLabel_1);
 	   maxLabel     -> attach (plotgrid);
@@ -180,12 +185,12 @@ double	Y_Values [displaySize];
 	displayBuffer [startElement]		= get_db (0);
 	displayBuffer [startElement + realLength] = get_db (0);
 	plotgrid	-> setAxisScale (QwtPlot::xBottom,
-				         X_axis [startElement],
-				         X_axis [startElement + realLength]);
+				         X_values [startElement],
+				         X_values [startElement + realLength - 1]);
 	plotgrid	-> enableAxis (QwtPlot::xBottom);
 	plotgrid	-> setAxisScale (QwtPlot::yLeft,
 				         get_db (0), get_db (0) + amp);
-	SpectrumCurve	-> setSamples (&X_axis [startElement],
+	SpectrumCurve	-> setSamples (&X_values [startElement],
 	                               &displayBuffer [startElement],
 		                       realLength);
 	if (IndexforMarker == 0)
@@ -198,60 +203,9 @@ void	spectrumScope::showFrame (double	*Y1_value,
 	                          uint32_t	rate,
 	                          uint64_t	freq,
 	                          double	amp) {
-uint16_t	i;
-double	X_axis	[displaySize];
-double	Y_Values [displaySize];
 
-	IndexforMarker	= (float)freq / 1000;
-	for (i = 0; i < displaySize; i ++) 
-	   X_axis [i] = (float)(freq / 1000) 
-	                - ((double)rate / 2 - ((double)rate) / displaySize * i) / 1000;
-
-	amp		= amp / 50 * (-get_db (0));
-	plotgrid	-> setAxisScale (QwtPlot::xBottom,
-				         X_axis [0],
-				         X_axis [displaySize - 1]);
-	plotgrid	-> enableAxis (QwtPlot::xBottom);
-	plotgrid	-> setAxisScale (QwtPlot::yLeft,
-				         get_db (0), get_db (0) + amp);
-	double s = 0, max = 0;
-
-	for (i = 0; i < displaySize; i ++) {
-	   if (!(std::isnan (Y_Values [i]) || std::isinf (Y_Values [i])))
-	      displayBuffer [i] =
-	               0.9 * displayBuffer [i] +
-	               0.1 * get_db (Y1_value [i]); 
-	   s += get_db (Y1_value [i]);
-           if (!isnan (Y1_value [i]) && (Y1_value [i] > max))
-              max = Y1_value [i];
-        }
-      double avg      = s / displaySize;
-	if (-- counter < 0) {
-	   counter	= 5;
-	   QwtText MarkerLabel_1  =  QwtText (QString::number (get_db (max)));
-	   QwtText MarkerLabel_2  =  QwtText (QString::number (avg));
-	   QFont font1 ("Courier New");
-	   font1.       setPixelSize (30);;
-	   MarkerLabel_1.    setFont (font1);
-	   MarkerLabel_1.    setColor (Qt::white);
-	   MarkerLabel_1. setRenderFlags (Qt::AlignLeft | Qt::AlignTop);
-	   MarkerLabel_2.    setFont (font1);
-	   MarkerLabel_2.    setColor (Qt::white);
-	   MarkerLabel_2. setRenderFlags (Qt::AlignRight | Qt::AlignTop);
-	   maxLabel     -> detach ();
-	   maxLabel     -> setText (MarkerLabel_1);
-	   maxLabel     -> attach (plotgrid);
-	   minLabel     -> detach ();
-	   minLabel     -> setText (MarkerLabel_2);
-	   minLabel     -> attach (plotgrid);
-	}
-	SpectrumCurve	-> setBaseline (get_db (0));
-	displayBuffer [0]		= get_db (0);
-	displayBuffer [displaySize - 1] = get_db (0);
-
-	SpectrumCurve	-> setSamples (X_axis, displayBuffer, displaySize);
-	Marker		-> setXValue (IndexforMarker);
-	plotgrid	-> replot(); 
+	showFrame (Y1_value, rate, 0, freq, amp);
+	return;
 }
 
 float	spectrumScope::get_db (float x) {

@@ -61,7 +61,9 @@ void		setBitDepth	(int16_t d);
 private:
 	float		get_db (float x);
 	QwtPlot		*plotgrid;
-	int16_t		displaySize;
+	int		displaySize;
+	double		*X_values;
+	double		*Y_values;
 	QwtPlotGrid	*grid;
 	QwtPlotCurve	*SpectrumCurve;
 	QBrush		*ourBrush;
