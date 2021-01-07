@@ -465,6 +465,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QSpinBox" name="reductor">
+           <property name="minimum">
+            <number>10</number>
+           </property>
            <property name="maximum">
             <number>500</number>
            </property>
