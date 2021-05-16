@@ -95,23 +95,23 @@ class	sdrplayHandler: public deviceHandler, public Ui_sdrplayWidget {
 Q_OBJECT
 public:
 		sdrplayHandler		(QSettings *);
-		~sdrplayHandler		(void);
+		~sdrplayHandler		();
 	void	setVFOFrequency		(uint64_t);
-	uint64_t	getVFOFrequency		(void);
+	uint64_t	getVFOFrequency		();
 	bool	legalFrequency		(uint64_t);
-	uint64_t	defaultFrequency	(void);
+	uint64_t	defaultFrequency	();
 
-	bool	restartReader		(void);
-	void	stopReader		(void);
-	int32_t	getSamples		(DSPCOMPLEX *, int32_t);
-	int32_t	getSamples		(DSPCOMPLEX *, int32_t, int32_t);
-	int32_t	Samples			(void);
-	uint8_t	myIdentity		(void);
-	void	resetBuffer		(void);
-	int16_t	maxGain			(void);
-	int16_t	bitDepth		(void);
-	int32_t	getRate			(void);
-	RingBuffer<DSPCOMPLEX>	_I_Buffer;
+	bool	restartReader		();
+	void	stopReader		();
+	int32_t	getSamples		(std::complex<float> *, int32_t);
+	int32_t	getSamples		(std::complex<float> *, int32_t, int32_t);
+	int32_t	Samples			();
+	uint8_t	myIdentity		();
+	void	resetBuffer		();
+	int16_t	maxGain			();
+	int16_t	bitDepth		();
+	int32_t	getRate			();
+	RingBuffer<std::complex<float>>	_I_Buffer;
 	int		denominator;
 private:
 	QFrame		myFrame;

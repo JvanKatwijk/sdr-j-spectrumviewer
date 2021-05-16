@@ -9,9 +9,9 @@ TARGET		= spectrumviewer
 QT		+= widgets
 QMAKE_CFLAGS    +=  -O3 -ffast-math
 QMAKE_CXXFLAGS  +=  -O3 -ffast-math
-#QMAKE_CFLAGS   +=  -g
-#QMAKE_CXXFLAGS +=  -g
-#QMAKE_LFLAGS   +=  -g
+QMAKE_CFLAGS   +=  -g
+QMAKE_CXXFLAGS +=  -g
+QMAKE_LFLAGS   +=  -g
 QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]
 RC_ICONS        =  viewer.ico
 RESOURCES       += resources.qrc
@@ -77,8 +77,9 @@ LIBS            += -lsndfile
 LIBS            += -lsamplerate
 
 CONFIG		+= dabstick
+#CONFIG		+= sdrplay
+CONFIG		+= sdrplay-v3
 #CONFIG		+= airspy
-CONFIG		+= sdrplay
 #CONFIG		+= pluto
 #CONFIG		+= elad-s1
 #CONFIG		+= soundcard
@@ -150,6 +151,16 @@ DEFINES		+= HAVE_SDRPLAY
 	                   ./devices/sdrplay-handler/sdrplayselect.cpp
 	FORMS		+= ./devices/sdrplay-handler/sdrplay-widget.ui
 }
+
+sdrplay-v3 {
+DEFINES		+= HAVE_SDRPLAY_V3
+	INCLUDEPATH	+= ./devices/sdrplay-handler-v3
+	HEADERS		+= ./devices/sdrplay-handler-v3/sdrplay-handler-v3.h \
+	                   ./devices/sdrplay-handler-v3/sdrplay-commands.h
+	SOURCES		+= ./devices/sdrplay-handler-v3/sdrplay-handler-v3.cpp 
+	FORMS		+= ./devices/sdrplay-handler-v3/sdrplay-widget-v3.ui
+}
+
 pluto   {
         DEFINES         += HAVE_PLUTO
         QT              += network

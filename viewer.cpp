@@ -32,6 +32,9 @@
 #ifdef	HAVE_SDRPLAY
 #include	"sdrplay-handler.h"
 #endif
+#ifdef	HAVE_SDRPLAY_V3
+#include	"sdrplay-handler-v3.h"
+#endif
 #ifdef	HAVE_PLUTO
 #include	"pluto-handler.h"
 #endif
@@ -75,8 +78,8 @@ int k;
 	this	-> rasterSize		= 50;
 	this	-> displaySize =
 	             spectrumSettings -> value ("displaySize", 4096). toInt ();
-//	if ((displaySize & (displaySize - 1)) != 0)
-//	   displaySize	= 1024;
+	if ((displaySize & (displaySize - 1)) != 0)
+	   displaySize	= 1024;
 
 	HFScope_1	= new spectrumScope (hf_spectrumscope,
 	                                           displaySize);
@@ -93,10 +96,11 @@ int k;
 	IFScope		= new spectrumScope (detailScope, 2 * displaySize);
 	connect (IFScope, SIGNAL (leftClicked (int)),
 	         this, SLOT (adjustinLoupe (int)));
-	signalView	= new SignalView (signalScope);
 
+	signalView	= new SignalView (signalScope);
 	theMapper	= new freqmapper (displaySize);
 	theMapper_2	= new freqmapper (2 * displaySize);
+
 	theDevice	= setDevice ();
 	if (theDevice == nullptr) {
 	   fprintf (stderr, "no device found\n");
@@ -212,6 +216,15 @@ deviceHandler	*testDevice;
 #ifdef	HAVE_SDRPLAY
 	try {
 	   testDevice	= new sdrplayHandler (spectrumSettings);
+	   connect (testDevice, SIGNAL (set_changeRate (int)),
+	            this, SLOT (set_changeRate (int)));
+	   return testDevice;
+	} catch (int e) {
+	}
+#endif
+#ifdef	HAVE_SDRPLAY_V3
+	try {
+	   testDevice	= new sdrplayHandler_v3 (spectrumSettings);
 	   connect (testDevice, SIGNAL (set_changeRate (int)),
 	            this, SLOT (set_changeRate (int)));
 	   return testDevice;
@@ -404,18 +417,19 @@ void	Viewer::lcd_timeout (void) {
 //	we want to process inputRate / 10 length  segments,
 //	which may amount to up to 800000 samples,
 //	so the _I_Buffer should be large enough.
-void	Viewer::handleSamples (void) {
+void	Viewer::handleSamples () {
 std::complex<float>	dataIn [displaySize];
 double showDisplay [displaySize];
-	currentFrequency	= theDevice -> getVFOFrequency ();
 
 	if (!running. load ())
 	   return;
 
+	currentFrequency	= theDevice -> getVFOFrequency ();
 	if (theDevice -> Samples () < inputRate / displayRate)
 	   return;
 
-	theDevice -> getSamples (dataIn, displaySize);
+	theDevice	-> getSamples (dataIn, displaySize, 
+	                                  theDevice -> Samples ());
 	theMapper	-> convert (dataIn, showDisplay);
 
 //	we have the buffer, the scopes can do the work
